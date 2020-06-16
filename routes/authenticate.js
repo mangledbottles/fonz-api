@@ -22,8 +22,8 @@ router.get('/spotify', function(req, res, next) {
   state = generateRandomString(16),
   stateKey = 'spotify_auth_state',
   spotifyApi = new SpotifyWebApi({
-    clientId: 'f0973699a0ef4a44b444027ea5c54daf',
-    clientSecret: '5b384ecf0866476290484216b44e7004',
+    clientId: process.env.SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     redirectUri: 'http://localhost:3000/callback/spotify'
   });
   res.cookie(stateKey, state);
