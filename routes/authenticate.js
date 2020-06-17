@@ -18,17 +18,19 @@ router.get('/', function(req, res, next) {
 
 router.get('/spotify', function(req, res, next) {
   // credentials are optional
+  console.log({ env: process.env })
   var scopes = ['user-read-private', 'user-read-email'],
   state = generateRandomString(16),
-  stateKey = 'spotify_auth_state',
+  stateKey = process.env.SPOTIFY_STATE_KEY,
   spotifyApi = new SpotifyWebApi({
     clientId: process.env.SPOTIFY_CLIENT_ID,
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    redirectUri: 'http://localhost:3000/callback/spotify'
+    redirectUri: process.env.SPOTIFY_REDIRECT_URI
   });
   res.cookie(stateKey, state);
   var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
-  res.json({ message: "spotify", authorizeURL });
+  res.redirect(authorizeURL);
+  // res.json({ message: "spotify", authorizeURL });
 });
 
 

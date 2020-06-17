@@ -3,6 +3,8 @@ var http = require('http');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var dotenv = require('dotenv');
+dotenv.config();
 
 var indexRouter = require('./routes/index');
 var authenticateRouter = require('./routes/authenticate');
@@ -10,7 +12,10 @@ var callbackRouter = require('./routes/callback');
 
 var app = express();
 
-app.set('view engine', 'html');
+// app.set('view engine', 'html');
+// app.engine('html', require('ejs').renderFile);
+// app.set('view engine', 'html');
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
