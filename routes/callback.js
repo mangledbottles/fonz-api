@@ -11,57 +11,34 @@ router.get('/spotify', function(req, res, next) {
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[process.env.SPOTIFY_STATE_KEY] : null;
 
-  if (state === null || state !== storedState) {
-    res.redirect('/#' +
-      querystring.stringify({
-        error: 'state_mismatch'
-      }));
-  } else {
-    res.clearCookie(process.env.SPOTIFY_STATE_KEY);
-    var authOptions = {
-      url: 'https://accounts.spotify.com/api/token',
-      form: {
-        code: code,
-        redirect_uri: process.env.SPOTIFY_REDIRECT_URI,
-        grant_type: 'authorization_code'
-      },
-      headers: {
-        'Authorization': 'Basic ' + (new Buffer(process.env.SPOTIFY_CLIENT_ID + ':' + process.env.SPOTIFY_CLIENT_SECRET).toString('base64'))
-      },
-      json: true
-    };
+  if (state === null || state !== storedState) return res.status(400).json({ message: "Error: State mismatch." });
 
-    request.post(authOptions, function(error, response, body) {
-      if (!error && response.statusCode === 200) {
+  res.clearCookie(process.env.SPOTIFY_STATE_KEY);
+  var spotifyApi = new SpotifyWebApi({
+    clientId: process.env.SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+    redirectUri: process.env.SPOTIFY_REDIRECT_URI
+  });
+  // Retrieve an access token and a refresh token
+  spotifyApi.authorizationCodeGrant(code).then( function(data) {
+    const { expires_in, access_token, refresh_token } = data.body;
+    console.log('The token expires in ' + data.body['expires_in']);
+    console.log('The access token is ' + data.body['access_token']);
+    console.log('The refresh token is ' + data.body['refresh_token']);
 
-        var access_token = body.access_token,
-            refresh_token = body.refresh_token;
+    // Set the access token on the API object to use it in later calls
+    spotifyApi.setAccessToken(data.body['access_token']);
+    spotifyApi.setRefreshToken(data.body['refresh_token']);
 
-        var options = {
-          url: 'https://api.spotify.com/v1/me',
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-        };
-
-        // use the access token to access the Spotify Web API
-        request.get(options, function(error, response, body) {
-          console.log(body);
-        });
-
-        // we can also pass the token to the browser to make requests from there
-        res.redirect('/#' +
-          querystring.stringify({
-            access_token: access_token,
-            refresh_token: refresh_token
-          }));
-      } else {
-        res.redirect('/#' +
-          querystring.stringify({
-            error: 'invalid_token'
-          }));
-      }
+    spotifyApi.getMe().then(function(data) {
+      // user spotify information
+      res.json({ access_token, refresh_token, expires_in, userInformation: data.body })
+      }, function(err) {
+        res.status(500).json({ message: "Error getting user information.", err });
     });
-  }
+  }, function(err) {
+    res.status(500).json({ message: "Error with auth code.", err });
+  });
 });
 
 module.exports = router;

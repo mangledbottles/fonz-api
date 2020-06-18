@@ -9,6 +9,7 @@ dotenv.config();
 var indexRouter = require('./routes/index');
 var authenticateRouter = require('./routes/authenticate');
 var callbackRouter = require('./routes/callback');
+var userRouter = require('./routes/user');
 
 var app = express();
 
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/authenticate', authenticateRouter);
 app.use('/callback', callbackRouter);
+app.use('/user', userRouter);
 
 app.use(function(err, req, res, next) {
   res.locals.message = err.message;
