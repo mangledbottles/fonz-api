@@ -17,8 +17,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/spotify', function(req, res, next) {
-  // credentials are optional
-  console.log({ env: process.env })
+  // console.log({ env: process.env })
   var scopes = ['user-read-private', 'user-read-email', 'app-remote-control', 'user-library-modify', 'user-library-read', 'user-read-playback-state'],
   state = generateRandomString(16),
   stateKey = process.env.SPOTIFY_STATE_KEY,
