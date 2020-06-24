@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var SpotifyWebApi = require('spotify-web-api-node');
+var SpotifyWebApi = require('spotify-web-api-fonzi');
 const User = require("../controller/user");
 const spotifyApi = new SpotifyWebApi();
 
