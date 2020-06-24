@@ -11,14 +11,23 @@ var generateRandomString = function(length) {
   return text;
 };
 
-/* GET home page. */
 router.get('/', function(req, res, next) {
   res.json({ status: 200 });
 });
 
 router.get('/spotify', function(req, res, next) {
-  // console.log({ env: process.env })
-  var scopes = ['user-read-private', 'user-read-email', 'app-remote-control', 'user-library-modify', 'user-library-read', 'user-read-playback-state'],
+  const scopes = [
+    'user-read-private',
+    'user-read-email',
+    'user-library-modify',
+    'user-library-read',
+    'app-remote-control',
+    'user-read-playback-state',
+    'user-read-currently-playing',
+    'user-modify-playback-state',
+    'user-library-modify',
+    'app-remote-control',
+  ],
   state = generateRandomString(16),
   stateKey = process.env.SPOTIFY_STATE_KEY,
   spotifyApi = new SpotifyWebApi({

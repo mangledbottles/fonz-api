@@ -1,6 +1,4 @@
 'use strict';
-// var querystring = require('querystring');
-// var request = require('request'); // "Request" library
 var SpotifyWebApi = require('spotify-web-api-node');
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.SPOTIFY_CLIENT_ID,
@@ -17,11 +15,34 @@ exports.authorizeUser = (code) => {
         console.log(userInfo)
         const spotifyId = userInfo.body.id;
         const { email, display_name, product, country} = userInfo.body;
-        // console.log({ spotifyId })
         resolve( { email, display_name, product, country, spotifyId, expires_in, access_token, refresh_token } );
       }).catch((err) => {
         reject(err)
       });
     });
   });
+}
+
+exports.searchSong = (term) => {
+  return new Promise((resolve, reject) => {
+    spotifyApi.setAccessToken(global.access_token);
+    spotifyApi.setRefreshToken(global.refresh_token);
+    spotifyApi.searchTracks(`track:${term}`).then((data) => {
+      resolve(data.body);
+    }).catch((err) => {
+      reject(err);
+    })
+  })
+}
+
+exports.addToQueue = (songUri) => {
+  return new Promise((resolve, reject) => {
+    spotifyApi.setAccessToken(global.access_token);
+    spotifyApi.setRefreshToken(global.refresh_token);
+    spotifyApi.addToQueue(songUri).then((data) => {
+      resolve(data.body);
+    }).catch((err) => {
+      reject(err);
+    })
+  })
 }

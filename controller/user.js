@@ -1,6 +1,11 @@
 'use strict';
 let User = require('../model/user');
 const jwt = require('jsonwebtoken');
+var SpotifyWebApi = require('spotify-web-api-node');
+const spotifyApi = new SpotifyWebApi({
+  clientId: process.env.SPOTIFY_CLIENT_ID,
+  clientSecret: process.env.SPOTIFY_CLIENT_SECRET
+});
 
 function generateId(length){
     var result           = '';
@@ -21,5 +26,32 @@ exports.generateJWT = (service, email, access_token, refresh_token, spotifyId, p
       var token = jwt.sign(payload, process.env.JWT_PRIVATE_KEY);
       resolve(token);
     }, service, email, access_token, refresh_token, sid, spotifyId, product);
+  });
+}
+
+exports.isValidSession = ({ sid, email, service }) => {
+  return new Promise((resolve, reject) => {
+    User.isValidSession((err, isValidSession, access_token, refresh_token) => {
+      if(err) return reject(err);
+      spotifyApi.setAccessToken(access_token);
+      spotifyApi.setRefreshToken(refresh_token);
+      spotifyApi.refreshAccessToken().then((newToken) => {
+        let access_token = newToken.body['access_token'];
+        global.access_token = access_token;
+        global.refresh_token = refresh_token;
+        resolve(isValidSession);
+      }).catch((err) => {
+        reject(err);
+      })
+    }, sid, email, service);
+  });
+}
+
+exports.getAccessAndRefreshToken = (sid) => {
+  return new Promise((resolve, reject) => {
+    User.getAccessAndRefreshToken((err, tokens) => {
+      if(err) return reject(err);
+      resolve(tokens);
+    }, sid);
   });
 }
