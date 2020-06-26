@@ -36,14 +36,13 @@ exports.isValidSession = ({ sid, email, service }) => {
       spotifyApi.setAccessToken(access_token);
       spotifyApi.setRefreshToken(refresh_token);
       spotifyApi.refreshAccessToken().then((newToken) => {
-        let access_token = newToken.body['access_token'];
-        global.access_token = access_token;
-        global.refresh_token = refresh_token;
-        resolve(isValidSession);
-      }).catch((err) => {
-        reject(err);
-      })
-    }, sid, email, service);
+      let access_token = newToken.body['access_token'];
+      global.access_token = access_token;
+      global.refresh_token = refresh_token;
+      resolve(isValidSession);
+    }).catch((err) => {
+      reject(err);
+    })}, sid, email, service);
   });
 }
 

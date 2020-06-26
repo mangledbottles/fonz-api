@@ -19,16 +19,11 @@ router.get('/spotify', function(req, res, next) {
 });
 
 router.get('/spotify/current', function(req, res, next) {
-  User.getAccessAndRefreshToken(res.locals.user.sid).then(({ access_token, refresh_token }) => {
-    spotifyApi.setAccessToken(access_token);
-    spotifyApi.setRefreshToken(refresh_token);
-
-    spotifyApi.getMyCurrentPlaybackState().then((data) => {
-      res.json(data.body)
-      console.log("Now Playing: ",data.body);
-    }, function(err) {
-      console.log('Something went wrong! getMyCurrentPlaybackState', err);
-    });
+  spotifyApi.setAccessToken(global.access_token);
+  spotifyApi.getMyCurrentPlaybackState().then((data) => {
+    res.status(200).json(data.body);
+  }).catch((err) => {
+    res.status(500).json({ err });
   });
 });
 
