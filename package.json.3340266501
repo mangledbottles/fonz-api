@@ -13,8 +13,9 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.15",
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
-    "spotify-web-api-fonzi": "^4.0.0"
+    "spotify-web-api-node": "^4.0.0"
   }
 }
