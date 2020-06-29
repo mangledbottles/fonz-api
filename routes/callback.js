@@ -3,11 +3,10 @@ var router = express.Router();
 const User = require('../controller/user');
 const Spotify = require('../controller/spotify');
 
-
 router.get('/spotify', (req, res) => {
   const { code, state } = req.query;
-  var storedState = req.cookies ? req.cookies[process.env.SPOTIFY_STATE_KEY] : null;
-  if (state === null || state !== storedState) return res.status(400).json({ message: "Error: State mismatch." });
+  // var storedState = req.cookies ? req.cookies[process.env.SPOTIFY_STATE_KEY] : null;
+  // if (state === null || state !== storedState) return res.status(400).json({ message: "Error: State mismatch." });
   res.clearCookie(process.env.SPOTIFY_STATE_KEY);
 
   Spotify.authorizeUser(code).then(({ email, display_name, product, country, spotifyId, expires_in, access_token, refresh_token }) => {
