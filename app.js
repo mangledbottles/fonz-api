@@ -6,6 +6,7 @@ var dotenv = require('dotenv');
 dotenv.config();
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
+const rateLimit = require("express-rate-limit");
 
 var indexRouter = require('./routes/index');
 var authenticateRouter = require('./routes/authenticate');
@@ -13,7 +14,12 @@ var callbackRouter = require('./routes/callback');
 var userRouter = require('./routes/user');
 const libraryRouter = require('./routes/library');
 const app = express();
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5 // limit each IP to 100 requests per windowMs
+});
 
+app.use(limiter);
 app.use(logger('dev'));
 app.use(express.json());
 app.use(bodyParser.json())
@@ -21,6 +27,7 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({
   extended: false
 }));
+
 
 /** Middleware function to verify valid JWT and that the session ID associated with JWT is active and valid **/
 function authChecker(req, res, next) {
