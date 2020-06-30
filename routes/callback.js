@@ -12,10 +12,12 @@ router.get('/spotify', (req, res) => {
   Spotify.authorizeUser(code).then(({ email, display_name, product, country, spotifyId, expires_in, access_token, refresh_token }) => {
     User.generateJWT('Spotify', email, access_token, refresh_token, spotifyId, product, display_name).then((jwt) => {
       res.status(200).json({ jwt, email, display_name });
-    });
+    }).catch((e) => {
+      res.status(500).json({ status: 500, message: "Error generating JWT.", e });
+    })
   }).catch((err) => {
     res.send({ status: 500, message: "An internal error has occurred.", details: err, location: "Spotify Authorize User"});
   });
-})
+});
 
 module.exports = router;
