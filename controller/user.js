@@ -23,8 +23,10 @@ exports.generateJWT = (service, email, access_token, refresh_token, spotifyId, p
       const payload = {
          sid, email, service, display_name
       }
-      var token = jwt.sign(payload, process.env.JWT_PRIVATE_KEY);
-      resolve(token);
+      jwt.sign(payload, process.env.JWT_PRIVATE_KEY, (err, token) => {
+        if(err) reject(err);
+        resolve(token);
+      });
     }, service, email, access_token, refresh_token, sid, spotifyId, product);
   });
 }
