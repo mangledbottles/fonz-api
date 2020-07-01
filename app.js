@@ -36,7 +36,7 @@ function authChecker(req, res, next) {
   const token = authHeader.split(' ')[1], payload = jwt.decode(token);
 
   jwt.verify(token, process.env.JWT_PRIVATE_KEY, (err, user) => {
-    if (err) return res.status(403).json({ status: 403, message: "Invalid JWT Authentication token provided. Your token may have expired, login again to get a new token.", loginRequired: true });
+    if (err) return res.status(403).json({ status: 403, message: "Invalid JWT Authentication token provided. Your token may have expired, login again to get a new token.", loginRequired: true, err });
     User.isValidSession(user).then((isValidSession) => {
       if(!isValidSession) return res.status(403).json({ status: 403, message: "Invalid JWT Authentication token provided. This session has been deactivated, login again to get a new token.", loginRequired: true });
       // spotifyApi.setAccessToken(global.access_token);
