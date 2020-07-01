@@ -18,13 +18,5 @@ router.get('/spotify', function(req, res, next) {
   });
 });
 
-router.get('/spotify/current', function(req, res, next) {
-  spotifyApi.setAccessToken(global.access_token);
-  spotifyApi.getMyCurrentPlaybackState().then((data) => {
-    res.status(200).json(data.body);
-  }).catch((err) => {
-    res.status(500).json({ err });
-  });
-});
 
 module.exports = router;

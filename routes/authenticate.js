@@ -17,16 +17,18 @@ router.get('/', function(req, res, next) {
 
 router.get('/spotify', function(req, res, next) {
   const scopes = [
-    'user-read-private',
+    'user-read-playback-state',
+    'user-modify-playback-state',
+    'user-read-currently-playing',
+
+    'app-remote-control',
+    'streaming',
+
     'user-read-email',
+    'user-read-private',
+
     'user-library-modify',
     'user-library-read',
-    'app-remote-control',
-    'user-read-playback-state',
-    'user-read-currently-playing',
-    'user-modify-playback-state',
-    'user-library-modify',
-    'app-remote-control',
   ],
   state = generateRandomString(16),
   stateKey = process.env.SPOTIFY_STATE_KEY,
