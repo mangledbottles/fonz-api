@@ -25,7 +25,7 @@ exports.generateJWT = (service, email, access_token, refresh_token, spotifyId, p
       }
       jwt.sign(payload, process.env.JWT_PRIVATE_KEY, (err, token) => {
         if(err) reject(err);
-        resolve(token);
+        resolve({ token, sid });
       });
     }, service, email, access_token, refresh_token, sid, spotifyId, product);
   });
