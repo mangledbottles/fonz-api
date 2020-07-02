@@ -30,7 +30,9 @@ router.get('/spotify/state', function(req, res, next) {
 /** Spotify update state */
 router.put('/spotify/state/:state', (req, res, next) => {
   const { state } = req.params;
-  Spotify.setState(state).then((resp) => {
+  const { device_id } = req.query;
+  if(!state || !device_id) return res.status(400).json({ status: 400, message: "Missing parameters.", requiredParams: ['state', 'device_id'] });
+  Spotify.setState(state, device_id).then((resp) => {
     res.status(200).json(resp);
   }).catch((err) => {
     res.status(err.status).json(err);

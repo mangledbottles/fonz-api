@@ -74,15 +74,17 @@ exports.setState = (state, device_id) => {
   return new Promise(async (resolve, reject) => {
     spotifyApi.setAccessToken(global.access_token);
     spotifyApi.setRefreshToken(global.refresh_token);
-
+    console.log({ device_id })
     const currentSong = await this.getCurrent();
     if(currentSong.isQueueEmpty) return reject({ status: 410, message: "No music playing at the moment."});
+    // if(device_id == '') device_id = currentSong.deviceId;
     const { is_playing, deviceName, trackName } = currentSong;
+
 
     switch(state) {
       case 'play':
         if(is_playing) reject({ status: 403, message: `Track '${trackName}' is already playing on device ${deviceName}.`, isPlaying: true })
-        spotifyApi.play({ device_id }).then((resp) => {
+        spotifyApi.play({  }).then((resp) => {
           const message = (_.isEmpty(resp.body)) ? `Track '${trackName}' is now playing on device ${deviceName}.` : "Song could not be played";
           resolve({ status: 200, message, isPlaying: true });
         }).catch((err) => {
@@ -92,9 +94,18 @@ exports.setState = (state, device_id) => {
 
       case 'pause':
         if(!is_playing) reject({ status: 403, message: `Track '${trackName}' is already paused on device ${deviceName}.`, isPlaying: false })
-        spotifyApi.pause({ device_id }).then((resp) => {
+        spotifyApi.pause({  }).then((resp) => {
           const message = (_.isEmpty(resp.body)) ? `Track '${trackName}' is now paused on device ${deviceName}.` : "Song could not be paused.";
           resolve({ status: 200, message, isPlaying: false });
+        }).catch((err) => {
+          reject({ status: 400, err });
+        });
+        break;
+
+      case 'skip':
+        spotifyApi.skipToNext().then((details) => {
+          const message = (_.isEmpty(details.body)) ? `Skipped to next track.` : 'Could not skip to next track.';
+          resolve({ status: 200, message })
         }).catch((err) => {
           reject({ status: 400, err });
         });
