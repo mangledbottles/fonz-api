@@ -15,8 +15,8 @@ router.get('/spotify', (req, res) => {
     }).catch((e) => {
       res.status(500).json({ status: 500, message: "Error generating JWT.", e });
     })
-  }).catch((err) => {
-    res.send({ status: 500, message: "An internal error has occurred.", details: err, location: "Spotify Authorize User"});
+  }).catch((details) => {
+    res.send({ status: 500, message: "An internal error has occurred.", details, location: "Spotify Authorize User"});
   });
 });
 

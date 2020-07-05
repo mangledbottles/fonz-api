@@ -9,21 +9,25 @@ var _ = require('lodash');
 
 exports.authorizeUser = (code) => {
   return new Promise((resolve, reject) => {
-    spotifyApi.authorizationCodeGrant(code).then((authData) => {
-      const { expires_in, access_token, refresh_token } = authData.body;
-      spotifyApi.setAccessToken(access_token);
-      spotifyApi.setRefreshToken(refresh_token);
-      spotifyApi.getMe().then((userInfo) => {
-        console.log(userInfo)
-        const spotifyId = userInfo.body.id;
-        const { email, display_name, product, country} = userInfo.body;
-        resolve( { email, display_name, product, country, spotifyId, expires_in, access_token, refresh_token } );
+    try{
+      spotifyApi.authorizationCodeGrant(code).then((authData) => {
+        const { expires_in, access_token, refresh_token } = authData.body;
+        if(!expires_in || !access_token || !refresh_token) return reject("Spotify Error. Spotify could not generate user access_token and refresh_token. Try again later.");
+        spotifyApi.setAccessToken(access_token);
+        spotifyApi.setRefreshToken(refresh_token);
+        spotifyApi.getMe().then((userInfo) => {
+          const spotifyId = userInfo.body.id;
+          const { email, display_name, product, country} = userInfo.body;
+          resolve( { email, display_name, product, country, spotifyId, expires_in, access_token, refresh_token } );
+        }).catch((err) => {
+          reject(err)
+        });
       }).catch((err) => {
-        reject(err)
+          reject(err);
       });
-    }).catch((err) => {
-        reject(err);
-    });
+    } catch(err) {
+      reject(err);
+    }
   });
 }
 
