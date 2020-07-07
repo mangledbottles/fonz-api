@@ -32,6 +32,7 @@ router.put('/spotify/state/:state', (req, res, next) => {
   const { state } = req.params;
   const { device_id } = req.query;
   if(!state || !device_id) return res.status(400).json({ status: 400, message: "Missing parameters.", requiredParams: ['state', 'device_id'] });
+  if(res.locals.user.type == 'user') return res.status(403).json({ status: 403, message: "Forbidden. Only host accounts have the privilege to use this request. "});
   Spotify.setState(state, device_id).then((resp) => {
     res.status(200).json(resp);
   }).catch((err) => {
@@ -41,6 +42,7 @@ router.put('/spotify/state/:state', (req, res, next) => {
 
 /** Spotify get devices */
 router.get('/spotify/devices', (req, res, next) => {
+  if(res.locals.user.type == 'user') return res.status(403).json({ status: 403, message: "Forbidden. Only host accounts have the privilege to use this request. "});
   Spotify.getDevices().then((devices) => {
     res.status(200).json({ status: 200, amount: devices.length, devices });
   }).catch((err) => {

@@ -21,7 +21,7 @@ exports.generateJWT = (service, email, access_token, refresh_token, spotifyId, p
     const sid = spotifyId + generateId(10);
     User.creatAuthentication((err, res) => {
       const payload = {
-         sid, email, service, display_name
+         sid, email, service, display_name, type: 'host'
       }
       jwt.sign(payload, process.env.JWT_PRIVATE_KEY, (err, token) => {
         if(err) reject(err);
@@ -31,20 +31,33 @@ exports.generateJWT = (service, email, access_token, refresh_token, spotifyId, p
   });
 }
 
-exports.isValidSession = ({ sid, email, service }) => {
+exports.generateUserJWT = (service, sid) => {
+  return new Promise((resolve, reject) => {
+    const payload = {
+      sid, service, type: 'user'
+    }
+    jwt.sign(payload, process.env.JWT_PRIVATE_KEY, (err, token) => {
+      if(err) return reject(err);
+      resolve({ token, sid });
+    })
+  });
+}
+
+exports.isValidSession = ({ sid, service }) => {
   return new Promise((resolve, reject) => {
     User.isValidSession((err, isValidSession, access_token, refresh_token) => {
       if(err) return reject(err);
       spotifyApi.setAccessToken(access_token);
       spotifyApi.setRefreshToken(refresh_token);
       spotifyApi.refreshAccessToken().then((newToken) => {
-      let access_token = newToken.body['access_token'];
-      global.access_token = access_token;
-      global.refresh_token = refresh_token;
-      resolve(isValidSession);
-    }).catch((err) => {
-      reject(err);
-    })}, sid, email, service);
+        let access_token = newToken.body['access_token'];
+        global.access_token = access_token;
+        global.refresh_token = refresh_token;
+        resolve(isValidSession);
+      }).catch((err) => {
+        reject({ err, location: "RefreshToken", message: "Spotify would not generate access token." });
+      })
+    }, sid, service);
   });
 }
 
@@ -54,5 +67,15 @@ exports.getAccessAndRefreshToken = (sid) => {
       if(err) return reject(err);
       resolve(tokens);
     }, sid);
+  });
+}
+
+exports.userIsSessionActive = (sid) => {
+  return new Promise((resolve, reject) => {
+    User.getSessionInformation((err, sessionInformation) => {
+      if(err) return reject(err);
+      resolve(sessionInformation)
+      // resolve({ activeSession: sessionInformation.active==1, sessionInformation});
+    }, sid)
   });
 }
