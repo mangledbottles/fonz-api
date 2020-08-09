@@ -17,7 +17,8 @@ router.get('/spotify', (req, res) => {
         'Auth-DisplayName': display_name,
         'Auth-Email': email
       });
-      res.status(200).json({ jwt: token, email, display_name, sid });
+      res.redirect(`/?jwt=${token}`);
+      // res.status(200).json({ jwt: token, email, display_name, sid });
     }).catch((e) => {
       res.status(500).json({ status: 500, message: "Error generating JWT.", e });
     })
