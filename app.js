@@ -28,7 +28,6 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 
-
 /** Middleware function to verify valid JWT and that the session ID associated with JWT is active and valid **/
 function authChecker(req, res, next) {
   const User = require("./controller/user"), authHeader = req.headers.authorization;
@@ -39,8 +38,6 @@ function authChecker(req, res, next) {
     if (err) return res.status(403).json({ status: 403, message: "Invalid JWT Authentication token provided. Your token may have expired, login again to get a new token.", loginRequired: true });
     User.isValidSession(user).then((isValidSession) => {
       if(!isValidSession) return res.status(403).json({ status: 403, message: "Invalid JWT Authentication token provided. This session has been deactivated, login again to get a new token.", loginRequired: true });
-      // spotifyApi.setAccessToken(global.access_token);
-      // spotifyApi.setRefreshToken(global.refresh_token);
       res.locals.user = user;
       next();
     }).catch((err) => {
