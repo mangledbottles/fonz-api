@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var SpotifyWebApi = require('spotify-web-api-fonzi');
+const User = require('../controller/user');
+const Spotify = require('../controller/spotify');
 
 var generateRandomString = function(length) {
   var text = '';
@@ -17,16 +19,18 @@ router.get('/', function(req, res, next) {
 
 router.get('/spotify', function(req, res, next) {
   const scopes = [
-    'user-read-private',
+    'user-read-playback-state',
+    'user-modify-playback-state',
+    'user-read-currently-playing',
+
+    'app-remote-control',
+    'streaming',
+
     'user-read-email',
+    'user-read-private',
+
     'user-library-modify',
     'user-library-read',
-    'app-remote-control',
-    'user-read-playback-state',
-    'user-read-currently-playing',
-    'user-modify-playback-state',
-    'user-library-modify',
-    'app-remote-control',
   ],
   state = generateRandomString(16),
   stateKey = process.env.SPOTIFY_STATE_KEY,
@@ -38,6 +42,20 @@ router.get('/spotify', function(req, res, next) {
   res.cookie(stateKey, state);
   var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
   res.redirect(authorizeURL);
+});
+
+router.get('/spotify/user/:sid', (req, res, next) => {
+  const { sid } = req.params;
+  User.userIsSessionActive(sid).then((resp) => {
+    if(!resp.active) return res.status(404).json({ status: 404, message: "This session is not live / does not exist. "});
+    User.generateUserJWT('Spotify', sid).then(({ token, sid }) => {
+      res.status(200).json({ jwt: token, sid });
+    }).catch((e) => {
+      res.status(500).json({ status: 500, message: "Error generating JWT.", e });
+    });
+  }).catch((err) => {
+    res.status(500).json({ status: 500, message: "Error getting information about the session ID.", err });
+  })
 });
 
 
