@@ -4,6 +4,10 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
+    "rewrites": [ {
+      "source": "**",
+      "function": "api"
+    } ], 
     "public": "y",
     "ignore": [
       "firebase.json",
@@ -12,3 +16,4 @@
     ]
   }
 }
+

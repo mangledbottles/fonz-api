@@ -1,3 +1,6 @@
+// Firebase Functions
+const functions = require('firebase-functions');
+
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -66,4 +69,5 @@ app.use(function(err, req, res, next) {
   res.json({ error: err, message: err.message });
 });
 
-module.exports = app;
+// module.exports = app;
+exports.api = app;
