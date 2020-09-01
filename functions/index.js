@@ -42,34 +42,48 @@ function authChecker(req, res, next) {
     const token = authHeader.split(' ')[1],
         payload = jwt.decode(token);
 
-    jwt.verify(token, process.env.JWT_PRIVATE_KEY, (err, user) => {
-        if (err) return res.status(403).json({
-            status: 403,
-            message: "Invalid JWT Authentication token provided. Your token may have expired, login again to get a new token.",
-            loginRequired: true
-        });
-        User.isValidSession(user).then((isValidSession) => {
-            if (!isValidSession) return res.status(403).json({
-                status: 403,
-                message: "Invalid JWT Authentication token provided. This session has been deactivated, login again to get a new token.",
-                loginRequired: true
-            });
+    admin.auth().verifyIdToken(token)
+        .then((user) => {
             res.locals.user = user;
-            // global.userId = user.userId;
-            next();
-        }).catch((err) => {
-            return res.status(500).json({
-                err,
-                location: "isValidSession"
-            });
-        })
-    });
+            next()
+        }).catch((error) => {
+            return res.status(403).json({
+                status: 403,
+                message: "Invalid access token has been provided",
+                error
+            })
+        });
+
+
+    // jwt.verify(token, process.env.JWT_PRIVATE_KEY, (err, user) => {
+    //     if (err) return res.status(403).json({
+    //         status: 403,
+    //         message: "Invalid JWT Authentication token provided. Your token may have expired, login again to get a new token.",
+    //         loginRequired: true
+    //     });
+    //     User.isValidSession(user).then((isValidSession) => {
+    //         if (!isValidSession) return res.status(403).json({
+    //             status: 403,
+    //             message: "Invalid JWT Authentication token provided. This session has been deactivated, login again to get a new token.",
+    //             loginRequired: true
+    //         });
+    //         res.locals.user = user;
+    //         // global.userId = user.userId;
+    //         next();
+    //     }).catch((err) => {
+    //         return res.status(500).json({
+    //             err,
+    //             location: "isValidSession"
+    //         });
+    //     })
+    // });
 }
 
 app.use('/', indexRouter);
-app.use('/test', userRouter);
+// app.use('/test', userRouter);
 app.use('/authenticate', authenticateRouter);
 app.use('/callback', callbackRouter);
+
 /** All requests after this require authentication */
 app.use(authChecker);
 app.use('/library', libraryRouter);
