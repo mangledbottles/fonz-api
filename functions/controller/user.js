@@ -61,9 +61,9 @@ exports.isValidSession = ({ sid, service }) => {
   });
 }
 
-exports.getAccessAndRefreshToken = (sid) => {
+exports.getSpotifyAccessAndRefreshToken = (userId) => {
   return new Promise((resolve, reject) => {
-    User.getAccessAndRefreshToken((err, tokens) => {
+    User.getSpotifyAccessAndRefreshToken((err, tokens) => {
       if(err) return reject(err);
       resolve(tokens);
     }, sid);

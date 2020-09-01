@@ -55,6 +55,7 @@ function authChecker(req, res, next) {
                 loginRequired: true
             });
             res.locals.user = user;
+            // global.userId = user.userId;
             next();
         }).catch((err) => {
             return res.status(500).json({
@@ -66,6 +67,7 @@ function authChecker(req, res, next) {
 }
 
 app.use('/', indexRouter);
+app.use('/test', userRouter);
 app.use('/authenticate', authenticateRouter);
 app.use('/callback', callbackRouter);
 /** All requests after this require authentication */

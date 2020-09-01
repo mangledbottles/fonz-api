@@ -6,7 +6,10 @@ const spotifyApi = new SpotifyWebApi();
 
 
 router.get('/', (req, res, next) => {
-  res.send("AUTHENTICATED");
+  User.getSpotifyAccessAndRefreshToken('1').then((tokens) => {
+    res.json(tokens)
+  })
+  // res.send("AUTHENTICATED");
 })
 
 router.get('/spotify', function(req, res, next) {
