@@ -48,16 +48,13 @@ app.use(bodyParser.urlencoded({
 
 /** Middleware function to verify valid JWT and that the session ID associated with JWT is active and valid **/
 function authChecker(req, res, next) {
-    // const User = require("./controller/user"),
-        authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({
         status: 401,
         message: "Authentication token missing"
     });
     const token = authHeader.split(' ')[1],
         payload = jwt.decode(token);
-
-    // db.collection('providers').doc('SoundCloud').collection('authentication')
 
     admin.auth().verifyIdToken(token)
         .then((user) => {
