@@ -31,12 +31,13 @@ router.get('/spotify', (req, res) => {
       // added isnt already on the Fonz users account
       const spotifyAuthExists = await global.db
         .collection('spotify')
-        .where('spotifyId', '==', spotifyId)
+        // .where('spotifyId', '==', spotifyId)
         .where('userId', '==', storedStateUserId)
         .get();
 
       if(!spotifyAuthExists.empty) {
-        return res.status(403).json({ status: 403, message: "This music provider is already added on your Fonz Account." });
+        // return res.status(403).json({ status: 403, message: "This music provider is already added on your Fonz Account." });
+        return res.status(403).json({ status: 403, message: "You can only have 1 Spotify account linked to your Fonz account. "})
       }
 
       global.db.collection('spotify').add({
