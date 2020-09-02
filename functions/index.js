@@ -52,6 +52,7 @@ function authChecker(req, res, next) {
     admin.auth().verifyIdToken(token)
         .then((user) => {
             res.locals.user = user;
+            global.userId = user.user_id;
             next()
         }).catch((error) => {
             return res.status(403).json({
@@ -67,7 +68,10 @@ app.use('/', indexRouter);
 
 /* TODO: 
  *   [*] Rename authenticate to add music provider
- *   [] Accept access token as GET param for adding music provider
+ *   [*] Accept access token as GET param for adding music provider
+ *   [*] Fix callback endpoint to add music providers
+ *   [] Update auth for guests joining session (/spotify/user/:sid)
+ *   [] Distinguish between Host and Guest for priviledges
  *   [] Update endpoints to query Firestore db
  *   [] Create new endpoints for viewing active sessions
  *   [] Create endpoint to create new session
