@@ -1,14 +1,8 @@
 'use strict';
 let sql = require('../db');
 
-const admin = require('firebase-admin');
-admin.initializeApp({
-  credential: admin.credential.applicationDefault()
-});
-
-const db = admin.firestore();
-const sessionsRef = db.collection('sessions');
-const spotifyRef = db.collection('spotify');
+const sessionsRef = global.db.collection('sessions');
+const spotifyRef = global.db.collection('spotify');
 
 const User = () => {
   this.timestamp = new Date();
