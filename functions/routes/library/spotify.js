@@ -3,6 +3,22 @@ var router = express.Router();
 const Library = require('../../controller/library');
 const Spotify = require('../../controller/spotify');
 
+router.use(async (req, res, next) => {
+    const spotifyAuth = await global.SpotifyDB
+        .collection('authentication')
+        .doc(global.session.authenticationId)
+        .get();
+
+    const {
+        access_token,
+        refresh_token,
+        lastUpdated
+    } = spotifyAuth.data();
+    global.access_token = access_token;
+    global.refresh_token = refresh_token;
+    global.lastUpdated = lastUpdated;
+});
+
 /** Spotify search for song */
 router.get('/search', (req, res, next) => {
     const {
