@@ -58,38 +58,38 @@ router.get('/spotify', function (req, res, next) {
 
 });
 
-router.get('/spotify/user/:sid', (req, res, next) => {
-  const {
-    sid
-  } = req.params;
-  User.userIsSessionActive(sid).then((resp) => {
-    if (!resp.active) return res.status(404).json({
-      status: 404,
-      message: "This session is not live / does not exist. "
-    });
-    User.generateUserJWT('Spotify', sid).then(({
-      token,
-      sid
-    }) => {
-      res.status(200).json({
-        jwt: token,
-        sid
-      });
-    }).catch((e) => {
-      res.status(500).json({
-        status: 500,
-        message: "Error generating JWT.",
-        e
-      });
-    });
-  }).catch((err) => {
-    res.status(500).json({
-      status: 500,
-      message: "Error getting information about the session ID.",
-      err
-    });
-  })
-});
+// router.get('/spotify/user/:sid', (req, res, next) => {
+//   const {
+//     sid
+//   } = req.params;
+//   User.userIsSessionActive(sid).then((resp) => {
+//     if (!resp.active) return res.status(404).json({
+//       status: 404,
+//       message: "This session is not live / does not exist. "
+//     });
+//     User.generateUserJWT('Spotify', sid).then(({
+//       token,
+//       sid
+//     }) => {
+//       res.status(200).json({
+//         jwt: token,
+//         sid
+//       });
+//     }).catch((e) => {
+//       res.status(500).json({
+//         status: 500,
+//         message: "Error generating JWT.",
+//         e
+//       });
+//     });
+//   }).catch((err) => {
+//     res.status(500).json({
+//       status: 500,
+//       message: "Error getting information about the session ID.",
+//       err
+//     });
+//   })
+// });
 
 
 module.exports = router;
