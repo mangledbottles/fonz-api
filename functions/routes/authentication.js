@@ -45,7 +45,7 @@ router.get('/spotify', function (req, res, next) {
         uid
       } = user;
       res.cookie(stateKey, uid);
-      var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
+      var authorizeURL = spotifyApi.createAuthorizeURL(scopes, uid);
       res.redirect(authorizeURL);
     }).catch((error) => {
       return res.status(403).json({
