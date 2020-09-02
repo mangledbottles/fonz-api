@@ -7,6 +7,9 @@ admin.initializeApp({
 const db = admin.firestore();
 global.admin = admin;
 global.db = db;
+const Providers = global.db.collection('providers');
+const SpotifyDB = Providers.doc('Spotify');
+global.SpotifyDB = SpotifyDB;
 
 var express = require('express');
 var path = require('path');
@@ -40,7 +43,7 @@ app.use(bodyParser.urlencoded({
 
 /** Middleware function to verify valid JWT and that the session ID associated with JWT is active and valid **/
 function authChecker(req, res, next) {
-    const User = require("./controller/user"),
+    // const User = require("./controller/user"),
         authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({
         status: 401,
@@ -48,6 +51,8 @@ function authChecker(req, res, next) {
     });
     const token = authHeader.split(' ')[1],
         payload = jwt.decode(token);
+
+    // db.collection('providers').doc('SoundCloud').collection('authentication')
 
     admin.auth().verifyIdToken(token)
         .then((user) => {
@@ -72,7 +77,7 @@ app.use('/', indexRouter);
  *   [*] Fix callback endpoint to add music providers
  *   [] Update auth for guests joining session (/spotify/user/:sid)
  *   [] Distinguish between Host and Guest for priviledges
- *   [] Update endpoints to query Firestore db
+ *   [*] Update endpoints to query Firestore db
  *   [] Create new endpoints for viewing active sessions
  *   [] Create endpoint to create new session
  *   [] Turn on / off all coasters
