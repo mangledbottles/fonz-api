@@ -1,5 +1,7 @@
 // Firebase Functions
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+global.admin = admin;
 
 var express = require('express');
 var path = require('path');
@@ -12,7 +14,7 @@ const jwt = require('jsonwebtoken');
 const rateLimit = require("express-rate-limit");
 
 var indexRouter = require('./routes/index');
-var authenticateRouter = require('./routes/authenticate');
+var authenticationRouter = require('./routes/authentication');
 var callbackRouter = require('./routes/callback');
 var userRouter = require('./routes/user');
 const libraryRouter = require('./routes/library');
@@ -37,7 +39,7 @@ function authChecker(req, res, next) {
         authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({
         status: 401,
-        message: "JWT Authentication token missing"
+        message: "Authentication token missing"
     });
     const token = authHeader.split(' ')[1],
         payload = jwt.decode(token);
@@ -53,35 +55,21 @@ function authChecker(req, res, next) {
                 error
             })
         });
-
-
-    // jwt.verify(token, process.env.JWT_PRIVATE_KEY, (err, user) => {
-    //     if (err) return res.status(403).json({
-    //         status: 403,
-    //         message: "Invalid JWT Authentication token provided. Your token may have expired, login again to get a new token.",
-    //         loginRequired: true
-    //     });
-    //     User.isValidSession(user).then((isValidSession) => {
-    //         if (!isValidSession) return res.status(403).json({
-    //             status: 403,
-    //             message: "Invalid JWT Authentication token provided. This session has been deactivated, login again to get a new token.",
-    //             loginRequired: true
-    //         });
-    //         res.locals.user = user;
-    //         // global.userId = user.userId;
-    //         next();
-    //     }).catch((err) => {
-    //         return res.status(500).json({
-    //             err,
-    //             location: "isValidSession"
-    //         });
-    //     })
-    // });
 }
 
 app.use('/', indexRouter);
 // app.use('/test', userRouter);
-app.use('/authenticate', authenticateRouter);
+
+/* TODO: 
+ *   [*] Rename authenticate to add music provider
+ *   [] Accept access token as GET param for adding music provider
+ *   [] Update endpoints to query Firestore db
+ *   [] Create new endpoints for viewing active sessions
+ *   [] Create endpoint to create new session
+ *   [] Turn on / off all coasters
+ */
+
+app.use('/auth', authenticationRouter);
 app.use('/callback', callbackRouter);
 
 /** All requests after this require authentication */
@@ -93,7 +81,7 @@ app.use('/user', userRouter);
 app.use(function (req, res, next) {
     res.status(404).json({
         status: 404,
-        message: "404 NOT FOUND Ensure that you have requested the correct URL."
+        message: "Endpoint not found. Ensure that you have requested the correct URL."
     });
 });
 
