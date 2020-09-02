@@ -25,10 +25,6 @@ router.use(async (req, res, next) => {
     next();
 });
 
-router.get('/', (req, res, next) => {
-    res.send("ALL G")
-});
-
 router.get('/search', (req, res, next) => {
     const {
         term,
@@ -58,5 +54,37 @@ router.get('/state', function (req, res, next) {
         res.status(err.status).json(err);
     });
 });
+
+/** Spotify add song to queue */
+router.post('/queue/:songUri', (req, res, next) => {
+    const {
+        songUri
+    } = req.params;
+    const {
+        device_id
+    } = req.query;
+    if (songUri.split(':')[1] != 'track') return res.status(400).json({
+        status: 400,
+        message: "An invalid track has been provided. Must be informat of 'spotify:track:TRACKID'. "
+    });
+    if (!songUri) return res.status(400).json({
+        status: 400,
+        message: "Missing parameters.",
+        requiredParams: ['songUri', 'device_id']
+    });
+
+    Spotify.addToQueue(songUri).then((resp) => {
+        res.status(200).json((resp.length == 0 || resp.length == undefined) ? {
+            status: 200,
+            message: "Song queued."
+        } : resp);
+    }).catch((err) => {
+        res.status(err.status).json(err);
+    })
+});
+
+router.all('*', (req, res, next) => {
+    res.status(400).json({ status: 400, message: 'Invalid endpoint or method used for Spotify Guest' })
+})
 
 module.exports = router;
