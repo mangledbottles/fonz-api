@@ -34,6 +34,11 @@ const limiter = rateLimit({
 
 app.use(limiter);
 app.use(logger('dev'));
+app.use((req, res, next) => {
+    res.removeHeader('X-Powered-By');
+    res.setHeader('A-PWNER-MESSAGE', 'VGhpcyBpcyBhIHByaXZhdGUgQVBJClVuYXV0aG9yaXNlZCB1c2Ugd2lsbCBiZSBkZXRlY3RlZCwgYW5kIHdlIHdpbGwgZmluZCB5b3UsIHdhdGNoIG91dC4=')
+    next()
+})
 app.use(express.json());
 app.use(bodyParser.json())
 app.use(cookieParser());
