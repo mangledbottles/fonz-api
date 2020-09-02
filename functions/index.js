@@ -21,11 +21,13 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const rateLimit = require("express-rate-limit");
 
-var indexRouter = require('./routes/index');
-var authenticationRouter = require('./routes/authentication');
-var callbackRouter = require('./routes/callback');
-var userRouter = require('./routes/user');
+const indexRouter = require('./routes/index');
+const authenticationRouter = require('./routes/authentication');
+const callbackRouter = require('./routes/callback');
+const userRouter = require('./routes/user');
 const libraryRouter = require('./routes/library');
+const guestRouter = require('./routes/guest');
+
 const app = express();
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -87,6 +89,7 @@ app.use('/', indexRouter);
 
 app.use('/auth', authenticationRouter);
 app.use('/callback', callbackRouter);
+app.use('/guest', guestRouter);
 
 /** All requests after this require authentication */
 app.use(authChecker);
