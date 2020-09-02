@@ -3,6 +3,12 @@ var router = express.Router();
 const Library = require('../../controller/library');
 const Spotify = require('../../controller/spotify');
 
+router.post('/refresh', (req, res, next) => {
+    Spotify.refreshAccessToken().then((resp) => {
+        res.json({ message: "Token refreshed" })
+    })
+})
+
 router.use(async (req, res, next) => {
     const spotifyAuth = await global.SpotifyDB
         .collection('authentication')
@@ -119,7 +125,6 @@ router.post('/queue/:songUri', (req, res, next) => {
         res.status(err.status).json(err);
     })
 });
-
 
 /** Helpers for wrong URL */
 router.get('/queue', (req, res, next) => {

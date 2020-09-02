@@ -25,6 +25,7 @@ router.use(async (req, res, next) => {
     next();
 });
 
+
 router.get('/search', (req, res, next) => {
     const {
         term,
@@ -57,6 +58,7 @@ router.get('/state', function (req, res, next) {
 
 /** Spotify add song to queue */
 router.post('/queue/:songUri', (req, res, next) => {
+    console.log("TRY TO QUEUE SONG")
     const {
         songUri
     } = req.params;
@@ -74,7 +76,7 @@ router.post('/queue/:songUri', (req, res, next) => {
     });
 
     Spotify.addToQueue(songUri).then((resp) => {
-        res.status(200).json((resp.length == 0 || resp.length == undefined) ? {
+        return res.status(200).json((resp.length == 0 || resp.length == undefined) ? {
             status: 200,
             message: "Song queued."
         } : resp);
