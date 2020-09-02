@@ -1,7 +1,12 @@
 // Firebase Functions
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+admin.initializeApp({
+    credential: admin.credential.applicationDefault()
+});
+const db = admin.firestore();
 global.admin = admin;
+global.db = db;
 
 var express = require('express');
 var path = require('path');
