@@ -8,18 +8,18 @@ const User = () => {
   this.timestamp = new Date();
 }
 
-User.getSpotifyAccessAndRefreshToken = async (result, userId) => {
-  const tokens = await spotifyRef.where('userId', '==', userId).limit(1).get();
-  tokens.forEach((doc) => {
-    console.log(doc.id, '=>', doc.data());
-    result(null, doc.data())
-  })
-  // console.log(tokens.docs)
+// User.getSpotifyAccessAndRefreshToken = async (result, userId) => {
+//   const tokens = await spotifyRef.where('userId', '==', global.userId).limit(1).get();
+//   tokens.forEach((doc) => {
+//     console.log(doc.id, '=>', doc.data());
+//     result(null, doc.data())
+//   })
+//   // console.log(tokens.docs)
 
-  // console.log({ tokens });  
-  // console.log(tokens.data())
-  // result(null, tokens.docs)
-}
+//   // console.log({ tokens });  
+//   // console.log(tokens.data())
+//   // result(null, tokens.docs)
+// }
 
 
 

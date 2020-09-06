@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var SpotifyWebApi = require('spotify-web-api-fonzi');
-const User = require('../controller/user');
+const User = require('../controller/host');
 const Spotify = require('../controller/spotify');
 const {
   userRecordConstructor
@@ -22,7 +22,7 @@ router.get('/', function (req, res, next) {
   });
 });
 
-router.get('/spotify', function (req, res, next) {
+router.get('/spotify', async (req, res, next) => {
   const {
     token
   } = req.query;
