@@ -7,8 +7,12 @@ admin.initializeApp({
 const db = admin.firestore();
 global.admin = admin;
 global.db = db;
+
 const Providers = global.db.collection('providers');
 const SpotifyDB = Providers.doc('Spotify');
+const SessionsDB = db.collection('sessions');
+
+global.SessionsDB = SessionsDB;
 global.SpotifyDB = SpotifyDB;
 
 var express = require('express');
@@ -24,7 +28,7 @@ const rateLimit = require("express-rate-limit");
 const indexRouter = require('./routes/index');
 const authenticationRouter = require('./routes/authentication');
 const callbackRouter = require('./routes/callback');
-const userRouter = require('./routes/user');
+const hostRouter = require('./routes/host');
 const libraryRouter = require('./routes/library');
 const guestRouter = require('./routes/guest');
 
@@ -94,7 +98,7 @@ app.use('/guest', guestRouter);
 /** All requests after this require authentication */
 app.use(authChecker);
 app.use('/library', libraryRouter);
-app.use('/user', userRouter);
+app.use('/host', hostRouter);
 
 /** All unknown URL requests managed here */
 app.use(function (req, res, next) {
@@ -120,3 +124,7 @@ app.use(function (err, req, res, next) {
 exports.api = functions
     .https
     .onRequest(app);
+
+exports.speedTest = functions.https.onRequest((req, res) => {
+    res.json({ message: 'Speed Test Fonz Music' })
+})
