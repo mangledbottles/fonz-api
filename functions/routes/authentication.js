@@ -23,14 +23,6 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/spotify', async (req, res, next) => {
-  const {
-    token
-  } = req.query;
-  if (!token) return res.status(401).json({
-    status: 401,
-    message: "Access token is missing."
-  })
-
   global.admin.auth().verifyIdToken(token)
     .then((user) => {
       const scopes = ['user-read-playback-state', 'user-modify-playback-state', 'user-read-currently-playing', 'app-remote-control', 'streaming', 'user-read-email', 'user-read-private', 'user-library-modify', 'user-library-read'],
@@ -57,39 +49,5 @@ router.get('/spotify', async (req, res, next) => {
 
 
 });
-
-// router.get('/spotify/user/:sid', (req, res, next) => {
-//   const {
-//     sid
-//   } = req.params;
-//   User.userIsSessionActive(sid).then((resp) => {
-//     if (!resp.active) return res.status(404).json({
-//       status: 404,
-//       message: "This session is not live / does not exist. "
-//     });
-//     User.generateUserJWT('Spotify', sid).then(({
-//       token,
-//       sid
-//     }) => {
-//       res.status(200).json({
-//         jwt: token,
-//         sid
-//       });
-//     }).catch((e) => {
-//       res.status(500).json({
-//         status: 500,
-//         message: "Error generating JWT.",
-//         e
-//       });
-//     });
-//   }).catch((err) => {
-//     res.status(500).json({
-//       status: 500,
-//       message: "Error getting information about the session ID.",
-//       err
-//     });
-//   })
-// });
-
 
 module.exports = router;

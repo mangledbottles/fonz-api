@@ -91,12 +91,12 @@ app.use('/', indexRouter);
  *   [] Turn on / off all coasters
  */
 
-app.use('/auth', authenticationRouter);
 app.use('/callback', callbackRouter);
 app.use('/guest', guestRouter);
 
 /** All requests after this require authentication */
 app.use(authChecker);
+app.use('/auth', authenticationRouter);
 app.use('/library', libraryRouter);
 app.use('/host', hostRouter);
 
