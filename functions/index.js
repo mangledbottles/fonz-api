@@ -92,10 +92,10 @@ app.use('/', indexRouter);
  */
 
 app.use('/callback', callbackRouter);
-app.use('/guest', guestRouter);
 
 /** All requests after this require authentication */
 app.use(authChecker);
+app.use('/guest', guestRouter);
 app.use('/auth', authenticationRouter);
 app.use('/library', libraryRouter);
 app.use('/host', hostRouter);
