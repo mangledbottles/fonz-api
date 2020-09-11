@@ -9,7 +9,6 @@ router.get('/spotify', (req, res) => {
     state
   } = req.query,
   storedStateUserId = req.cookies ? req.cookies[process.env.SPOTIFY_STATE_KEY] : null;
-  console.log({ storedStateUserId });
   if(storedStateUserId == null) return  res.status(400).json({
     message: "Error: State mismatch."
   });

@@ -49,7 +49,7 @@ app.use(express.json());
 app.use(bodyParser.json())
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({
-    extended: false
+    extended: true
 }));
 
 /** Middleware function to verify valid JWT and that the session ID associated with JWT is active and valid **/
@@ -125,6 +125,6 @@ exports.api = functions
     .https
     .onRequest(app);
 
-exports.speedTest = functions.https.onRequest((req, res) => {
-    res.json({ message: 'Speed Test Fonz Music' })
-})
+// exports.speedTest = functions.https.onRequest((req, res) => {
+//     res.json({ message: 'Speed Test Fonz Music' })
+// })
