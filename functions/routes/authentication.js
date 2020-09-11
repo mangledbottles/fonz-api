@@ -31,9 +31,6 @@ router.get('/spotify', async (req, res, next) => {
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
       redirectUri: process.env.SPOTIFY_REDIRECT_URI
     });
-  const {
-    uid
-  } = user;
   res.cookie(stateKey, global.userId);
   var authorizeURL = spotifyApi.createAuthorizeURL(scopes, global.userId);
   res.redirect(authorizeURL);
