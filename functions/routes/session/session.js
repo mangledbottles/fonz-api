@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const Host = require("../controller/host");
+const Host = require("../../controller/host");
 
 
 // Create session
@@ -56,3 +56,4 @@ router.post('/', async (req, res, next) => {
     })
   })
   
+  module.exports = router;
