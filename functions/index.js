@@ -11,9 +11,12 @@ global.db = db;
 const Providers = global.db.collection('providers');
 const SpotifyDB = Providers.doc('Spotify');
 const SessionsDB = db.collection('sessions');
+const CoastersDB = db.collection('coasters');
 
 global.SessionsDB = SessionsDB;
 global.SpotifyDB = SpotifyDB;
+global.CoastersDB = CoastersDB;
+
 
 var express = require('express');
 var path = require('path');
