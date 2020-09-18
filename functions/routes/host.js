@@ -3,7 +3,7 @@ var router = express.Router();
 var SpotifyWebApi = require('spotify-web-api-fonzi');
 const Host = require("../controller/host");
 const spotifyApi = new SpotifyWebApi();
-
+const coasterRoutes = require('./coaster/coaster.js')
 
 router.get('/', (req, res, next) => {
   Host.getSpotifyAccessAndRefreshToken('1').then((tokens) => {
@@ -28,6 +28,9 @@ router.get('/spotify', function (req, res, next) {
     })
   });
 });
+
+/* Coasters */
+router.use('/coasters', coasterRoutes);
 
 
 /* Sessions */
