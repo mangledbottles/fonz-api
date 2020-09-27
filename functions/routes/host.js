@@ -5,27 +5,38 @@ const spotifyApi = new SpotifyWebApi();
 
 const coasterRoutes = require('./coaster/coaster.js');
 const sessionRoutes = require('./session/session.js');
+const Host = require('../controller/host');
+const Spotify = require('../controller/spotify');
 
-router.get('/', (req, res, next) => {
-  Host.getSpotifyAccessAndRefreshToken('1').then((tokens) => {
-    res.json(tokens)
+router.get('/providers', (req, res) => {
+  Host.getProviders().then((providers) => {
+    res.json({
+      providers
+    });
   }).catch((error) => {
     res.status(error.status || 500).json(error);
   })
 });
 
 router.get('/spotify', function (req, res, next) {
-  spotifyApi.setAccessToken(global.access_token);
-  spotifyApi.getMe().then((data) => {
-    res.json({
-      sid: res.locals.user.sid,
-      userInformation: data.body
-    })
-  }).catch((err) => {
-    res.status(500).json({
-      err
-    })
-  });
+  // spotifyApi.setAccessToken(global.access_token);
+  // Spotify.refreshAccessToken().then(() => {
+    spotifyApi.getMe().then((data) => {
+      res.json({
+        sid: res.locals.user.sid,
+        userInformation: data.body
+      })
+    }).catch((err) => {
+      res.status(500).json({
+        err
+      })
+    });
+  // })
+  // .catch((err) => {
+  //   res.status(500).json({
+  //     err
+  //   })
+  // })
 });
 
 /* Coasters */

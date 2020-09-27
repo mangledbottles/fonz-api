@@ -16,6 +16,39 @@ function generateId(length) {
   return result;
 }
 
+exports.getProviders = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let providers = [];
+      // Get Spotify
+      const spotifyRef = await global.SpotifyDB.collection('authentication')
+        .where('userId', '==', global.userId)
+        .get();
+      if (!spotifyRef.empty) {
+        spotifyRef.forEach((doc) => {
+          const {
+            display_name,
+            spotifyId,
+            lastUpdated,
+            country
+          } = doc.data();
+          providers.push({
+            provider: "Spotify",
+            display_name,
+            spotifyId,
+            country,
+            lastUpdated
+          });
+        });
+      }
+      resolve(providers)
+    } catch (error) {
+      console.error(error)
+      reject(error);
+    }
+  })
+}
+
 exports.createSession = () => {
   return new Promise(async (resolve, reject) => {
     const sessionAlreadyExists = await global.SessionsDB
@@ -52,9 +85,20 @@ exports.getSession = () => {
     });
     sessionInformation.forEach((doc) => {
       const sessionId = doc.id;
-      console.log({ sessionId })
-      const { createdAt, active, provider } = doc.data();
-      resolve({ sessionId, createdAt, provider, active })
+      console.log({
+        sessionId
+      })
+      const {
+        createdAt,
+        active,
+        provider
+      } = doc.data();
+      resolve({
+        sessionId,
+        createdAt,
+        provider,
+        active
+      })
     })
   })
 }
@@ -68,8 +112,10 @@ exports.deleteSession = (sessionId) => {
       status: 404,
       message: `Session ${sessionId} does not exist`
     });
-    const { userId } = sessionInformation.data();
-    if(userId !== global.userId) return reject({
+    const {
+      userId
+    } = sessionInformation.data();
+    if (userId !== global.userId) return reject({
       status: 403,
       message: 'This session ID is not linked to the given user account'
     })
@@ -90,19 +136,24 @@ exports.updateSession = (sessionId, active) => {
       status: 404,
       message: `Session ${sessionId} does not exist`
     });
-    const { userId } = sessionInformation.data();
-    if(userId !== global.userId) return reject({
+    const {
+      userId
+    } = sessionInformation.data();
+    if (userId !== global.userId) return reject({
       status: 403,
       message: 'This session ID is not linked to the given user account'
     })
 
     const res = await global.SessionsDB
-    .doc(sessionId)
-    .update({
-      active
-    });
+      .doc(sessionId)
+      .update({
+        active
+      });
 
-    resolve({ status: 200, message: 'Session has been updated' })
+    resolve({
+      status: 200,
+      message: 'Session has been updated'
+    })
   });
 }
 
