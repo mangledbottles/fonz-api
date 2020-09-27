@@ -94,11 +94,6 @@ app.use('/', indexRouter);
  *   [] Turn on / off all coasters
  */
 
-app.use('/callback', callbackRouter);
-// const importData = require('./routes/import');
-// app.use('/import', importData);
-
-
 /** All requests after this require authentication */
 app.use(authChecker);
 app.use('/guest', guestRouter);
