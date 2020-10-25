@@ -59,9 +59,26 @@ exports.createSession = () => {
       message: 'User already has an active session'
     });
 
+    const spotifyAuthId = await global.SpotifyDB
+      .collection('authentication')
+      .where('userId', '==', global.userId)
+      .limit(1)
+      .get();
+
+    if(spotifyAuthId.empty) return reject({
+      status: 401,
+      message: 'User does not have a Spotify account linked.'
+    });
+
+    let authenticationId;
+    spotifyAuthId.forEach((doc) => {
+      authenticationId = doc.id;
+    });
+
     const session = await global.SessionsDB.add({
       provider: 'Spotify', // hard coded for the moment
       userId: global.userId,
+      authenticationId,
       active: true,
       createdAt: global.admin.firestore.FieldValue.serverTimestamp()
     });
