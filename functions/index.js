@@ -80,6 +80,7 @@ function authChecker(req, res, next) {
 }
 
 app.use('/', indexRouter);
+app.use('/callback', callbackRouter);
 // app.use('/test', userRouter);
 
 /* TODO: 
