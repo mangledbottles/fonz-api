@@ -8,6 +8,8 @@ router.post('/refresh', (req, res, next) => {
         res.json({
             message: "Token refreshed"
         })
+    }).catch((error) => {
+        res.status(error.status || 500).send(error);
     })
 })
 

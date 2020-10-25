@@ -32,7 +32,8 @@ exports.getCoaster = (coasterId) => {
             paused,
             name
         } = coaster.data();
-        if (userId !== global.userId) return reject({
+        console.log({ userId, globalUserId: global.userId})
+        if (userId !== global.userId && userId !== null) return reject({
             status: 404,
             message: 'This coaster is linked to a different Fonz account.'
         });
@@ -91,6 +92,7 @@ exports.addCoasterToAccount = (coasterId) => {
 
 exports.updateCoaster = (coasterId, params) => {
     return new Promise(async (resolve, reject) => {
+        try {
         const {
             name,
             active,
@@ -120,6 +122,10 @@ exports.updateCoaster = (coasterId, params) => {
                 message: 'No valid parameters have been passed.'
             })
         }
+    } catch(error) {
+        console.error(error)
+        reject(error)
+    }
     })
 }
 

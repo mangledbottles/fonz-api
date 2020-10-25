@@ -3,9 +3,6 @@ var router = express.Router();
 var SpotifyWebApi = require('spotify-web-api-fonzi');
 const User = require('../controller/host');
 const Spotify = require('../controller/spotify');
-const {
-  userRecordConstructor
-} = require('firebase-functions/lib/providers/auth');
 
 var generateRandomString = function (length) {
   var text = '';
@@ -33,6 +30,7 @@ router.get('/spotify', async (req, res, next) => {
     });
   res.cookie(stateKey, global.userId);
   var authorizeURL = spotifyApi.createAuthorizeURL(scopes, global.userId);
+  // res.json({ authorizeURL })
   res.redirect(authorizeURL);
 });
 

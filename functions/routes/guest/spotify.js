@@ -3,48 +3,70 @@ var router = express.Router();
 const Spotify = require('../../controller/spotify');
 
 router.use(async (req, res, next) => {
-    if(global.session.provider !== 'Spotify') return res.status(401).json({
-        status: 401,
-        message: 'This session is not linked to a Spotify stream.'
-    })
-    const spotifyAuth = await global.SpotifyDB
-    .collection('authentication')
-    .doc(global.session.authenticationId)
-    .get();
+    try {
+        if (global.session.provider !== 'Spotify') return res.status(401).json({
+            status: 401,
+            message: 'This session is not linked to a Spotify stream.'
+        })
+        console.log({
+            session: global.session,
+            authId: global.session.authenticationId
+        })
+        if (!global.session.authenticationId) {
+            res.status(401).json({ message: "No Music Provider linked to Host Fonz Account."})
+        }
+        const spotifyAuth = await global.SpotifyDB
+            .collection('authentication')
+            .doc(global.session.authenticationId)
+            .get();
 
-    if(!spotifyAuth.exists) return res.status(403).json({
-        status: 403,
-        message: 'This session has been misconfigured.'
-    });
+        if (!spotifyAuth.exists) return res.status(403).json({
+            status: 403,
+            message: 'This session has been misconfigured.'
+        });
 
-    const { access_token, refresh_token, lastUpdated } = spotifyAuth.data();
-    global.access_token = access_token;
-    global.refresh_token = refresh_token;
-    global.lastUpdated = lastUpdated;
+        const {
+            access_token,
+            refresh_token,
+            lastUpdated
+        } = spotifyAuth.data();
+        global.access_token = access_token;
+        global.refresh_token = refresh_token;
+        global.lastUpdated = lastUpdated;
 
-    next();
+        next();
+    } catch (error) {
+        throw (error)
+    }
 });
 
 
 router.get('/search', (req, res, next) => {
-    const {
-        term,
-        limit,
-        offset
-    } = req.query;
-    if (!term) return res.status(400).json({
-        status: 400,
-        message: "Missing parameters.",
-        requiredParams: ['term']
-    });
-    console.log({ access_token: global.access_token, refresh_token: global.refresh_token })
-    Spotify.searchSong(term).then((resp) => {
-        res.status(200).json(resp);
-    }).catch((err) => {
-        res.status(500).json({
-            err
+    try {
+        const {
+            term,
+            limit,
+            offset
+        } = req.query;
+        if (!term) return res.status(400).json({
+            status: 400,
+            message: "Missing parameters.",
+            requiredParams: ['term']
         });
-    })
+        console.log({
+            access_token: global.access_token,
+            refresh_token: global.refresh_token
+        })
+        Spotify.searchSong(term).then((resp) => {
+            res.status(200).json(resp);
+        }).catch((err) => {
+            res.status(500).json({
+                err
+            });
+        })
+    } catch (error) {
+        res.status(500).send(error)
+    }
 });
 
 /** Spotify get currently playing song */
@@ -86,7 +108,10 @@ router.post('/queue/:songUri', (req, res, next) => {
 });
 
 router.all('*', (req, res, next) => {
-    res.status(400).json({ status: 400, message: 'Invalid endpoint or method used for Spotify Guest' })
+    res.status(400).json({
+        status: 400,
+        message: 'Invalid endpoint or method used for Spotify Guest'
+    })
 })
 
 module.exports = router;
