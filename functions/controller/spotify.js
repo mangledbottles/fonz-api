@@ -31,40 +31,40 @@ function initSpotify() {
 }
 var _ = require('lodash');
 
-exports.refreshAccessToken = async () => {
+exports.refreshAccessToken = () => {
   return new Promise(async (resolve, reject) => {
-    const spotifyAuth = await global.SpotifyDB
-      .collection('authentication')
-      .where('userId', '==', global.userId)
-      .limit(1)
-      .get();
+    try {
+      const spotifyAuth = await global.SpotifyDB
+        .collection('authentication')
+        .where('userId', '==', global.userId)
+        .limit(1)
+        .get();
 
-    spotifyAuth.forEach((doc) => {
-      let sessionId = doc.id;
-      const {
-        access_token,
-        refresh_token
-      } = doc.data();
-      spotifyApi.setAccessToken(access_token);
-      spotifyApi.setRefreshToken(refresh_token);
-      spotifyApi.refreshAccessToken().then(
-        function (data) {
-          global.access_token = data.body.access_token;
-          global.SpotifyDB
-            .collection('authentication')
-            .doc(sessionId)
-            .update({
-              access_token: data.body.access_token,
-              lastUpdated: global.admin.firestore.FieldValue.serverTimestamp()
-            });
-          resolve();
-        },
-        function (err) {
+      spotifyAuth.forEach((doc) => {
+        let sessionId = doc.id;
+        const {
+          access_token,
+          refresh_token
+        } = doc.data();
+        spotifyApi.setAccessToken(access_token);
+        spotifyApi.setRefreshToken(refresh_token);
+        spotifyApi.refreshAccessToken().then((data) => {
+            global.access_token = data.body.access_token;
+            global.SpotifyDB
+              .collection('authentication')
+              .doc(sessionId)
+              .update({
+                access_token: data.body.access_token,
+                lastUpdated: global.admin.firestore.FieldValue.serverTimestamp()
+              });
+            resolve();
+          }).catch((error) => {
           reject(error);
-          // console.log('Could not refresh the token!', err.message, err);
-        }
-      )
-    })
+        });
+      });
+    } catch (error) {
+      reject(error);
+    }
   });
 }
 

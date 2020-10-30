@@ -23,6 +23,7 @@ exports.getProviders = () => {
       // Get Spotify
       const spotifyRef = await global.SpotifyDB.collection('authentication')
         .where('userId', '==', global.userId)
+        .limit(1)
         .get();
       if (!spotifyRef.empty) {
         spotifyRef.forEach((doc) => {
@@ -33,6 +34,7 @@ exports.getProviders = () => {
             country
           } = doc.data();
           providers.push({
+            id: doc.id,
             provider: "Spotify",
             display_name,
             spotifyId,
@@ -47,6 +49,36 @@ exports.getProviders = () => {
       reject(error);
     }
   })
+}
+
+exports.removeSpotify = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const providers = await this.getProviders();
+      console.log({ providers })
+      const { id } = providers[0];
+      const removeRef = await global.SpotifyDB.collection('authentication')
+        .doc(id)
+        .delete();
+      const sessionRef = await global.SessionsDB
+        .where('authenticationId', '==', id)
+        .where('userId', '==', global.userId)
+        .limit(1)
+        .get();
+      sessionRef.forEach(async (doc) => {
+        const sessionId = doc.id;
+        const sessionRemove = await global.SessionsDB
+        .doc(sessionId)
+        .update({ authenticationId: null });
+      });
+        
+      resolve({ message: `Removed provider ${id} from account.`});
+
+    } catch (error) {
+      console.error(error)
+      reject(error);
+    }
+  });
 }
 
 exports.createSession = () => {
@@ -65,7 +97,7 @@ exports.createSession = () => {
       .limit(1)
       .get();
 
-    if(spotifyAuthId.empty) return reject({
+    if (spotifyAuthId.empty) return reject({
       status: 401,
       message: 'User does not have a Spotify account linked.'
     });

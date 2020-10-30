@@ -18,6 +18,16 @@ router.get('/providers', (req, res) => {
   })
 });
 
+router.delete('/providers/spotify', (req, res) => {
+  Host.removeSpotify().then((resp) => {
+    res.json(resp);
+  }).catch((error) => {
+    res.status(error.status || 500).json(error);
+  });
+});
+
+
+
 router.get('/spotify', function (req, res, next) {
   // spotifyApi.setAccessToken(global.access_token);
   // Spotify.refreshAccessToken().then(() => {

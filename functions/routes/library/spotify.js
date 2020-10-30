@@ -6,9 +6,11 @@ const Spotify = require('../../controller/spotify');
 router.post('/refresh', (req, res, next) => {
     Spotify.refreshAccessToken().then((resp) => {
         res.json({
+            resp,
             message: "Token refreshed"
         })
     }).catch((error) => {
+        console.error(error)
         res.status(error.status || 500).send(error);
     })
 })
