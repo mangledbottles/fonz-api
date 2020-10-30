@@ -176,7 +176,7 @@ exports.deleteSession = (sessionId) => {
   });
 }
 
-exports.updateSession = (sessionId, active) => {
+exports.updateSession = (sessionId, active, authenticationId) => {
   return new Promise(async (resolve, reject) => {
     const sessionInformation = await global.SessionsDB
       .doc(sessionId)
@@ -196,7 +196,8 @@ exports.updateSession = (sessionId, active) => {
     const res = await global.SessionsDB
       .doc(sessionId)
       .update({
-        active
+        active,
+        authenticationId
       });
 
     resolve({

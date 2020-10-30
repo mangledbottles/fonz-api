@@ -35,12 +35,14 @@ router.delete('/:sessionId', (req, res, next) => {
 });
 
 // Update session
+// TODO: Add changing the authenticationId for adding new spotify account to old session
 router.put('/:sessionId', (req, res, next) => {
   const {
-    sessionId
+    sessionId,
   } = req.params;
   const {
-    active
+    active,
+    authenticationId
   } = req.body;
   if (!active) return res.status(400).json({
     status: 400,
@@ -49,7 +51,7 @@ router.put('/:sessionId', (req, res, next) => {
   if (!(active == 'true' || active == 'false')) return res.status(403).json({
     message: "Invalid input"
   })
-  Host.updateSession(sessionId, active).then((resp) => {
+  Host.updateSession(sessionId, active, authenticationId).then((resp) => {
     res.status(resp.status || 200).json(resp);
   }).catch((err) => {
     res.status(err.status || 500).json(err);
