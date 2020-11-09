@@ -9,66 +9,73 @@ const spotifyApi = new SpotifyWebApi({
   redirectUri: process.env.SPOTIFY_REDIRECT_URI
 });
 
+
 function initSpotify() {
   return new Promise(async (resolve, reject) => {
-
-    if (global.lastUpdated == undefined) {
-      global.providers = await Host.getProviders();
-      global.lastUpdated = global.providers[0].lastUpdated;
-      console.log({
-        providers: global.providers
-      })
-    }
-
-    spotifyApi.setAccessToken(global.access_token);
-    spotifyApi.setRefreshToken(global.refresh_token);
-
-    // if(global.providers == null) {
-    // global.providers = await Host.getProviders().lastUpdated;
-    // }
-    // console.log({ globalLastUpdated: global.lastUpdated + 3600, firestoreDate: global.admin.firestore.FieldValue.serverTimestamp(), seconds: global.lastUpdated._seconds + 3600 })
-
-    // if (global.lastUpdated + 3600 >= global.admin.firestore.FieldValue.serverTimestamp()) {
-    // console.log({ lastUpdated: global.lastUpdated })
-
-
-    // if (global.lastUpdated == undefined) {
-    //   spotifyApi.refreshAccessToken().then((resp) => {
-    //     console.log("Refreshed Spotify Token SINCE UNDEFINED")
-    //   }).catch((err) => {
-    //     console.error({
-    //       message: 'Could not refresh the token!',
-    //       errorMessage: err.message,
-    //       err
-    //     });
-    //     return reject({
-    //       message: "Could not refresh token"
-    //     })
-    //   });
-    // } else 
-    if (((global.lastUpdated._seconds + 3600 * 1000)) >= +new Date()) {
-      console.log("Spotify Token being refreshed")
-      spotifyApi.refreshAccessToken().then((resp) => {
-        console.log("Refreshed Spotify Token")
-      }).catch((err) => {
-        console.error({
-          message: 'Could not refresh the token!',
-          errorMessage: err.message,
-          err
-        });
-        return reject({
-          message: "Could not refresh token"
+    try {
+      if (global.lastUpdated == undefined) {
+        global.providers = await Host.getProviders();
+        global.lastUpdated = global.providers[0].lastUpdated;
+        console.log({
+          providers: global.providers
         })
-      });
-    } else {
-      console.log("No need to update Spotify token")
+      }
+
+      spotifyApi.setAccessToken(global.access_token);
+      spotifyApi.setRefreshToken(global.refresh_token);
+
+      // if(global.providers == null) {
+      // global.providers = await Host.getProviders().lastUpdated;
+      // }
+      // console.log({ globalLastUpdated: global.lastUpdated + 3600, firestoreDate: global.admin.firestore.FieldValue.serverTimestamp(), seconds: global.lastUpdated._seconds + 3600 })
+
+      // if (global.lastUpdated + 3600 >= global.admin.firestore.FieldValue.serverTimestamp()) {
+      // console.log({ lastUpdated: global.lastUpdated })
+
+
+      // if (global.lastUpdated == undefined) {
+      //   spotifyApi.refreshAccessToken().then((resp) => {
+      //     console.log("Refreshed Spotify Token SINCE UNDEFINED")
+      //   }).catch((err) => {
+      //     console.error({
+      //       message: 'Could not refresh the token!',
+      //       errorMessage: err.message,
+      //       err
+      //     });
+      //     return reject({
+      //       message: "Could not refresh token"
+      //     })
+      //   });
+      // } else 
+      // if ( ((global.lastUpdated._seconds + 3600) * 1000) >= +new Date()) {
+      if (((global.lastUpdated._seconds + 3600) * 1000) >= parseInt(+new Date()) / 1000) {
+        console.log("Spotify Token being refreshed")
+        const updateRef = await refreshAccessToken();
+        // spotifyApi.refreshAccessToken().then((resp) => {
+        //   console.log("Refreshed Spotify Token")
+        // }).catch((err) => {
+        //   console.error({
+        //     message: 'Could not refresh the token!',
+        //     errorMessage: err.message,
+        //     err
+        //   });
+        // return reject({
+          // message: "Could not refresh token"
+        // })
+        // });
+      } else {
+        console.log("No need to update Spotify token")
+        console.log("Last updated: " + (global.lastUpdated._seconds + 3600 * 100000), " Current TS: ", +new Date())
+      }
+      resolve();
+    } catch (error) {
+      console.error(error);
+      reject(error);
     }
-    resolve();
   });
 }
 
-
-exports.refreshAccessToken = () => {
+function refreshAccessToken() {
   console.log("EXPORTS REFRESH SPOTIFY ACCESS TOKEN")
   return new Promise(async (resolve, reject) => {
     try {
@@ -103,10 +110,9 @@ exports.refreshAccessToken = () => {
             access_token: data.body.access_token,
             lastUpdated: global.admin.firestore.FieldValue.serverTimestamp()
           });
-          spotifyApi.setAccessToken(data.body.access_token);
+        spotifyApi.setAccessToken(data.body.access_token);
         console.log({
           accessTokenNew: data.body.access_token,
-          refreshTokenNew: data.body.refresh_token
         })
         // spotifyApi.setAccessToken(data.body.access_token);
         // spotifyApi.setRefreshToken(data.body.refresh_token);
