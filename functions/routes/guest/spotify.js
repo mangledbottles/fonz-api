@@ -2,6 +2,13 @@ var express = require('express');
 var router = express.Router();
 const Spotify = require('../../controller/spotify');
 
+var SpotifyWebApi = require('spotify-web-api-fonzi');
+const spotifyApi = new SpotifyWebApi({
+  clientId: process.env.SPOTIFY_CLIENT_ID,
+  clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+  redirectUri: process.env.SPOTIFY_REDIRECT_URI
+});
+
 router.use(async (req, res, next) => {
     try {
         if (global.session.provider !== 'Spotify') return res.status(401).json({
@@ -13,7 +20,9 @@ router.use(async (req, res, next) => {
             authId: global.session.authenticationId
         })
         if (!global.session.authenticationId) {
-            res.status(401).json({ message: "No Music Provider linked to Host Fonz Account."})
+            res.status(401).json({
+                message: "No Music Provider linked to Host Fonz Account."
+            })
         }
         const spotifyAuth = await global.SpotifyDB
             .collection('authentication')
@@ -30,15 +39,40 @@ router.use(async (req, res, next) => {
             refresh_token,
             lastUpdated
         } = spotifyAuth.data();
+
+        console.log({
+            access_token, refresh_token, lastUpdated
+        })
+
         global.access_token = access_token;
         global.refresh_token = refresh_token;
         global.lastUpdated = lastUpdated;
-
         next();
     } catch (error) {
         throw (error)
     }
 });
+
+// exports.refreshAccessToken = () => {
+//     return new Promise(async (resolve, reject) => {
+//         try {
+
+
+//             spotifyApi.refreshAccessToken().then((data) => {
+//                 global.SpotifyDB
+//                     .collection('authentication')
+//                     .doc(global.session.sessionId)
+//                     .update({
+//                         access_token: global.access_token,
+//                         lastUpdated: global.admin.firestore.FieldValue.serverTimestamp()
+//                     });
+//                 resolve();
+//             });
+//         } catch (error) {
+//             reject(error);
+//         }
+//     });
+// }
 
 
 router.get('/search', (req, res, next) => {
@@ -53,10 +87,10 @@ router.get('/search', (req, res, next) => {
             message: "Missing parameters.",
             requiredParams: ['term']
         });
-        console.log({
-            access_token: global.access_token,
-            refresh_token: global.refresh_token
-        })
+        // console.log({
+        //     access_token: global.access_token,
+        //     refresh_token: global.refresh_token
+        // })
         Spotify.searchSong(term).then((resp) => {
             res.status(200).json(resp);
         }).catch((err) => {

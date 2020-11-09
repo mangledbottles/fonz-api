@@ -2,6 +2,9 @@
 let User = require('../model/user');
 const jwt = require('jsonwebtoken');
 var SpotifyWebApi = require('spotify-web-api-fonzi');
+const {
+  reject
+} = require('lodash');
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.SPOTIFY_CLIENT_ID,
   clientSecret: process.env.SPOTIFY_CLIENT_SECRET
@@ -55,8 +58,12 @@ exports.removeSpotify = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const providers = await this.getProviders();
-      console.log({ providers })
-      const { id } = providers[0];
+      console.log({
+        providers
+      })
+      const {
+        id
+      } = providers[0];
       const removeRef = await global.SpotifyDB.collection('authentication')
         .doc(id)
         .delete();
@@ -68,11 +75,15 @@ exports.removeSpotify = () => {
       sessionRef.forEach(async (doc) => {
         const sessionId = doc.id;
         const sessionRemove = await global.SessionsDB
-        .doc(sessionId)
-        .update({ authenticationId: null });
+          .doc(sessionId)
+          .update({
+            authenticationId: null
+          });
       });
-        
-      resolve({ message: `Removed provider ${id} from account.`});
+
+      resolve({
+        message: `Removed provider ${id} from account.`
+      });
 
     } catch (error) {
       console.error(error)
@@ -83,132 +94,151 @@ exports.removeSpotify = () => {
 
 exports.createSession = () => {
   return new Promise(async (resolve, reject) => {
-    const sessionAlreadyExists = await global.SessionsDB
-      .where('userId', '==', global.userId)
-      .get();
-    if (!sessionAlreadyExists.empty) return reject({
-      status: 403,
-      message: 'User already has an active session'
-    });
+    try {
+      const sessionAlreadyExists = await global.SessionsDB
+        .where('userId', '==', global.userId)
+        .get();
+      if (!sessionAlreadyExists.empty) return reject({
+        status: 403,
+        message: 'User already has an active session'
+      });
 
-    const spotifyAuthId = await global.SpotifyDB
-      .collection('authentication')
-      .where('userId', '==', global.userId)
-      .limit(1)
-      .get();
+      const spotifyAuthId = await global.SpotifyDB
+        .collection('authentication')
+        .where('userId', '==', global.userId)
+        .limit(1)
+        .get();
 
-    if (spotifyAuthId.empty) return reject({
-      status: 401,
-      message: 'User does not have a Spotify account linked.'
-    });
+      if (spotifyAuthId.empty) return reject({
+        status: 401,
+        message: 'User does not have a Spotify account linked.'
+      });
 
-    let authenticationId;
-    spotifyAuthId.forEach((doc) => {
-      authenticationId = doc.id;
-    });
+      let authenticationId;
+      spotifyAuthId.forEach((doc) => {
+        authenticationId = doc.id;
+      });
 
-    const session = await global.SessionsDB.add({
-      provider: 'Spotify', // hard coded for the moment
-      userId: global.userId,
-      authenticationId,
-      active: true,
-      createdAt: global.admin.firestore.FieldValue.serverTimestamp()
-    });
-    resolve({
-      status: 201,
-      message: `Session ${session.id} has been created`,
-      sessionId: session.id
-    });
+      const session = await global.SessionsDB.add({
+        provider: 'Spotify', // hard coded for the moment
+        userId: global.userId,
+        authenticationId,
+        active: true,
+        createdAt: global.admin.firestore.FieldValue.serverTimestamp()
+      });
+      resolve({
+        status: 201,
+        message: `Session ${session.id} has been created`,
+        sessionId: session.id
+      });
+    } catch (error) {
+      console.error(error)
+      reject(error);
+    }
   });
 }
 
 exports.getSession = () => {
   return new Promise(async (resolve, reject) => {
-    const sessionInformation = await global.SessionsDB
-      .where('userId', '==', global.userId)
-      .limit(1)
-      .get();
-    if (sessionInformation.empty) return reject({
-      status: 404,
-      message: 'No sessions active'
-    });
-    sessionInformation.forEach((doc) => {
-      const sessionId = doc.id;
-      console.log({
-        sessionId
+    try {
+      const sessionInformation = await global.SessionsDB
+        .where('userId', '==', global.userId)
+        .limit(1)
+        .get();
+      if (sessionInformation.empty) return reject({
+        status: 404,
+        message: 'No sessions active'
+      });
+      sessionInformation.forEach((doc) => {
+        const sessionId = doc.id;
+        console.log({
+          sessionId
+        })
+        const {
+          createdAt,
+          active,
+          provider,
+          authenticationId
+        } = doc.data();
+        resolve({
+          sessionId,
+          authenticationId,
+          createdAt,
+          provider,
+          active
+        })
       })
-      const {
-        createdAt,
-        active,
-        provider
-      } = doc.data();
-      resolve({
-        sessionId,
-        createdAt,
-        provider,
-        active
-      })
-    })
+    } catch (error) {
+      reject(error);
+    }
   })
 }
 
 exports.deleteSession = (sessionId) => {
   return new Promise(async (resolve, reject) => {
-    const sessionInformation = await global.SessionsDB
-      .doc(sessionId)
-      .get();
-    if (!sessionInformation.exists) return reject({
-      status: 404,
-      message: `Session ${sessionId} does not exist`
-    });
-    const {
-      userId
-    } = sessionInformation.data();
-    if (userId !== global.userId) return reject({
-      status: 403,
-      message: 'This session ID is not linked to the given user account'
-    })
-    const res = await global.SessionsDB
-      .doc(sessionId)
-      .delete();
+    try {
+      const sessionInformation = await global.SessionsDB
+        .doc(sessionId)
+        .get();
+      if (!sessionInformation.exists) return reject({
+        status: 404,
+        message: `Session ${sessionId} does not exist`
+      });
+      const {
+        userId
+      } = sessionInformation.data();
+      if (userId !== global.userId) return reject({
+        status: 403,
+        message: 'This session ID is not linked to the given user account'
+      })
+      
+      const res = await global.SessionsDB.doc(sessionId).delete();
 
-    resolve()
+      resolve()
+    } catch (error) {
+      reject(error);
+    }
   });
 }
 
 exports.updateSession = (sessionId, active, authenticationId) => {
   return new Promise(async (resolve, reject) => {
-    const sessionInformation = await global.SessionsDB
-      .doc(sessionId)
-      .get();
-    if (!sessionInformation.exists) return reject({
-      status: 404,
-      message: `Session ${sessionId} does not exist`
-    });
-    const {
-      userId
-    } = sessionInformation.data();
-    if (userId !== global.userId) return reject({
-      status: 403,
-      message: 'This session ID is not linked to the given user account'
-    })
-
-    const res = await global.SessionsDB
-      .doc(sessionId)
-      .update({
-        active,
-        authenticationId
+    try {
+      const sessionInformation = await global.SessionsDB
+        .doc(sessionId)
+        .get();
+      if (!sessionInformation.exists) return reject({
+        status: 404,
+        message: `Session ${sessionId} does not exist`
       });
+      const {
+        userId
+      } = sessionInformation.data();
+      if (userId !== global.userId) return reject({
+        status: 403,
+        message: 'This session ID is not linked to the given user account'
+      })
 
-    resolve({
-      status: 200,
-      message: 'Session has been updated'
-    })
+      const res = await global.SessionsDB
+        .doc(sessionId)
+        .update({
+          active,
+          authenticationId
+        });
+
+      resolve({
+        status: 200,
+        message: 'Session has been updated'
+      })
+    } catch (error) {
+      reject(error);
+    }
   });
 }
 
 exports.generateJWT = (service, email, access_token, refresh_token, spotifyId, product, display_name) => {
   return new Promise((resolve, reject) => {
+  
     const sid = spotifyId + generateId(10);
     User.creatAuthentication((err, res) => {
       const payload = {

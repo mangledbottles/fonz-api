@@ -30,7 +30,7 @@ router.get('/search', (req, res, next) => {
     Spotify.searchSong(term).then((resp) => {
         res.status(200).json(resp);
     }).catch((err) => {
-        res.status(500).json({
+        res.status(500).send({
             err
         });
     })
@@ -41,7 +41,8 @@ router.get('/state', function (req, res, next) {
     Spotify.getCurrent().then((currentlyPlayingInfo) => {
         res.status(200).json(currentlyPlayingInfo);
     }).catch((err) => {
-        res.status(err.status).json(err);
+        console.error(err)
+        res.status(err.status || 500).send(err);
     });
 });
 

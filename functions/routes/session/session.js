@@ -17,6 +17,7 @@ router.get('/', (req, res, next) => {
   Host.getSession().then((sessionInfo) => {
     res.status(sessionInfo.status || 200).json(sessionInfo);
   }).catch((err) => {
+    console.error(err);
     res.status(err.status || 500).json(err);
   })
 });
@@ -44,14 +45,15 @@ router.put('/:sessionId', (req, res, next) => {
     active,
     authenticationId
   } = req.body;
-  if (!active) return res.status(400).json({
+  
+  if (!active || !authenticationId) return res.status(400).json({
     status: 400,
-    message: 'Missing parameter active'
+    message: 'Missing parameters'
   });
   if (!(active == 'true' || active == 'false')) return res.status(403).json({
     message: "Invalid input"
   })
-  Host.updateSession(sessionId, active, authenticationId).then((resp) => {
+  Host.updateSession(sessionId, (active == 'true'), authenticationId).then((resp) => {
     res.status(resp.status || 200).json(resp);
   }).catch((err) => {
     res.status(err.status || 500).json(err);
