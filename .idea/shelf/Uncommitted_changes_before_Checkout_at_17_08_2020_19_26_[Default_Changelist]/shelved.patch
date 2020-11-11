@@ -1,0 +1,27 @@
+Index: routes/authenticate.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>var express = require('express');\r\nvar router = express.Router();\r\nvar SpotifyWebApi = require('spotify-web-api-fonzi');\r\nconst User = require('../controller/user');\r\nconst Spotify = require('../controller/spotify');\r\n\r\nvar generateRandomString = function(length) {\r\n  var text = '';\r\n  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\r\n  for (var i = 0; i < length; i++) {\r\n    text += possible.charAt(Math.floor(Math.random() * possible.length));\r\n  }\r\n  return text;\r\n};\r\n\r\nrouter.get('/', function(req, res, next) {\r\n  res.json({ status: 200 });\r\n});\r\n\r\nrouter.get('/spotify', function(req, res, next) {\r\n  const scopes = [\r\n    'user-read-playback-state',\r\n    'user-modify-playback-state',\r\n    'user-read-currently-playing',\r\n\r\n    'app-remote-control',\r\n    'streaming',\r\n\r\n    'user-read-email',\r\n    'user-read-private',\r\n\r\n    'user-library-modify',\r\n    'user-library-read',\r\n  ],\r\n  state = generateRandomString(16),\r\n  stateKey = process.env.SPOTIFY_STATE_KEY,\r\n  spotifyApi = new SpotifyWebApi({\r\n    clientId: process.env.SPOTIFY_CLIENT_ID,\r\n    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,\r\n    redirectUri: process.env.SPOTIFY_REDIRECT_URI\r\n  });\r\n  res.cookie(stateKey, state);\r\n  var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);\r\n  res.redirect(authorizeURL);\r\n});\r\n\r\nrouter.get('/spotify/user/:sid', (req, res, next) => {\r\n  const { sid } = req.params;\r\n  User.userIsSessionActive(sid).then((resp) => {\r\n    if(!resp.active) return res.status(404).json({ status: 404, message: \"This session is not live / does not exist. \"});\r\n    User.generateUserJWT('Spotify', sid).then(({ token, sid }) => {\r\n      res.status(200).json({ jwt: token, sid });\r\n    }).catch((e) => {\r\n      res.status(500).json({ status: 500, message: \"Error generating JWT.\", e });\r\n    });\r\n  }).catch((err) => {\r\n    res.status(500).json({ status: 500, message: \"Error getting information about the session ID.\", err });\r\n  })\r\n});\r\n\r\n\r\nmodule.exports = router;\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- routes/authenticate.js	(revision 9f1ca2fc0ef2ce94e6db456529e6d6260d067257)
++++ routes/authenticate.js	(date 1597009988903)
+@@ -17,6 +17,7 @@
+   res.json({ status: 200 });
+ });
+ 
++/** Spotify Authentication */
+ router.get('/spotify', function(req, res, next) {
+   const scopes = [
+     'user-read-playback-state',
+@@ -59,4 +60,9 @@
+ });
+ 
+ 
++/** Apple Music Authentication */
++router.get('/apple', (req, res, next) => {
++
++});
++
+ module.exports = router;

@@ -1,3 +1,5 @@
 .env
 node_modules
 .idea
+*.log
+functions/firebase-debug.log
