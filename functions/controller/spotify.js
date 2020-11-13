@@ -186,7 +186,8 @@ exports.searchSong = (term) => {
   return new Promise(async (resolve, reject) => {
     try {
       await initSpotify();
-      spotifyApi.searchTracks(`track:${term}`).then((data) => {
+      // spotifyApi.searchTracks(`track:${term}`).then((data) => {
+        spotifyApi.searchTracks(term).then((data) => {
         resolve(data.body);
       }).catch((err) => {
         reject(err);
