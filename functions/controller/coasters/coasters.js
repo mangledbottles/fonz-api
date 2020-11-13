@@ -140,7 +140,9 @@ exports.removeCoaster = (coasterId) => {
         await global.CoastersDB
             .doc(coasterId)
             .update({
-                userId: FieldValue.delete()
+                userId: "",
+                active: false,
+                paused: false
             });
         resolve({
             message: 'Coaster removed from Fonz account.'

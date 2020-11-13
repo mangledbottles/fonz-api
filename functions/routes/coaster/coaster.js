@@ -47,6 +47,7 @@ router.delete('/:coasterId', (req, res, next) => {
     Coaster.removeCoaster(coasterId).then((resp) => {
         res.json(resp)
     }).catch((error) => {
+        console.error(error);
         res.status(error.status || 500).json(error)
     });
 });
