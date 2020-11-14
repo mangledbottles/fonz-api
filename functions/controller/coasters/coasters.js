@@ -140,7 +140,9 @@ exports.removeCoaster = (coasterId) => {
         await global.CoastersDB
             .doc(coasterId)
             .update({
-                userId: "",
+                // admin.firestore.FieldValue;
+                // FieldValue.delete()
+                userId: global.admin.firestore.FieldValue.delete(),
                 active: false,
                 paused: false
             });
