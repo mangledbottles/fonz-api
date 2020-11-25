@@ -18,14 +18,23 @@ router.get('/providers', (req, res) => {
   })
 });
 
+// router.delete('/providers/:providerId', (req, res) => {
+//   const { providerId } = req.params;
+//   Host.removeProvider(providerId).then((resp) => {
+//     res.json(resp);
+//   }).catch((error) => {
+//     res.status(error.status || 500).json(error);
+//   });
+// });
+
 router.delete('/providers/spotify', (req, res) => {
-  Host.removeSpotify().then((resp) => {
+  // const { providerId } = req.params;
+  Host.removeProvider().then((resp) => {
     res.json(resp);
   }).catch((error) => {
     res.status(error.status || 500).json(error);
   });
 });
-
 
 
 router.get('/spotify', function (req, res, next) {
