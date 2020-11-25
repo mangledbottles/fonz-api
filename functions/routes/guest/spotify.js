@@ -11,10 +11,10 @@ const spotifyApi = new SpotifyWebApi({
 
 router.use(async (req, res, next) => {
     try {
-        if (global.session.provider !== 'Spotify') return res.status(401).json({
-            status: 401,
-            message: 'This session is not linked to a Spotify stream.'
-        })
+        // if (global.session.provider !== 'Spotify') return res.status(401).json({
+        //     status: 401,
+        //     message: 'This session is not linked to a Spotify stream.'
+        // })
         console.log({
             session: global.session,
             authId: global.session.authenticationId
@@ -24,22 +24,27 @@ router.use(async (req, res, next) => {
                 message: "No Music Provider linked to Host Fonz Account."
             })
         }
-        const spotifyAuth = await global.SpotifyDB
-            .collection('authentication')
+        const spotifyAuth = await global.Providers
             .doc(global.session.authenticationId)
             .get();
 
         if (!spotifyAuth.exists) return res.status(403).json({
             status: 403,
-            message: 'This session has been misconfigured.'
+            message: 'This session has been misconfigured.',
+            additionalInfo: 'The provided music provider ID does not exist'
         });
 
         const {
             access_token,
             refresh_token,
-            lastUpdated
+            lastUpdated,
+            provider
         } = spotifyAuth.data();
 
+        if(provider != 'Spotify') return res.status(401).json({
+            status: 401,
+            message: "This session does not have Spotify linked to it."
+        })
         console.log({
             access_token, refresh_token, lastUpdated
         })

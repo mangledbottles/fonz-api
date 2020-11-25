@@ -2,19 +2,21 @@ var express = require('express');
 var router = express.Router();
 const Host = require("../../controller/host");
 
-
-// Create session
-router.post('/', async (req, res, next) => {
-  Host.createSession().then((sessionInfo) => {
+// Get session information
+router.get('/', (req, res, next) => {
+  console.log("GET Get Session Information")
+  Host.getSession().then((sessionInfo) => {
     res.status(sessionInfo.status || 200).json(sessionInfo);
   }).catch((err) => {
+    console.error(err);
     res.status(err.status || 500).json(err);
   })
 });
 
-// Get session information
-router.get('/', (req, res, next) => {
-  Host.getSession().then((sessionInfo) => {
+// Create session
+router.post('/', (req, res, next) => {
+  console.log("POST Create Session");
+  Host.createSession().then((sessionInfo) => {
     res.status(sessionInfo.status || 200).json(sessionInfo);
   }).catch((err) => {
     console.error(err);
@@ -36,7 +38,6 @@ router.delete('/:sessionId', (req, res, next) => {
 });
 
 // Update session
-// TODO: Add changing the authenticationId for adding new spotify account to old session
 router.put('/:sessionId', (req, res, next) => {
   const {
     sessionId,

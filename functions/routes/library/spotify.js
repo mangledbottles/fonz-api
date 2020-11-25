@@ -113,6 +113,7 @@ router.post('/queue/:songUri', (req, res, next) => {
             message: "Song queued."
         } : resp);
     }).catch((err) => {
+        console.error(err);
         res.status(err.status).json(err);
     })
 });
