@@ -12,6 +12,7 @@ router.get('/spotify', (req, res) => {
   if(storedStateUserId == null) return  res.status(400).json({
     message: "Error: State mismatch."
   });
+
   res.clearCookie(process.env.SPOTIFY_STATE_KEY);
 
   try {
@@ -28,16 +29,18 @@ router.get('/spotify', (req, res) => {
 
       // Verify that the spotify account trying to be
       // added isnt already on the Fonz users account
-      const spotifyAuthExists = await global.SpotifyDB
-        .collection('authentication')
+      const spotifyAuthExists = await global.Providers
+        .where('provider', '==', 'Spotify')
         .where('userId', '==', storedStateUserId)
-        .get()
+        .get();
+
+        console.log("Set userID for callback: ", storedStateUserId)
 
       if(!spotifyAuthExists.empty) {
         return res.status(403).json({ status: 403, message: "You can only have 1 Spotify account linked to your Fonz account. "})
       }
 
-      global.SpotifyDB.collection('authentication').add({
+      global.Providers.add({
         email,
         display_name,
         product,
@@ -47,7 +50,8 @@ router.get('/spotify', (req, res) => {
         access_token,
         refresh_token,
         userId: storedStateUserId,
-        lastUpdated: global.admin.firestore.FieldValue.serverTimestamp()
+        lastUpdated: global.admin.firestore.FieldValue.serverTimestamp(),
+        provider: "Spotify"
       }).then((result) => {
         console.log(result);
         res.json({

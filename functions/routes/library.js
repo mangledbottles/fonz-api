@@ -4,8 +4,8 @@ var router = express.Router();
 const SpotifyRoutes = require('./library/spotify');
 
 async function UserHasSpotifyAccount(req, res, next) {
-  const spotifyAuthExists = await global.SpotifyDB
-    .collection('authentication')
+  const spotifyAuthExists = await global.Providers
+    .where('provider', '==', 'Spotify')
     .where('userId', '==', global.userId)
     .limit(1)
     .get();

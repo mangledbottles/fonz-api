@@ -5,6 +5,7 @@ var SpotifyWebApi = require('spotify-web-api-fonzi');
 const {
   reject
 } = require('lodash');
+const { provider } = require('firebase-functions/lib/providers/analytics');
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.SPOTIFY_CLIENT_ID,
   clientSecret: process.env.SPOTIFY_CLIENT_SECRET
@@ -19,14 +20,42 @@ function generateId(length) {
   return result;
 }
 
+
+exports.getProvider = (providerId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const spotifyRef = await global.Providers
+        .doc(providerId)
+        .get();
+      if (!spotifyRef.exists) return reject({
+        status: 404,
+        message: `The provider ${providerId} does not exist.`
+      });
+      const providerData = spotifyRef.data();
+      if (providerData.userId != global.userId) return reject({
+        status: 401,
+        message: "This provider is not linked to this Fonz account."
+      });
+
+      resolve(providerData);
+    } catch (error) {
+      reject(error);
+    }
+  })
+}
+
 exports.getProviders = () => {
   return new Promise(async (resolve, reject) => {
     try {
       let providers = [];
       // Get Spotify
-      const spotifyRef = await global.SpotifyDB.collection('authentication')
+      // const spotifyRef = await global.SpotifyDB.collection('authentication')
+      // .where('userId', '==', global.userId)
+      // .limit(1)
+      // .get();
+
+      const spotifyRef = await global.Providers
         .where('userId', '==', global.userId)
-        .limit(1)
         .get();
       if (!spotifyRef.empty) {
         spotifyRef.forEach((doc) => {
@@ -34,11 +63,12 @@ exports.getProviders = () => {
             display_name,
             spotifyId,
             lastUpdated,
-            country
+            country,
+            provider
           } = doc.data();
           providers.push({
             id: doc.id,
-            provider: "Spotify",
+            provider,
             display_name,
             spotifyId,
             country,
@@ -54,24 +84,25 @@ exports.getProviders = () => {
   })
 }
 
-exports.removeSpotify = () => {
+exports.removeProvider = (providerId) => {
   return new Promise(async (resolve, reject) => {
     try {
       const providers = await this.getProviders();
-      console.log({
-        providers
-      })
       const {
-        id
+      id: providerId
       } = providers[0];
-      const removeRef = await global.SpotifyDB.collection('authentication')
-        .doc(id)
+      // const provider = await this.getProvider(providerId);
+      const spotifyRef = await global.Providers
+        .doc(providerId)
         .delete();
       const sessionRef = await global.SessionsDB
-        .where('authenticationId', '==', id)
+        .where('authenticationId', '==', providerId)
         .where('userId', '==', global.userId)
         .limit(1)
         .get();
+      // if(sessionRef.empty) {
+      // return reject({ status: 404, message: `Provider ${providerId} does not exist for this Fonz account.` });
+      // }
       sessionRef.forEach(async (doc) => {
         const sessionId = doc.id;
         const sessionRemove = await global.SessionsDB
@@ -82,7 +113,7 @@ exports.removeSpotify = () => {
       });
 
       resolve({
-        message: `Removed provider ${id} from account.`
+        message: `Removed provider ${providerId} from account.`
       });
 
     } catch (error) {
@@ -92,40 +123,58 @@ exports.removeSpotify = () => {
   });
 }
 
+
+// const sessionInformation = await global.SessionsDB
+// .where('userId', '==', global.userId)
+// .limit(1)
+// .get();
+// if (sessionInformation.empty) return reject({
+// status: 404,
+// message: 'No sessions active'
+// });
+
 exports.createSession = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const sessionAlreadyExists = await global.SessionsDB
         .where('userId', '==', global.userId)
+        .limit(1)
         .get();
       if (!sessionAlreadyExists.empty) return reject({
         status: 403,
         message: 'User already has an active session'
       });
 
-      const spotifyAuthId = await global.SpotifyDB
-        .collection('authentication')
-        .where('userId', '==', global.userId)
-        .limit(1)
-        .get();
+      // const spotifyAuthId = await global.SpotifyDB
+      //   .collection('authentication')
+      //   .where('userId', '==', global.userId)
+      //   .limit(1)
+      //   .get();
 
-      if (spotifyAuthId.empty) return reject({
-        status: 401,
-        message: 'User does not have a Spotify account linked.'
-      });
+      // if (spotifyAuthId.empty) return reject({
+      //   status: 401,
+      //   message: 'User does not have a Spotify account linked.'
+      // });
 
-      let authenticationId;
-      spotifyAuthId.forEach((doc) => {
-        authenticationId = doc.id;
-      });
+      // let authenticationId;
+      // spotifyAuthId.forEach((doc) => {
+      //   authenticationId = doc.id;
+      // });
+
+      // const session = await global.SessionsDB.add({
+      //   provider: 'Spotify', // hard coded for the moment
+      //   userId: global.userId,
+      //   authenticationId,
+      //   active: true,
+      //   createdAt: global.admin.firestore.FieldValue.serverTimestamp()
+      // });
 
       const session = await global.SessionsDB.add({
-        provider: 'Spotify', // hard coded for the moment
         userId: global.userId,
-        authenticationId,
         active: true,
         createdAt: global.admin.firestore.FieldValue.serverTimestamp()
       });
+
       resolve({
         status: 201,
         message: `Session ${session.id} has been created`,
@@ -151,9 +200,6 @@ exports.getSession = () => {
       });
       sessionInformation.forEach((doc) => {
         const sessionId = doc.id;
-        console.log({
-          sessionId
-        })
         const {
           createdAt,
           active,
@@ -191,7 +237,7 @@ exports.deleteSession = (sessionId) => {
         status: 403,
         message: 'This session ID is not linked to the given user account'
       })
-      
+
       const res = await global.SessionsDB.doc(sessionId).delete();
 
       resolve()
@@ -238,7 +284,7 @@ exports.updateSession = (sessionId, active, authenticationId) => {
 
 exports.generateJWT = (service, email, access_token, refresh_token, spotifyId, product, display_name) => {
   return new Promise((resolve, reject) => {
-  
+
     const sid = spotifyId + generateId(10);
     User.creatAuthentication((err, res) => {
       const payload = {
@@ -301,22 +347,22 @@ exports.isValidSession = ({
   });
 }
 
-exports.getSpotifyAccessAndRefreshToken = (userId) => {
-  return new Promise(async (resolve, reject) => {
-    const tokens = await global.SpotifyDB.collection('authentication')
-      .where('userId', '==', global.userId)
-      .limit(1)
-      .get();
-    if (tokens.empty) return reject({
-      status: 404,
-      message: "There is no Spotify account linked to this Fonz Account"
-    })
-    tokens.forEach((doc) => {
-      console.log(doc.id, '=>', doc.data());
-      resolve(doc.data())
-    });
-  });
-}
+// exports.getSpotifyAccessAndRefreshToken = (userId) => {
+//   return new Promise(async (resolve, reject) => {
+//     const tokens = await global.SpotifyDB.collection('authentication')
+//       .where('userId', '==', global.userId)
+//       .limit(1)
+//       .get();
+//     if (tokens.empty) return reject({
+//       status: 404,
+//       message: "There is no Spotify account linked to this Fonz Account"
+//     })
+//     tokens.forEach((doc) => {
+//       console.log(doc.id, '=>', doc.data());
+//       resolve(doc.data())
+//     });
+//   });
+// }
 
 exports.userIsSessionActive = (sid) => {
   return new Promise((resolve, reject) => {

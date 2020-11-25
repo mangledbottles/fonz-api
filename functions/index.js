@@ -9,12 +9,14 @@ global.admin = admin;
 global.db = db;
 
 const Providers = global.db.collection('providers');
-const SpotifyDB = Providers.doc('Spotify');
+// const SpotifyDB = Providers;
+// const SpotifyDB = Providers.doc('Spotify');
 const SessionsDB = db.collection('sessions');
 const CoastersDB = db.collection('coasters');
 
 global.SessionsDB = SessionsDB;
-global.SpotifyDB = SpotifyDB;
+global.Providers = Providers;
+// global.SpotifyDB = SpotifyDB;
 global.CoastersDB = CoastersDB;
 
 
@@ -81,6 +83,7 @@ function authChecker(req, res, next) {
 
 app.use('/', indexRouter);
 app.use('/callback', callbackRouter);
+app.use('/auth', authenticationRouter);
 // app.use('/test', userRouter);
 
 /* TODO: 
@@ -98,7 +101,7 @@ app.use('/callback', callbackRouter);
 /** All requests after this require authentication */
 app.use(authChecker);
 app.use('/guest', guestRouter);
-app.use('/auth', authenticationRouter);
+// app.use('/auth', authenticationRouter);
 app.use('/library', libraryRouter);
 app.use('/host', hostRouter);
 

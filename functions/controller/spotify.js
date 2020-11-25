@@ -83,8 +83,12 @@ function refreshAccessToken() {
         global.session = await Host.getSession();
       }
 
-      const spotifyAuth = await global.SpotifyDB
-        .collection('authentication')
+      // const spotifyAuth = await global.SpotifyDB
+      //   .collection('authentication')
+      //   .doc(global.session.authenticationId)
+      //   .get();
+
+      const spotifyAuth = await global.Providers
         .doc(global.session.authenticationId)
         .get();
 
@@ -103,8 +107,7 @@ function refreshAccessToken() {
           data
         })
         global.access_token = data.body.access_token;
-        global.SpotifyDB
-          .collection('authentication')
+        global.Providers
           .doc(sessionId)
           .update({
             access_token: data.body.access_token,
