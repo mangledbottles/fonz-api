@@ -16,7 +16,7 @@ router.get('/', (req, res, next) => {
 router.get('/:coasterId', (req, res, next) => {
     const { coasterId } = req.params;
     Coaster.getCoaster(coasterId).then((resp) => {
-        res.json(resp)
+        res.status(resp.status || 200).json(resp)
     }).catch((error) => {
         res.status(error.status || 500).json(error)
     });

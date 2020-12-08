@@ -354,6 +354,8 @@ exports.addToQueue = (songUri, device_id) => {
         }).catch((err) => {
           reject({
             status: 500,
+            // This is a guess that this is the problem
+            message: 'Ensure that the host has Spotify open on a device, Sonos is currently not supported!',
             err
           });
         })

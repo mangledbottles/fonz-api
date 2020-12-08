@@ -32,10 +32,17 @@ exports.getCoaster = (coasterId) => {
             paused,
             name
         } = coaster.data();
-        console.log({ userId, globalUserId: global.userId})
-        if (userId !== global.userId && userId !== null) return reject({
-            status: 404,
-            message: 'This coaster is linked to a different Fonz account.'
+        if (userId !== global.userId && userId !== undefined) {
+            // TODO: Get hosts name who currently is connected to coaster
+            // const user = await global.Use
+            return reject({
+                status: 404,
+                message: `This coaster '${name}' is linked to a different Fonz account`
+            });
+        }
+        if (userId == undefined) return resolve({
+            status: 204,
+            message: 'This coaster is not assigned to any Fonz account.'
         });
         resolve({
             name,
@@ -45,6 +52,11 @@ exports.getCoaster = (coasterId) => {
         });
     })
 }
+
+// create
+// update
+// delete
+// read
 
 // new endpoint to help error checking.
 // should all of them be status 404 or can we do differnt numbers? 
@@ -135,39 +147,39 @@ exports.addCoasterToAccount = (coasterId) => {
 exports.updateCoaster = (coasterId, params) => {
     return new Promise(async (resolve, reject) => {
         try {
-        const {
-            name,
-            active,
-            paused
-        } = params;
-        if (name || active || paused) {
-            const coasterData = await this.getCoaster(coasterId);
-            if (coasterData.userId !== global.userId) return reject({
-                status: 404,
-                message: 'This coaster is not linked to this Fonz account.'
-            });
-            await global.CoastersDB
-                .doc(coasterId)
-                .update({
-                    name: ((name == undefined) ? coasterData.name : name),
-                    active: ((active == undefined) ? coasterData.active : active),
-                    paused: ((paused == undefined) ? coasterData.paused : paused)
-                });
-            resolve({
+            const {
                 name,
                 active,
                 paused
-            })
-        } else {
-            reject({
-                status: 400,
-                message: 'No valid parameters have been passed.'
-            })
+            } = params;
+            if (name || active || paused) {
+                const coasterData = await this.getCoaster(coasterId);
+                if (coasterData.userId !== global.userId) return reject({
+                    status: 404,
+                    message: 'This coaster is not linked to this Fonz account.'
+                });
+                await global.CoastersDB
+                    .doc(coasterId)
+                    .update({
+                        name: ((name == undefined) ? coasterData.name : name),
+                        active: ((active == undefined) ? coasterData.active : active),
+                        paused: ((paused == undefined) ? coasterData.paused : paused)
+                    });
+                resolve({
+                    name,
+                    active,
+                    paused
+                })
+            } else {
+                reject({
+                    status: 400,
+                    message: 'No valid parameters have been passed.'
+                })
+            }
+        } catch (error) {
+            console.error(error)
+            reject(error)
         }
-    } catch(error) {
-        console.error(error)
-        reject(error)
-    }
     })
 }
 
