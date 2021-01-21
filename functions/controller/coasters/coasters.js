@@ -17,6 +17,37 @@ exports.getAllCoasters = () => {
     });
 }
 
+/* Explicity for getting ANY coaster, ownership is not implied */
+exports.getUserCoaster = (coasterId) => {
+    return new Promise(async (resolve, reject) => {
+        const coaster = await global.CoastersDB
+            .doc(coasterId)
+            .get();
+        if (!coaster.exists) return reject({
+            status: 404,
+            message: 'This coaster does not exist.'
+        });
+        const {
+            userId,
+            active,
+            paused,
+            name
+        } = coaster.data();
+
+        if (userId == undefined) return reject({
+            status: 204,
+            message: 'This coaster is not in use.'
+        });
+        resolve({
+            name,
+            paused,
+            active,
+            userId
+        });
+    });
+}
+
+/* Explicity for getting a coaster that the requesting user should own */
 exports.getCoaster = (coasterId) => {
     return new Promise(async (resolve, reject) => {
         const coaster = await global.CoastersDB

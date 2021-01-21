@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const SpotifyGuestRouter = require('./guest/spotify');
+const Session = require('../controller/Sessions/sessions')
 
 async function ValidSession(req, res, next) {
     try {
@@ -48,6 +49,20 @@ async function ValidSession(req, res, next) {
         throw (error)
     }
 }
+
+/* Get details of session from a coaster UID */
+router.get('/coaster/:coasterUID', async (req, res) => {
+    try {
+        const {
+            coasterUID
+        } = req.params;
+        const session = await Session.getCoasterSession(coasterUID);
+        res.json(session)
+    } catch (error) {
+        res.send(error);
+        console.error(error);
+    }
+})
 
 router.get('/session/:sessionId', ValidSession, async (req, res, next) => {
     try {
