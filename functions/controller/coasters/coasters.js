@@ -15,6 +15,7 @@ exports.getAllCoasters = () => {
             reject(error);
         }
     });
+
 }
 
 /* Explicity for getting ANY coaster, ownership is not implied */
