@@ -59,7 +59,7 @@ router.get('/coaster/:coasterUID', async (req, res) => {
         const session = await Session.getCoasterSession(coasterUID);
         res.json(session)
     } catch (error) {
-        res.send(error);
+        res.json(error);
         console.error(error);
     }
 })
