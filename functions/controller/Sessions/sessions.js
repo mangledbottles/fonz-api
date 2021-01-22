@@ -30,7 +30,7 @@ exports.getCoasterSession = (coasterId) => {
                 sessionActive
             });
         } catch (error) {
-            throw (error);
+            reject(error);
         }
     });
 }
@@ -67,3 +67,12 @@ exports.getUserSession = (userId) => {
         }
     })
 }
+
+// exports.getHostInformation = (userId) => {
+//     return new Promise(async (resolve, reject) => {
+//         try {
+//         } catch(error) {
+//             reject(error);
+//         }
+//     });
+// }
