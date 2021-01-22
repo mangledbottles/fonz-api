@@ -19,7 +19,14 @@ exports.getCoasterSession = (coasterId) => {
                 active: sessionActive
             } = await this.getUserSession(userId);
 
+            const {
+                displayName,
+                photoURL
+            } = await this.getHostInformation(userId);
             resolve({
+                displayName,
+                photoURL,
+                userId,
                 coasterName,
                 coasterPaused,
                 coasterPaused,
@@ -68,11 +75,21 @@ exports.getUserSession = (userId) => {
     })
 }
 
-// exports.getHostInformation = (userId) => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//         } catch(error) {
-//             reject(error);
-//         }
-//     });
-// }
+exports.getHostInformation = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            global.Auth_BE_CAREFUL_VERY_PRIVATE.getUser(userId).then((userRecord) => {
+                const {
+                    displayName,
+                    photoURL
+                } = userRecord.toJSON();
+                resolve({
+                    displayName,
+                    photoURL
+                });
+            })
+        } catch (error) {
+            reject(error);
+        }
+    });
+}

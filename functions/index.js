@@ -8,6 +8,9 @@ const db = admin.firestore();
 global.admin = admin;
 global.db = db;
 
+const Auth_BE_CAREFUL_VERY_PRIVATE = admin.auth();
+global.Auth_BE_CAREFUL_VERY_PRIVATE = Auth_BE_CAREFUL_VERY_PRIVATE;
+
 const Providers = global.db.collection('providers');
 // const SpotifyDB = Providers;
 // const SpotifyDB = Providers.doc('Spotify');
