@@ -3,4 +3,5 @@ node_modules
 .idea
 *.log
 functions/firebase-debug.log
-/package-lock.json
+package-lock.json
+functions/package-lock.json
