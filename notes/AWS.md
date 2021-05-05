@@ -3,7 +3,7 @@
 ### TODO:
 - [ ] [Creating an Amazon Machine Image](#creating-an-amazon-machine-image)
 - [ ] User Auth Export
-  - [ ] Export raw data
+  - [x] Export raw data
   - [ ] Manage password hash
   - [ ] [3rd party sign-in](#3rd-party-sign-in)
 
