@@ -14,7 +14,8 @@
   - [ ] Manage flow of updates, downtime and security issues
 - [ ] Repository Restructure
   - [ ] Clean up all the files and folders
-
+  - [ ] Remove unnecesary files
+- [ ] Conversion from Firebase to AWS
 
 
 
@@ -32,4 +33,20 @@
 - All changes to the API will be done in a **new branch**
 - Once this branch is turned into a PR and approved, it is merged into the master branch
 - Looking into the possibility of using GitHub *releases* to manage redeployment
-- Otherwise, whenever there is a change to main, using GH WorkFlows, deploy the new API on AWS  
+- Otherwise, whenever there is a change to main, using GH WorkFlows, deploy the new API on AWS
+
+#### Moving from Firebase to AWS
+- There are a lot of changes happening with how the API is managed
+
+**Currently** 
+| Function | Name |
+| - | - | - |
+| Database|  [GCP](#gcp) Firebase Firestore NoSQL |
+| Server | [GCP](#gcp) Firebase Serverless Functions |
+
+
+
+#### Terminology
+##### GCP
+- Google Cloud Platform
+- https://cloud.google.com
