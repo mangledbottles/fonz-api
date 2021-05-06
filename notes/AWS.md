@@ -12,6 +12,8 @@
   - [x] Create first official release
   - [ ] Configure GH WorkFlows with AWS correctly
   - [ ] Manage flow of updates, downtime and security issues
+- [ ] Repository Restructure
+  - [ ] Clean up all the files and folders
 
 
 
@@ -21,12 +23,12 @@
 - Creating an AMI makes it easy to provision multiple Amazon EC2 instances with the same Node.js installation. For more information about creating an AMI from an existing instance, see Creating an Amazon EBS-Backed Linux AMI in the Amazon EC2 User Guide for Linux Instances.
 - https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html
 
-### 3rd Party Sign-in
+#### 3rd Party Sign-in
 - Users have created accounts with Google, Apple, Anonymous
 - Google and Apple sign in are done through an affiliated developer account
   - That affiliated developer is Google....
 
-### Github Auto-Deploy to AWS
+#### Github Auto-Deploy to AWS
 - All changes to the API will be done in a **new branch**
 - Once this branch is turned into a PR and approved, it is merged into the master branch
 - Looking into the possibility of using GitHub *releases* to manage redeployment
