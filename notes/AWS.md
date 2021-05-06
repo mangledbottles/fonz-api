@@ -6,6 +6,12 @@
   - [x] Export raw data
   - [ ] Manage password hash
   - [ ] [3rd party sign-in](#3rd-party-sign-in)
+- [ ] [Github auto-deploy to AWS](#github-auto-deploy-to-aws)
+  - [ ] Read up more about this
+  - [x] Deploy initial setup
+  - [x] Create first official release
+  - [ ] Configure GH WorkFlows with AWS correctly
+  - [ ] Manage flow of updates, downtime and security issues
 
 
 
@@ -19,3 +25,9 @@
 - Users have created accounts with Google, Apple, Anonymous
 - Google and Apple sign in are done through an affiliated developer account
   - That affiliated developer is Google....
+
+### Github Auto-Deploy to AWS
+- All changes to the API will be done in a **new branch**
+- Once this branch is turned into a PR and approved, it is merged into the master branch
+- Looking into the possibility of using GitHub *releases* to manage redeployment
+- Otherwise, whenever there is a change to main, using GH WorkFlows, deploy the new API on AWS  
