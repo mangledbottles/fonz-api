@@ -39,8 +39,9 @@
 - There are a lot of changes happening with how the API is managed
 
 **Currently** 
+
 | Function | Name |
-| - | - | - |
+| --- | --- |
 | Database|  [GCP](#gcp) Firebase Firestore NoSQL |
 | Server | [GCP](#gcp) Firebase Serverless Functions |
 
