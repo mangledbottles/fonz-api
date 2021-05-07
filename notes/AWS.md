@@ -1,4 +1,4 @@
-# AWS
+# AWS Migration
 
 ### TODO:
 - [ ] [Creating an Amazon Machine Image](#creating-an-amazon-machine-image)
