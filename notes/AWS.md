@@ -2,6 +2,7 @@
 
 ### TODO:
 - [ ] [Creating an Amazon Machine Image](#creating-an-amazon-machine-image)
+- https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating-an-ami-ebs.html
   - [x] Setup pipeline
     - [x] Build scheduler (Monday at 9:00 UTC)
     - [x] Create image based on configured Linux EC2 server AMI ID #ami-08bac620dc84221eb
