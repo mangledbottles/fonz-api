@@ -49,11 +49,16 @@
 - There are a lot of changes happening with how the API is managed
 
 **Currently** 
-
 | Function | Name |
 | --- | --- |
 | Database|  [GCP](#gcp) Firebase Firestore NoSQL |
 | Server | [GCP](#gcp) Firebase Serverless Functions |
+
+**Future** 
+| Function | Name |
+| --- | --- |
+| Database|  [AWS](#aws) Multi-Region MySQL RDS Aurora Serverless |
+| Server | [AWS](#aws) Multi-Region EC2 scaling with AMI |
 
 
 
@@ -61,3 +66,7 @@
 ##### GCP
 - Google Cloud Platform
 - https://cloud.google.com
+
+##### AWS
+- Amazon Web Services
+- https://aws.amazon.com
