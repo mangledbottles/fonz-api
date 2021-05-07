@@ -2,6 +2,16 @@
 
 ### TODO:
 - [ ] [Creating an Amazon Machine Image](#creating-an-amazon-machine-image)
+  - [x] Setup pipeline
+    - [x] Build scheduler (Monday at 9:00 UTC)
+    - [x] Create image based on configured Linux EC2 server AMI ID #ami-08bac620dc84221eb
+    - [x] Initialise storage volumes for auto-expansion
+    - [x] Create component for AMI recipe
+      - [x] Create test component to configure
+        - ARN arn:aws:imagebuilder:eu-west-1:941145422188:component/fonz-test-component/x.x.x
+    - [x] Setup distribution settings
+      - [x] Create EU-WEST-1 Region (Ireland server)
+      - [x] Create US-EAST-2 Region (Ohio server)
 - [ ] User Auth Export
   - [x] Export raw data
   - [ ] Manage password hash
