@@ -17,6 +17,7 @@
   - [x] Export raw data
   - [ ] Manage password hash
     - [ ] Research the cryptography used by Firebase (scrypt)
+      - [Scrypt](#scrypt)
     - [ ] Hash configuration
       - [ ] Signer key
       - [ ] Signer salt seperator
@@ -67,6 +68,11 @@
 | Database|  [AWS](#aws) Multi-Region MySQL RDS Aurora Serverless |
 | Server | [AWS](#aws) Multi-Region EC2 scaling with AMI |
 
+## Scrypt
+- Scrypt is a "password-based key derivation function".
+- Real passwords are **NEVER** stored, they are **hashed** (also using a random salt to make them unique) so user accounts are *safe*
+- Google Firebase Authentication uses Scrypt, might use a different hashing mechanism.. tbd
+- Read More: https://en.wikipedia.org/wiki/Scrypt
 
 
 #### Terminology
