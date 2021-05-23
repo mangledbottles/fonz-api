@@ -1,7 +1,7 @@
 # AWS Migration
 
 ### TODO:
-- [ ] [Creating an Amazon Machine Image](#creating-an-amazon-machine-image)
+- [x] [Creating an Amazon Machine Image](#creating-an-amazon-machine-image)
 - https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating-an-ami-ebs.html
   - [x] Setup pipeline
     - [x] Build scheduler (Monday at 9:00 UTC)
@@ -16,6 +16,12 @@
 - [ ] User Auth Export
   - [x] Export raw data
   - [ ] Manage password hash
+    - [ ] Research the cryptography used by Firebase (scrypt)
+    - [ ] Hash configuration
+      - [ ] Signer key
+      - [ ] Signer salt seperator
+      - [ ] Rounds
+      - [ ] Memory cost
   - [ ] [3rd party sign-in](#3rd-party-sign-in)
 - [ ] [Github auto-deploy to AWS](#github-auto-deploy-to-aws)
   - [ ] Read up more about this
