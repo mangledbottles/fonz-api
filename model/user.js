@@ -1,8 +1,8 @@
 'use strict';
 // let sql = require('../db');
 
-const sessionsRef = global.db.collection('sessions');
-const spotifyRef = global.db.collection('spotify');
+// const sessionsRef = global.db.collection('sessions');
+// const spotifyRef = global.db.collection('spotify');
 
 const User = () => {
   this.timestamp = new Date();
