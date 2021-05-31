@@ -11,14 +11,6 @@ const spotifyApi = new SpotifyWebApi({
 
 router.use(async (req, res, next) => {
     try {
-        // if (global.session.provider !== 'Spotify') return res.status(401).json({
-        //     status: 401,
-        //     message: 'This session is not linked to a Spotify stream.'
-        // })
-        console.log({
-            session: global.session,
-            authId: global.session.authenticationId
-        })
         if (!global.session.authenticationId) {
             res.status(401).json({
                 message: "No Music Provider linked to Host Fonz Account."
@@ -57,28 +49,6 @@ router.use(async (req, res, next) => {
         throw (error)
     }
 });
-
-// exports.refreshAccessToken = () => {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-
-
-//             spotifyApi.refreshAccessToken().then((data) => {
-//                 global.SpotifyDB
-//                     .collection('authentication')
-//                     .doc(global.session.sessionId)
-//                     .update({
-//                         access_token: global.access_token,
-//                         lastUpdated: global.admin.firestore.FieldValue.serverTimestamp()
-//                     });
-//                 resolve();
-//             });
-//         } catch (error) {
-//             reject(error);
-//         }
-//     });
-// }
-
 
 router.get('/search', (req, res, next) => {
     try {

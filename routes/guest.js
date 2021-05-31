@@ -24,18 +24,7 @@ async function ValidSession(req, res, next) {
             userId: hostUserId,
             authenticationId
         } = session.data();
-        // const hostInformation = await global.db
-        //     .collection('users')
-        //     .doc(hostUserId)
-        //     .get();
-        // if (!hostInformation.exists) return res.status(403).json({
-        //     status: 403,
-        //     message: 'This session requires further set-up by the host before use.'
-        // })
-        // const {
-        //     name
-        // } = hostInformation.data();
-
+    
         global.session = {
             name: 'Fonz User',
             active,
