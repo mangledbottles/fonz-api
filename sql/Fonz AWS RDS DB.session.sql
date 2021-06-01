@@ -94,3 +94,27 @@ INSERT INTO Sessions VALUES (
     'UROqkPBzZ1U3YWZfp6HO2AwpkEh1',
     ''
 );
+
+--@block Create MusicProviders Table
+CREATE TABLE MusicProviders (
+    `providerId` VARCHAR(28) NOT NULL,
+    `userId` VARCHAR(28) NOT NULL,
+    `provider` TEXT NOT NULL,
+    `country` TEXT NOT NULL,
+    `displayName` VARCHAR(255),
+    `expiresIn` INT NOT NULL,
+    `accessToken` VARCHAR(255) NOT NULL,
+    `refreshToken` VARCHAR(255) NOT NULL,
+    `additional` VARCHAR(512),
+    `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    `lastUpdated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    PRIMARY KEY (providerId),
+    FOREIGN KEY (userId) REFERENCES Users(userId)
+);
+
+--@block DESC MusicProviders Table
+DESC MusicProviders;
+
+--@block Get MusicProviders Content
+SELECT * FROM MusicProviders;
+
