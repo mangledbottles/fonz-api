@@ -70,8 +70,6 @@ INSERT INTO Providers VALUES (
 SHOW Tables
 
 --@block Create Sessions Table
-
---@block Create providers TABLE
 CREATE TABLE Sessions (
     `sessionId` VARCHAR(28) NOT NULL,
     `userId` INT NOT NULL,
@@ -82,6 +80,14 @@ CREATE TABLE Sessions (
 
 --@block Desc Sessions
 DESC Sessions;
+
+--@block Manage Sessions Table
+ALTER TABLE Sessions
+-- MODIFY userId VARCHAR(28) NOT NULL;
+ADD FOREIGN KEY (userId) REFERENCES Users(userId);
+
+--@block Get Sessions contents
+SELECT * FROM Sessions;
 
 --@block Insert into Sessions
 INSERT INTO Sessions VALUES (
