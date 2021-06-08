@@ -80,6 +80,6 @@
 - Google Cloud Platform
 - https://cloud.google.com
 
-##### AWS
+##### AWS 
 - Amazon Web Services
 - https://aws.amazon.com
