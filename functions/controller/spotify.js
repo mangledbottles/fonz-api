@@ -1,5 +1,5 @@
 'use strict';
-var SpotifyWebApi = require('spotify-web-api-fonzi');
+var SpotifyWebApi = require('spotify-web-api-node');
 var _ = require('lodash');
 const Host = require('./host');
 
@@ -136,9 +136,11 @@ function refreshAccessToken() {
 }
 
 exports.authorizeUser = (code) => {
-  return new Promise((resolve, reject) => {
+  return new Promise( (resolve, reject) => {
     try {
+      spotifyApi.setRedirectURI("fonz-music://spotify-login-callback");
       spotifyApi.authorizationCodeGrant(code).then((authData) => {
+        console.log({ authData })
         const {
           expires_in,
           access_token,
@@ -169,6 +171,7 @@ exports.authorizeUser = (code) => {
           reject(err)
         });
       }).catch((err) => {
+        console.error(err)
         reject(err);
       });
     } catch (err) {

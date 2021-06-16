@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var SpotifyWebApi = require('spotify-web-api-fonzi');
+var SpotifyWebApi = require('spotify-web-api-node');
 const spotifyApi = new SpotifyWebApi();
 
 const coasterRoutes = require('./coaster/coaster.js');

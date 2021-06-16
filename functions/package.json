@@ -27,7 +27,8 @@
     "lodash": "^4.17.19",
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
-    "spotify-web-api-fonzi": "^4.0.0"
+    "spotify-web-api-fonzi": "^4.0.0",
+    "spotify-web-api-node": "^5.0.2"
   },
   "devDependencies": {
     "firebase-functions-test": "^0.2.0"

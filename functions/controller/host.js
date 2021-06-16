@@ -1,7 +1,7 @@
 'use strict';
 let User = require('../model/user');
 const jwt = require('jsonwebtoken');
-var SpotifyWebApi = require('spotify-web-api-fonzi');
+var SpotifyWebApi = require('spotify-web-api-node');
 const {
   reject
 } = require('lodash');
