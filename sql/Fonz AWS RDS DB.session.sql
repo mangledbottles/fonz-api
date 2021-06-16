@@ -2,9 +2,15 @@
 -- @block Get users
 SELECT * FROM Users
 
+-- @block Get specific user
+SELECT * FROM Users WHERE userId = 'E0Nvj28Pt0cemcxKnWM3f21ZLFp2'
+
+-- @block Get users
+SELECT COUNT(*) FROM Users
+
 -- @block Create USER
-INSERT INTO Users (email, password) 
-VALUES ("benji@fonzmusic.com", "password")
+INSERT INTO Users (userId, email, password) 
+VALUES ("E6gbirpVBgasWsvuRGjGANYGiQl2", " bq9wuj3i5f@privaterelay.appleid.com", "")
 
 --@block Fix Users TABLE
 UPDATE Users 
@@ -12,11 +18,19 @@ UPDATE Users
 -- WHERE email = 'didi@fonzmusic.com'
 SET agreedConsent = 1, agreedMarketing = 1;
 
+-- @block Delete users table
+DELETE IGNORE FROM Users;
+-- TRUNCATE TABLE Users;
 
 --@block Update users table
 ALTER TABLE Users
-ADD agreedConsent TINYINT NOT NULL,
-ADD agreedMarketing TINYINT NOT NULL;
+ADD firebaseImport TINYINT NOT NULL DEFAULT 0
+-- ADD providerSignIn TINYINT NOT NULL
+-- ALTER providerSignIn SET DEFAULT 0
+-- ADD displayName VARCHAR(255)
+
+-- ADD agreedConsent TINYINT NOT NULL,
+-- ADD agreedMarketing TINYINT NOT NULL;
 
 
 -- DROP COLUMN id;
@@ -54,8 +68,8 @@ CREATE TABLE providers (
 );
 
 -- @block Get providers
-SELECT * FROM Providers
--- desc providers
+-- SELECT * FROM Providers
+desc Providers
 
 -- @block Add user provider
 INSERT INTO Providers VALUES (
@@ -67,7 +81,7 @@ INSERT INTO Providers VALUES (
 );
 
 --@block List all Tables
-SHOW Tables
+SHOW Tables;
 
 --@block Create Sessions Table
 CREATE TABLE Sessions (
@@ -83,11 +97,18 @@ DESC Sessions;
 
 --@block Manage Sessions Table
 ALTER TABLE Sessions
--- MODIFY userId VARCHAR(28) NOT NULL;
-ADD FOREIGN KEY (userId) REFERENCES Users(userId);
+-- ADD active TINYINT AFTER userId;
+-- DROP COLUMN status;
+-- MODIFY active TINYINT NOT NULL DEFAULT 1;
+ADD providerId VARCHAR(28),
+ADD FOREIGN KEY (providerId) REFERENCES MusicProviders(providerId);
+-- ADD FOREIGN KEY (userId) REFERENCES Users(userId);
 
 --@block Get Sessions contents
 SELECT * FROM Sessions;
+
+--@block Clear Sessions table
+DELETE IGNORE FROM Sessions;
 
 --@block Insert into Sessions
 INSERT INTO Sessions VALUES (
@@ -118,3 +139,35 @@ DESC MusicProviders;
 --@block Get MusicProviders Content
 SELECT * FROM MusicProviders;
 
+
+--@block Create Coasters Table
+CREATE TABLE Coasters (
+    `coasterId` VARCHAR(28) NOT NULL,
+    `userId` VARCHAR(28),
+    `active` TINYINT NOT NULL DEFAULT 1,
+    `paused` TINYINT NOT NULL DEFAULT 0,
+    `name` VARCHAR(255),
+    PRIMARY KEY (coasterId),
+    FOREIGN KEY (userId) REFERENCES Users(userId)
+);
+
+
+--@block DESC Coasters Table
+DESC Coasters;
+
+--@block Alter Coasters
+ALTER TABLE Coasters
+CHANGE COLUMN userId userId VARCHAR(28)
+
+--@block Get Coasters Content
+SELECT * FROM Coasters;
+
+--@block Get Coasters count
+SELECT COUNT(*) FROM Coasters;
+
+--@block Delete all coasters
+DELETE FROM Coasters;
+
+--@block Insert singular coaster
+INSERT INTO Coasters (coasterId, userId, active, paused, name) 
+            VALUES ('0487E41AE66C80', 'E6gbirpVBgasWsvuRGjGANYGiQl2', 1, 0, '98 Franklin ');
