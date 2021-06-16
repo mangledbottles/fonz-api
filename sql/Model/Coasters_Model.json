@@ -1,0 +1,42 @@
+[
+  {
+    "Field": "coasterId",
+    "Type": "varchar(28)",
+    "Null": "NO",
+    "Key": "PRI",
+    "Default": null,
+    "Extra": ""
+  },
+  {
+    "Field": "userId",
+    "Type": "varchar(28)",
+    "Null": "YES",
+    "Key": "MUL",
+    "Default": null,
+    "Extra": ""
+  },
+  {
+    "Field": "active",
+    "Type": "tinyint",
+    "Null": "NO",
+    "Key": "",
+    "Default": "1",
+    "Extra": ""
+  },
+  {
+    "Field": "paused",
+    "Type": "tinyint",
+    "Null": "NO",
+    "Key": "",
+    "Default": "0",
+    "Extra": ""
+  },
+  {
+    "Field": "name",
+    "Type": "varchar(255)",
+    "Null": "YES",
+    "Key": "",
+    "Default": null,
+    "Extra": ""
+  }
+]
