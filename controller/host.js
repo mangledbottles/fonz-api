@@ -5,7 +5,6 @@ var SpotifyWebApi = require('spotify-web-api-node');
 const {
   reject
 } = require('lodash');
-const { provider } = require('firebase-functions/lib/providers/analytics');
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.SPOTIFY_CLIENT_ID,
   clientSecret: process.env.SPOTIFY_CLIENT_SECRET
