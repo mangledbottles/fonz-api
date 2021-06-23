@@ -1,28 +1,3 @@
-// Firebase Functions
-// const functions = require('firebase-functions');
-// const admin = require('firebase-admin');
-// admin.initializeApp({
-    // credential: admin.credential.applicationDefault()
-// });
-// const db = admin.firestore();
-// global.admin = admin;
-// global.db = db;
-
-// const Auth_BE_CAREFUL_VERY_PRIVATE = admin.auth();
-// global.Auth_BE_CAREFUL_VERY_PRIVATE = Auth_BE_CAREFUL_VERY_PRIVATE;
-
-// const Providers = global.db.collection('providers');
-// // const SpotifyDB = Providers;
-// // const SpotifyDB = Providers.doc('Spotify');
-// const SessionsDB = db.collection('sessions');
-// const CoastersDB = db.collection('coasters');
-
-// global.SessionsDB = SessionsDB;
-// global.Providers = Providers;
-// // global.SpotifyDB = SpotifyDB;
-// global.CoastersDB = CoastersDB;
-
-
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -117,8 +92,4 @@ app.use(function (err, req, res, next) {
 
 app.listen(8080, () => {
     console.log(`Running on port 8080`);
-  });
-
-// exports.speedTest = functions.https.onRequest((req, res) => {
-//     res.json({ message: 'Speed Test Fonz Music' })
-// })
+});
