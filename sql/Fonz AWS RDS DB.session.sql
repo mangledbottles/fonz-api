@@ -3,7 +3,7 @@
 SELECT * FROM Users
 
 -- @block Get specific user
-SELECT * FROM Users WHERE userId = 'E0Nvj28Pt0cemcxKnWM3f21ZLFp2'
+SELECT * FROM Users WHERE userId = 'PYTOLmxn9PUsz8rhBwwux1oIWao1'
 
 -- @block Get users
 SELECT COUNT(*) FROM Users
@@ -107,6 +107,10 @@ ADD FOREIGN KEY (providerId) REFERENCES MusicProviders(providerId);
 --@block Get Sessions contents
 SELECT * FROM Sessions;
 
+--@block Remove providerId from Sessions
+ALTER TABLE Sessions
+DROP COLUMN FOREIGN KEY providerId;
+
 --@block Clear Sessions table
 DELETE IGNORE FROM Sessions;
 
@@ -118,9 +122,9 @@ INSERT INTO Sessions VALUES (
 
 --@block Create MusicProviders Table
 CREATE TABLE MusicProviders (
-    `providerId` VARCHAR(28) NOT NULL,
+    `musicProviderId` VARCHAR(28) NOT NULL,
     `userId` VARCHAR(28) NOT NULL,
-    `provider` TEXT NOT NULL,
+    `musicProvider` TEXT NOT NULL,
     `country` TEXT NOT NULL,
     `displayName` VARCHAR(255),
     `expiresIn` INT NOT NULL,
@@ -129,16 +133,20 @@ CREATE TABLE MusicProviders (
     `additional` VARCHAR(512),
     `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     `lastUpdated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-    PRIMARY KEY (providerId),
+    PRIMARY KEY (musicProviderId),
     FOREIGN KEY (userId) REFERENCES Users(userId)
 );
+
+--@block Drop Music Providers
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE MusicProviders;
+SET FOREIGN_KEY_CHECKS = 1;
 
 --@block DESC MusicProviders Table
 DESC MusicProviders;
 
 --@block Get MusicProviders Content
 SELECT * FROM MusicProviders;
-
 
 --@block Create Coasters Table
 CREATE TABLE Coasters (
