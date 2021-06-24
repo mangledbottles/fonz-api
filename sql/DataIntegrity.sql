@@ -6,6 +6,8 @@ SELECT * FROM Coasters;
 
 --@block User Content
 SELECT * FROM Users;
+--@block Desc Users
+DESC Users;
 
 --@block Music Providers Content
 SELECT * FROM MusicProviders;
