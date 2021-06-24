@@ -15,7 +15,7 @@ export const config: ConnectionOptions = {
     synchronize: true,
     logging: false,
     entities: [
-       'lib/entity/**/*.js'
+       '/entity/*.js'
     ],
 
     // Production Mode
