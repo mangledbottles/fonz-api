@@ -1,12 +1,14 @@
 import express, { IRouter, Request, Response } from "express";
 var router: IRouter = express.Router();
 
+const Auth = require('../controller/Auth');
 // var SpotifyWebApi = require('spotify-web-api-node');
 // const User = require('../controller/host');
 // const Spotify = require('../controller/spotify');
 
 router.post('/login', (req: Request, res: Response) => {
-    
+  const users = Auth.signIn('a', 'b');
+  res.send(users);
 });
 
 
