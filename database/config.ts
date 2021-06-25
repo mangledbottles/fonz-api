@@ -1,5 +1,10 @@
 import { ConnectionOptions, Connection, createConnection, getConnection } from 'typeorm';
 import 'reflect-metadata';
+import { Coaster } from '../entity/Coaster';
+import { MusicProvider } from '../entity/MusicProvider';
+import { Provider } from '../entity/Provider';
+import { Session } from '../entity/Session';
+import { User } from '../entity/User';
 
 // Will be true on deployed functions
 export const prod: boolean = process.env.NODE_ENV === 'production';
@@ -14,9 +19,7 @@ export const config: ConnectionOptions = {
     database: process.env.DB_DATABASE,
     synchronize: true,
     logging: false,
-    entities: [
-       '/entity/*.js'
-    ],
+    entities: [Coaster, MusicProvider, Provider, Session, User],
 
     // Production Mode
     ...(prod && {

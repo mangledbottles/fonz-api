@@ -1,7 +1,7 @@
 'use strict';
 
 import { connect } from '../database/config';
-import { User } from '../database/entity/User';
+import { User } from '../entity/User';
 
 exports.signIn = (username: string, password: string) => {
     console.log("controller called")
@@ -11,17 +11,11 @@ exports.signIn = (username: string, password: string) => {
             const connection = await connect();
             const repo = await connection.getRepository(User);
             console.log({ repo })
-    
-
             const allUsers = await repo.find();
             console.log({ allUsers })
-
-            console.log("none")
-            
+            console.log("none")            
             resolve(allUsers);
             
-
-
         } catch(error) {
             console.log(error + "ERROR`")
             reject(error);
