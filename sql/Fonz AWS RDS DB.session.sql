@@ -24,9 +24,9 @@ DELETE IGNORE FROM Users;
 
 --@block Update users table
 ALTER TABLE Users
-ADD firebaseImport TINYINT NOT NULL DEFAULT 0
+-- ADD firebaseImport TINYINT NOT NULL DEFAULT 0
 -- ADD providerSignIn TINYINT NOT NULL
--- ALTER providerSignIn SET DEFAULT 0
+ALTER userId SET DEFAULT 0
 -- ADD displayName VARCHAR(255)
 
 -- ADD agreedConsent TINYINT NOT NULL,
@@ -179,3 +179,7 @@ DELETE FROM Coasters;
 --@block Insert singular coaster
 INSERT INTO Coasters (coasterId, userId, active, paused, name) 
             VALUES ('0487E41AE66C80', 'E6gbirpVBgasWsvuRGjGANYGiQl2', 1, 0, '98 Franklin ');
+
+
+--@block Delete TYPEORM TABLES
+DROP TABLE session;
