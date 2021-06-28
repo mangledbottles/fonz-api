@@ -5,8 +5,8 @@ import {
     PrimaryGeneratedColumn 
 } from "typeorm";
 
-@Entity()
-export class Coaster extends BaseEntity {
+@Entity("Coasters")
+export class Coasters extends BaseEntity {
     
     @PrimaryGeneratedColumn("uuid")
     coasterId: string;
@@ -21,9 +21,6 @@ export class Coaster extends BaseEntity {
     paused: boolean;
 
     @Column()
-    emailVerified: boolean;
-
-    @Column()
-    createdAt: string;
+    name: string;
    
 }

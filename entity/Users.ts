@@ -1,14 +1,19 @@
 import { 
-    BaseEntity,
     Entity, 
     Column,
+    // PrimaryColumn,
     PrimaryGeneratedColumn 
 } from "typeorm";
 
-@Entity()
-export class User extends BaseEntity {
+@Entity("Users")
+export class Users {
+
+    // (userId, email, password, passwordSalt, emailVerified, 
+    // createdAt, lastSignedInAt, agreedConsent,
+    // agreedMarketing, displayName, providerSignIn) 
     
     @PrimaryGeneratedColumn("uuid")
+    // @PrimaryColumn()
     userId: string;
 
     @Column()
@@ -41,4 +46,8 @@ export class User extends BaseEntity {
     @Column()
     providerSignIn: boolean;
     
+    @Column()
+    firebase: string;
+    
+
 }

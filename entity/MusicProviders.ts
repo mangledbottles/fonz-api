@@ -2,20 +2,21 @@ import {
     BaseEntity,
     Entity, 
     Column,
-    PrimaryGeneratedColumn 
+    PrimaryGeneratedColumn, 
+    OneToOne,
+    JoinColumn
 } from "typeorm";
 
-@Entity()
-export class MusicProvider extends BaseEntity {
-    
+import { Users } from "./Users";
+
+@Entity("MusicProviders")
+export class MusicProviders extends BaseEntity {
+
     @PrimaryGeneratedColumn("uuid")
     providerId: string;
 
-    @Column()
+    @OneToOne(type => Users) @JoinColumn() 
     userId: string;
-
-    @Column()
-    provider: string;
 
     @Column()
     country: string;
@@ -30,7 +31,7 @@ export class MusicProvider extends BaseEntity {
     refreshToken: string;
 
     @Column()
-    additional: boolean;
+    additional: string;
 
     @Column()
     createdAt: Date;
@@ -38,4 +39,6 @@ export class MusicProvider extends BaseEntity {
     @Column()
     lastUpdated: Date;
     
+    @Column()
+    provider: string;
 }

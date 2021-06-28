@@ -5,7 +5,7 @@ import {
     PrimaryGeneratedColumn 
 } from "typeorm";
 
-@Entity()
+@Entity("Sessions")
 export class Session extends BaseEntity {
     
     @PrimaryGeneratedColumn("uuid")

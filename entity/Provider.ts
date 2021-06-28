@@ -5,7 +5,7 @@ import {
     PrimaryGeneratedColumn 
 } from "typeorm";
 
-@Entity()
+@Entity("Providers")
 export class Provider extends BaseEntity {
     
     @PrimaryGeneratedColumn("uuid")
