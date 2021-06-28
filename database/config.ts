@@ -1,10 +1,10 @@
 import { ConnectionOptions, Connection, createConnection, getConnection } from 'typeorm';
 import 'reflect-metadata';
-import { Coaster } from '../entity/Coaster';
-import { MusicProvider } from '../entity/MusicProvider';
-import { Provider } from '../entity/Provider';
-import { Session } from '../entity/Session';
-import { User } from '../entity/User';
+// import { Coasters } from '../entity/Coaster';
+import { MusicProviders } from '../entity/MusicProviders';
+// import { Provider } from '../entity/Provider';
+// import { Session } from '../entity/Session';
+import { Users } from '../entity/Users';
 
 // Will be true on deployed functions
 export const prod: boolean = process.env.NODE_ENV === 'production';
@@ -19,7 +19,8 @@ export const config: ConnectionOptions = {
     database: process.env.DB_DATABASE,
     synchronize: true,
     logging: false,
-    entities: [Coaster, MusicProvider, Provider, Session, User],
+    // entities: [Coasters, MusicProvider, Provider, Session, Users],
+    entities: [ Users, MusicProviders ],
 
     // Production Mode
     ...(prod && {
@@ -29,16 +30,16 @@ export const config: ConnectionOptions = {
         //     socketPath: '/cloudsql/YOUR_CONNECTION_NAME' // change
         // },
     })
- }
+}
 
- export const connect = async () => {
+export const connect = async () => {
 
     let connection: Connection;
 
     try {
         connection = getConnection(config.name)
         console.log(connection)
-    } catch(err) {
+    } catch (err) {
         connection = await createConnection(config);
     }
 
