@@ -12,7 +12,7 @@ const indexRouter = require('./routes/index');
 const authenticationRouter = require('./routes/authentication');
 const callbackRouter = require('./routes/callback');
 const hostRouter = require('./routes/host');
-const libraryRouter = require('./routes/library');
+const libraryRouter = require('./routes/library.ts');
 const guestRouter = require('./routes/guest');
 
 const app = express();
