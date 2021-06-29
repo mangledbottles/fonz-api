@@ -16,7 +16,7 @@ export class Users {
     // @PrimaryColumn()
     userId: string;
 
-    @Column()
+    @Column({ type:"string", unique: true })
     email: string;
 
     @Column()
