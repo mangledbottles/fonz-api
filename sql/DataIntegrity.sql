@@ -12,7 +12,7 @@ SELECT * FROM Users;
 DESC Users;
 
 --@block Drop Users
-DROP TABLE Users;
+DROP TABLE Coasters;
 
 --@block Add column
 ALTER TABLE MusicProviders
@@ -26,9 +26,15 @@ DROP COLUMN provider;
 --@block Music Providers Content
 SELECT * FROM MusicProviders;
 --@block DESC Music Providers
-DESC MusicProviders;
+DESC musicProviders;
 
 --@block Sessions Content // possibly providerId is calling Provider NOT MusicProviders
 SELECT * FROM Sessions;
 --@block DESC Sessions
 DESC Sessions;
+
+
+--@block Get Coasters
+SELECT * FROM Coasters;
+--@block Desc Coasters
+DESC Coasters;
