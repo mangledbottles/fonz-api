@@ -45,6 +45,9 @@ exports.getCoasters = () => {
         try {
             const connection = await connect();
             const repo = connection.getRepository(Coasters);
+
+            let coaster = await repo.findOne()
+
             let coasters = await repo.find();
 
             console.log({ coasters })
