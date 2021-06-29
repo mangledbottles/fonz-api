@@ -10,7 +10,7 @@ import {
 
 import { Users } from "./Users";
 
-@Entity("musicProviders")
+@Entity("MusicProviders")
 export class MusicProviders extends BaseEntity {
 
     @PrimaryGeneratedColumn("uuid")
