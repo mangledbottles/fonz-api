@@ -11,7 +11,10 @@ router.post('/login', (req: Request, res: Response) => {
   res.send(users);
 });
 
-
+router.get('/coasters', async (req: Request, res: Response) => {
+  const coasters = await Auth.getCoasters();
+  res.send(coasters);
+});
 /*
 router.get('/spotify', async (req, res, next) => {
   const {
