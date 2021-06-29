@@ -7,10 +7,6 @@ import {
 
 @Entity("Users")
 export class Users {
-
-    // (userId, email, password, passwordSalt, emailVerified, 
-    // createdAt, lastSignedInAt, agreedConsent,
-    // agreedMarketing, displayName, providerSignIn) 
     
     @PrimaryGeneratedColumn("uuid")
     // @PrimaryColumn()
@@ -28,11 +24,11 @@ export class Users {
     @Column()
     emailVerified: boolean;
 
-    @Column()
-    createdAt: Date;
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+    createdAt: string;
 
-    @Column()
-    lastSignedInAt: Date;
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+    lastSignedInAt: string;
 
     @Column()
     agreedConsent: boolean;
