@@ -46,8 +46,4 @@ export class Users {
     @Column()
     providerSignIn: boolean;
     
-    @Column()
-    firebase: string;
-    
-
 }
