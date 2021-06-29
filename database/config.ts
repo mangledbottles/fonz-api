@@ -1,6 +1,7 @@
 import { ConnectionOptions, Connection, createConnection, getConnection } from 'typeorm';
 import 'reflect-metadata';
-// import { Coasters } from '../entity/Coaster';
+
+import { Coasters } from '../entity/Coasters';
 import { MusicProviders } from '../entity/MusicProviders';
 // import { Provider } from '../entity/Provider';
 // import { Session } from '../entity/Session';
@@ -20,7 +21,7 @@ export const config: ConnectionOptions = {
     synchronize: true,
     logging: false,
     // entities: [Coasters, MusicProvider, Provider, Session, Users],
-    entities: [ Users, MusicProviders ],
+    entities: [ Users, MusicProviders, Coasters ],
 
     // Production Mode
     ...(prod && {
