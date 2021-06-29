@@ -3,20 +3,28 @@ import {
     Entity, 
     Column,
     PrimaryGeneratedColumn, 
-    OneToOne,
-    JoinColumn
+    JoinColumn,
+    ManyToOne,
+    PrimaryColumn
 } from "typeorm";
 
 import { Users } from "./Users";
 
-@Entity("MusicProviders")
+@Entity("musicProviders")
 export class MusicProviders extends BaseEntity {
 
     @PrimaryGeneratedColumn("uuid")
     providerId: string;
 
-    @OneToOne(type => Users) @JoinColumn() 
+    @PrimaryColumn()
     userId: string;
+
+    @ManyToOne(type => Users, user => user.userId)
+    @JoinColumn({ name: "userId" })
+    public user!: Users
+
+    // @OneToMany(type => Users) @JoinColumn() 
+    // userId: string;
 
     @Column()
     country: string;
@@ -25,7 +33,7 @@ export class MusicProviders extends BaseEntity {
     displayName: string;
 
     @Column()
-    expiresIn: Date;
+    expiresIn: number;
 
     @Column()
     refreshToken: string;
@@ -33,12 +41,12 @@ export class MusicProviders extends BaseEntity {
     @Column()
     additional: string;
 
-    @Column()
-    createdAt: Date;
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+    createdAt: string;
 
-    @Column()
-    lastUpdated: Date;
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+    lastUpdated: string;
     
-    @Column()
+    @Column({ default: 'Spotify' })
     provider: string;
 }
