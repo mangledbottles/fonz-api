@@ -3,7 +3,6 @@ var router: IRouter = express.Router();
 
 /** Import controllers */
 const Auth = require('../controller/Auth.controller');
-
 // var SpotifyWebApi = require('spotify-web-api-node');
 // const User = require('../controller/host');
 // const Spotify = require('../controller/spotify');
