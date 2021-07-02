@@ -16,7 +16,7 @@ export class Coasters extends BaseEntity {
     @PrimaryColumn({ unique: true, length: 32})
     coasterId: string;
 
-    @Column({ unique: true, nullable: true,})
+    @Column({ nullable: true,})
     userId: string | null;
 
     @ManyToOne(type => Users, user => user.userId)
