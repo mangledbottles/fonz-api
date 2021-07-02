@@ -11,6 +11,9 @@ SELECT * FROM Users;
 --@block Desc Users
 DESC Users;
 
+--@block
+UPDATE Users SET password = '123456' WHERE email = "DERMOT@test.com"
+
 --@block Drop Users
 DROP TABLE Coasters;
 
