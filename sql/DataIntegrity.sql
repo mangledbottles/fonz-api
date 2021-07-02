@@ -41,3 +41,6 @@ DESC Sessions;
 SELECT * FROM Coasters;
 --@block Desc Coasters
 DESC Coasters;
+
+--@block Add Coaster
+UPDATE Coasters SET userId = '3acaa0e4-fa32-46ee-a17b-50d9a08665d4' WHERE coasterId = '0409CC1AE66C81';
