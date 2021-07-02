@@ -21,6 +21,14 @@ function AuthChecker (req, res, next) {
                 }
                 res.status(401).send(resp);
             }
+
+            const { userId } = decoded;
+            // const globalAny:any = global;
+            // global.userId = userId;
+
+            res.locals.userId = userId;
+
+            console.log({ decoded })
             next();
         });
                
