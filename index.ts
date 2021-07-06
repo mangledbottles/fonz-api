@@ -1,7 +1,9 @@
 import express, { Application, NextFunction, Request, Response, Router } from "express";
+import logging from './config/logging';
 
 /** Import Authentication Checker */
-const AuthChecker = require('./routes/AuthChecker')
+// const AuthChecker = require('./routes/AuthChecker')
+import extractJWT from './middleware/extractJWT';
 
 /** Import dependecies */
 var cookieParser = require('cookie-parser');
@@ -14,11 +16,19 @@ const logger = require('morgan');
 /** Initialise API Application and Port */
 const app: Application = express();
 const port: string = process.env.PORT;
+const NAMESPACE = 'Server';
 
 /** Remove X-Powered-By Express and add custom header */
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.removeHeader('X-Powered-By');
     res.setHeader('A-PWNER-MESSAGE', 'VGhpcyBpcyBhIHByaXZhdGUgQVBJClVuYXV0aG9yaXNlZCB1c2Ugd2lsbCBiZSBkZXRlY3RlZCwgYW5kIHdlIHdpbGwgZmluZCB5b3UsIHdhdGNoIG91dC4=')
+
+    /** Log the req */
+    logging.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
+    res.on('finish', () => {
+        /** Log the res */
+        logging.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - STATUS: [${res.statusCode}] - IP: [${req.socket.remoteAddress}]`);
+    });
     next();
 })
 const limiter = rateLimit({
@@ -45,7 +55,7 @@ app.use('/auth', AuthenticationRoute);
 // app.use('/callback', callbackRouter);
 
 /** All requests after this require authentication */
-app.use(AuthChecker);
+app.use(extractJWT);
 app.use('/host', HostRoute);
 // app.use('/guest', guestRouter);
 // app.use('/library', libraryRouter);
