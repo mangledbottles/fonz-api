@@ -11,7 +11,6 @@ const Auth = require('../controller/Auth.controller');
 router.post('/login', (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    console.log({ email, password })
     Auth.signIn(email, password).then((details) => {
       res.send(details);
     }).catch((error) => {
@@ -22,11 +21,18 @@ router.post('/login', (req: Request, res: Response) => {
   }
 });
 
-router.get('/coasters', async (req: Request, res: Response) => {
-  const coasters = await Auth.getCoasters();
-  res.send(coasters);
-});
-
+router.post('/register', (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    Auth.signUp(email, password).then((details) => {
+      res.send(details);
+    }).catch((error) => {
+      res.status(error.status || 500).send(error);
+    });
+  } catch (error) {
+    res.status(error.status || 500).send(error);
+  }
+})
 /*
 router.get('/spotify', async (req, res, next) => {
   const {
