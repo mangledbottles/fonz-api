@@ -12,10 +12,10 @@ export class Users {
     // @PrimaryColumn()
     userId: string;
 
-    @Column({ unique: true })
+    @Column({ unique: true, nullable: false })
     email: string;
 
-    @Column()
+    @Column({ length: 256, nullable: true })
     password: string;
 
     @Column()
