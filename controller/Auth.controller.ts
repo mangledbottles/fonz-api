@@ -51,13 +51,21 @@ exports.signIn = (email, password: IUserSignIn) => {
     return new Promise(async (resolve, reject) => {
         try {
             const connection = await connect();
+
+            // Get user with given email address
             const User = await connection.getRepository(Users);
-            const accountDetails = await User.findOne({ where: { email, password } });
+            const accountDetails = await User.findOne({ where: { email } });
             
-            if(!accountDetails) return reject({ status: 404, message: "Incorrect password."})
+            // If no account is linked to given email
+            if(!accountDetails) return reject({ status: 404, message: "There is no account linked with this email address."});
 
+            // Check if correct password
+            const passwordCompare = await bcryptjs.compare(password, accountDetails.password);
+            console.log({ passwordCompare })
+            if(!passwordCompare) return reject({ status: 401, message: "Incorrect password provided for this account."})
+
+            // Create access token
             const { userId, emailVerified } = accountDetails;
-
             const jwtConfig = new Jwtoken(userId, email, emailVerified);
             const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY);
 
