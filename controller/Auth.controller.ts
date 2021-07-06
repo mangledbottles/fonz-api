@@ -13,6 +13,8 @@ import { IJwt } from "../interfaces/JWT.interface";
 
 /* Import dependecies */
 const jwt = require("jsonwebtoken");
+import bcryptjs from "bcryptjs";
+
 
 class Jwtoken implements IJwt {
     iss: string = "https://api.fonzmusic.com/auth"
@@ -34,27 +36,16 @@ class Jwtoken implements IJwt {
             sub: this.userId, email: this.email, emailVerified: this.emailVerified };
     }
 
+    static validateEmail(email): boolean {
+        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
+
+    static validatePassword(password): boolean {
+        return password?.length >= 12 && password?.length < 256;
+    }
+
 }
-
-// class UserRegisterEmailPassword {
-//     email: string;
-//     password: string;
-
-//     constructor(email: string, password: string) {
-//         this.email = email;
-//         this.password = password;
-//     }
-
-//     validateEmail() {
-//         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-//         return re.test(String(this.email).toLowerCase());
-//     }
-
-//     validatePassword() {
-//         return this.password.length >= 12 && this.password.length < 256;
-//     }
-
-// }
 
 exports.signIn = (email, password: IUserSignIn) => {
     return new Promise(async (resolve, reject) => {
@@ -84,6 +75,26 @@ exports.signUp = (email: string, password: string) => {
         try {
             const connection = await connect();
 
+            if(!Jwtoken.validateEmail(email)) return reject({
+                status: 401,
+                message: "Invalid email address provided."
+            })
+
+            if(!Jwtoken.validatePassword(password)) return reject({
+                status: 401,
+                message: "Invalid password provided, password should be atleast 12 characters long and less than 72"
+            })
+
+            bcryptjs.hash(password, 10, async (hashError, hash) => {
+                if (hashError) {
+                    return reject({
+                        status: 401,
+                        message: hashError.message,
+                        error: hashError
+                    });
+                }
+
+            console.log({ hash })
             
 
             let User = await connection.getRepository(Users).create({ email, password });
@@ -92,6 +103,7 @@ exports.signUp = (email: string, password: string) => {
             const jwtConfig = new Jwtoken(saved.userId, email, false);
             const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY);
             resolve({ ...saved, accessToken })
+        })
 
         } catch (error) {
             if(error.code == "ER_DUP_ENTRY") reject({ status: 403, message: "There is an account already using this email." })
