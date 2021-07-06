@@ -1,7 +1,7 @@
 'use strict';
 
 /* Import database configuration */
-import { connect } from '../database/config';
+import { connect } from '../config/config';
 
 /* Import entities */
 import { Coasters } from '../entity/Coasters';
