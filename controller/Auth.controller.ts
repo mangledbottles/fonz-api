@@ -1,7 +1,7 @@
 'use strict';
 
 /* Import database configuration */
-import { connect } from '../database/config';
+import { connect } from '../config/config';
 
 /* Import entities */
 import { Users } from '../entity/Users'; 
@@ -36,7 +36,25 @@ class Jwtoken implements IJwt {
 
 }
 
+// class UserRegisterEmailPassword {
+//     email: string;
+//     password: string;
 
+//     constructor(email: string, password: string) {
+//         this.email = email;
+//         this.password = password;
+//     }
+
+//     validateEmail() {
+//         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+//         return re.test(String(this.email).toLowerCase());
+//     }
+
+//     validatePassword() {
+//         return this.password.length >= 12 && this.password.length < 256;
+//     }
+
+// }
 
 exports.signIn = (email, password: IUserSignIn) => {
     return new Promise(async (resolve, reject) => {
@@ -60,6 +78,30 @@ exports.signIn = (email, password: IUserSignIn) => {
         }
     })
 }
+
+exports.signUp = (email: string, password: string) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const connection = await connect();
+
+            
+
+            let User = await connection.getRepository(Users).create({ email, password });
+            const saved = await connection.manager.save(User);
+
+            const jwtConfig = new Jwtoken(saved.userId, email, false);
+            const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY);
+            resolve({ ...saved, accessToken })
+
+        } catch (error) {
+            if(error.code == "ER_DUP_ENTRY") reject({ status: 403, message: "There is an account already using this email." })
+            
+            console.error(error)
+            reject({ message: error.message })
+        }
+    })
+}
+
 
 // let MusicProv = new MusicProviders();
             // MusicProv.userId = "509f4484-6830-4f17-aac9-707ccef96fae";
