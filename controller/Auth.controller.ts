@@ -52,6 +52,16 @@ exports.signIn = (email, password: IUserSignIn) => {
         try {
             const connection = await connect();
 
+            // Validate email and password inputs
+            if (!Jwtoken.validateEmail(email)) return reject({
+                status: 401,
+                message: "Invalid email address provided."
+            })
+            if (!Jwtoken.validatePassword(password)) return reject({
+                status: 401,
+                message: "Invalid password provided, password should be atleast 12 characters long and less than 72"
+            })
+
             // Get user with given email address
             const User = await connection.getRepository(Users);
             const accountDetails = await User.findOne({ where: { email } });
@@ -83,11 +93,11 @@ exports.signUp = (email: string, password: string) => {
         try {
             const connection = await connect();
 
+            // Validate email and password inputs
             if(!Jwtoken.validateEmail(email)) return reject({
                 status: 401,
                 message: "Invalid email address provided."
             })
-
             if(!Jwtoken.validatePassword(password)) return reject({
                 status: 401,
                 message: "Invalid password provided, password should be atleast 12 characters long and less than 72"
