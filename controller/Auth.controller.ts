@@ -85,28 +85,26 @@ exports.signUp = (email: string, password: string) => {
                 message: "Invalid password provided, password should be atleast 12 characters long and less than 72"
             })
 
-            bcryptjs.hash(password, 10, async (hashError, hash) => {
-                if (hashError) {
-                    return reject({
-                        status: 401,
-                        message: hashError.message,
-                        error: hashError
-                    });
-                }
-
-            console.log({ hash })
-            
-
-            let User = await connection.getRepository(Users).create({ email, password });
+            // Generate password salt and create hash with password and salt 📩
+            const passwordSalt = await bcryptjs.genSalt(10);
+            const passwordHash = await bcryptjs.hash(password, passwordSalt);
+    
+            // Insert User into database 🖥️
+            let User = await connection.getRepository(Users).create({ email, password: passwordHash, passwordSalt });
             const saved = await connection.manager.save(User);
 
+            // Security 🔐
+            delete saved.password;
+            delete saved.passwordSalt;
+
+            // Create access token for new account
             const jwtConfig = new Jwtoken(saved.userId, email, false);
             const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY);
+
             resolve({ ...saved, accessToken })
-        })
 
         } catch (error) {
-            if(error.code == "ER_DUP_ENTRY") reject({ status: 403, message: "There is an account already using this email." })
+            if(error.code == "ER_DUP_ENTRY") return reject({ status: 403, message: "There is an account already using this email." })
             
             console.error(error)
             reject({ message: error.message })
