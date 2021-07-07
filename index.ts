@@ -15,7 +15,8 @@ const logger = require('morgan');
 
 /** Initialise API Application and Port */
 const app: Application = express();
-const port: string = process.env.PORT;
+const prod: boolean = process.env.NODE_ENV === 'production';
+const port: string = prod ? "443" : process.env.PORT;
 const NAMESPACE = 'Server';
 
 /** Remove X-Powered-By Express and add custom header */
