@@ -21,5 +21,6 @@
         "routes",
         "controller",
         "model",
+        "**/*.ts"
     ]
 }
