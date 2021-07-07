@@ -37,11 +37,13 @@ class Jwtoken implements IJwt {
     }
 
     static validateEmail(email): boolean {
+        if(!email) return false;
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(String(email).toLowerCase());
     }
 
     static validatePassword(password): boolean {
+        if(!password) return false;
         return password.length >= 12 && password.length < 256;
     }
 
