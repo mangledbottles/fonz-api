@@ -138,7 +138,7 @@ function refreshAccessToken() {
 exports.authorizeUser = (code) => {
   return new Promise( (resolve, reject) => {
     try {
-      spotifyApi.setRedirectURI("fonz-music://spotify-login-callback");
+      // spotifyApi.setRedirectURI("fonz-music://spotify-login-callback");
       spotifyApi.authorizationCodeGrant(code).then((authData) => {
         console.log({ authData })
         const {
