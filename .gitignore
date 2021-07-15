@@ -8,4 +8,6 @@ functions/package-lock.json
 
 # Misc
 # /notes
+lib
+.vscode
 /Misc
