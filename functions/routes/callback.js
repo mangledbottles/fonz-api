@@ -4,33 +4,33 @@ const User = require('../controller/host');
 const Spotify = require('../controller/spotify');
 
 /** Middleware function to verify valid JWT and that the session ID associated with JWT is active and valid **/
-// function authChecker(req, res, next) {
-//   const authHeader = req.headers.authorization;
-//   if (!authHeader) return res.status(401).json({
-//     status: 401,
-//     message: "Authentication token missing"
-//   });
-//   const token = authHeader.split(' ')[1],
-//     payload = jwt.decode(token);
-
-//   admin.auth().verifyIdToken(token)
-//     .then((user) => {
-//       res.locals.user = user;
-//       global.userId = user.user_id;
-//       next()
-//     }).catch((error) => {
-//       return res.status(403).json({
-//         status: 403,
-//         message: "Invalid access token has been provided",
-//         error
-//       })
-//     });
-// }
-
 function authChecker(req, res, next) {
-  global.userId = "aHfMl3lUHWaCqBsFgQLzWw5DAcE3";
-  next()
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({
+    status: 401,
+    message: "Authentication token missing"
+  });
+  const token = authHeader.split(' ')[1],
+    payload = jwt.decode(token);
+
+  admin.auth().verifyIdToken(token)
+    .then((user) => {
+      res.locals.user = user;
+      global.userId = user.user_id;
+      next()
+    }).catch((error) => {
+      return res.status(403).json({
+        status: 403,
+        message: "Invalid access token has been provided",
+        error
+      })
+    });
 }
+
+// function authChecker(req, res, next) {
+//   global.userId = "aHfMl3lUHWaCqBsFgQLzWw5DAcE3";
+//   next()
+// }
 
 router.get('/spotify', (req, res) => {
   const {
