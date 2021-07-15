@@ -89,6 +89,7 @@ router.get('/spotify', (req, res) => {
         })
       })
     }).catch((details) => {
+      console.error(details)
       res.send({
         status: 500,
         message: "An internal error has occurred.",
