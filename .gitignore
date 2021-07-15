@@ -5,3 +5,5 @@ node_modules
 functions/firebase-debug.log
 package-lock.json
 functions/package-lock.json
+lib
+.vscode
