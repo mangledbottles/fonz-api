@@ -2,7 +2,10 @@
 SHOW tables;
 
 --@block Coasters Contents #1002/1002 in database
-SELECT * FROM Coasters;
+SELECT * FROM Coasters WHERE coasterId = "0403BB1AE66C81";
+--@block Update coasters
+UPDATE Coasters SET userId = "b359f3f7-5485-40b3-ba0d-f695bad5b27c" WHERE userId = "3acaa0e4-fa32-46ee-a17b-50d9a08665d4"
+
 --@block Desc Coasters
 DESC Coasters;
 
