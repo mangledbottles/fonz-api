@@ -21,4 +21,13 @@ router.get('/:coasterId', (req: Request, res: Response) => {
     })
 });
 
+router.post('/:coasterId', (req: Request, res: Response) => {
+    const { coasterId } = req.params;
+    Coaster.addCoaster(res.locals.userId, coasterId).then((resp) => {
+        res.json(resp)
+    }).catch((error) => {
+        res.status(error.status || 500).json(error)
+    });
+});
+
 module.exports = router;
