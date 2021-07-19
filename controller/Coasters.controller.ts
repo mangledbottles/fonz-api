@@ -120,3 +120,31 @@ exports.updateCoaster = (currentUserId, coasterId, params) => {
         }
     })
 }
+
+exports.removeCoaster = (currentUserId, coasterId) => {
+    return new Promise(async (resolve, reject) => {
+        const connection = await connect();
+        const repo = connection.getRepository(Coasters);
+
+        let [coaster] = await repo.find({ where: { coasterId } });
+        if (!coaster) return reject({
+            status: 404,
+            message: 'This coaster does not exist.'
+        });
+
+        if (coaster.userId !== currentUserId) return reject({
+            status: 404,
+            message: 'This coaster is not linked to this Fonz account.'
+        });
+
+        /** Remove userId and set active to false */
+        coaster.userId = null;
+        coaster.active = false;
+
+        await repo.save(coaster);
+
+        resolve({
+            message: 'Coaster removed from Fonz account.'
+        })
+    })
+}

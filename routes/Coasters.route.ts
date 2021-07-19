@@ -40,4 +40,15 @@ router.put('/:coasterId', (req, res, next) => {
     });
 });
 
+router.delete('/:coasterId', (req, res, next) => {
+    const { coasterId } = req.params;
+    Coaster.removeCoaster(res.locals.userId, coasterId).then((resp) => {
+        res.json(resp)
+    }).catch((error) => {
+        console.error(error);
+        res.status(error.status || 500).json(error)
+    });
+});
+
+
 module.exports = router;
