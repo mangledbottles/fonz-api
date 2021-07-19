@@ -37,13 +37,13 @@ class Jwtoken implements IJwt {
     }
 
     static validateEmail(email): boolean {
-        if(!email) return false;
+        if(!email || typeof email != "string") return false;
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(String(email).toLowerCase());
     }
 
     static validatePassword(password): boolean {
-        if(!password) return false;
+        if(!password || typeof password != "string") return false;
         return password.length >= 12 && password.length < 256;
     }
 
@@ -71,6 +71,7 @@ exports.signIn = (email, password: IUserSignIn) => {
             // If no account is linked to given email
             if(!accountDetails) return reject({ status: 404, message: "There is no account linked with this email address."});
 
+            
             // Check if correct password
             const passwordCompare = await bcryptjs.compare(password, accountDetails.password);
             console.log({ passwordCompare })
