@@ -21,3 +21,20 @@ exports.getCoasters = (userId) => {
         }
     })
 }
+
+exports.getCoastersById = (userId, coasterId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const connection = await connect();
+            const repo = connection.getRepository(Coasters);
+
+            let [ coaster ] = await repo.find({ where: { userId, coasterId }});
+            resolve(coaster);
+        } catch(error) {
+            console.error(error);
+            reject(error);
+        }
+    });
+}
+
+
