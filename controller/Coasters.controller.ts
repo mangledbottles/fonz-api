@@ -12,12 +12,12 @@ exports.getCoasters = (userId) => {
             const connection = await connect();
             const repo = connection.getRepository(Coasters);
 
-            let coasters = await repo.find({ where: { userId }});
-            resolve(coasters)
+            let [ coasters, quantity ] = await repo.findAndCount({ where: { userId }});
+            resolve({ coasters, quantity });
 
         } catch(error) {
             console.error(error);
-            reject({})
+            reject(error);
         }
     })
 }
