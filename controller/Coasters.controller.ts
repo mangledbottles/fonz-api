@@ -67,8 +67,6 @@ exports.addCoaster = (currentUserId, coasterId) => {
                     name: ''
                 });
 
-                console.log({ respo })
-
                 resolve({
                     message: `Coaster has been linked to your account.`
                 })
