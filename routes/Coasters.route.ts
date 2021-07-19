@@ -30,7 +30,7 @@ router.post('/:coasterId', (req: Request, res: Response) => {
     });
 });
 
-router.put('/:coasterId', (req, res, next) => {
+router.put('/:coasterId', (req: Request, res: Response) => {
     const { coasterId } = req.params;
     Coaster.updateCoaster(res.locals.userId, coasterId, req.body).then((resp) => {
         res.json(resp)
@@ -40,7 +40,7 @@ router.put('/:coasterId', (req, res, next) => {
     });
 });
 
-router.delete('/:coasterId', (req, res, next) => {
+router.delete('/:coasterId', (req: Request, res: Response) => {
     const { coasterId } = req.params;
     Coaster.removeCoaster(res.locals.userId, coasterId).then((resp) => {
         res.json(resp)
