@@ -12,10 +12,10 @@ exports.getCoasters = (userId) => {
             const connection = await connect();
             const repo = connection.getRepository(Coasters);
 
-            let [ coasters, quantity ] = await repo.findAndCount({ where: { userId }});
+            let [coasters, quantity] = await repo.findAndCount({ where: { userId } });
             resolve({ coasters, quantity });
 
-        } catch(error) {
+        } catch (error) {
             console.error(error);
             reject(error);
         }
@@ -28,9 +28,9 @@ exports.getCoastersById = (userId, coasterId) => {
             const connection = await connect();
             const repo = connection.getRepository(Coasters);
 
-            let [ coaster ] = await repo.find({ where: { userId, coasterId }});
+            let [coaster] = await repo.find({ where: { userId, coasterId } });
             resolve(coaster);
-        } catch(error) {
+        } catch (error) {
             console.error(error);
             reject(error);
         }
@@ -43,7 +43,7 @@ exports.addCoaster = (currentUserId, coasterId) => {
             const connection = await connect();
             const repo = connection.getRepository(Coasters);
 
-            const [ coaster ] = await repo.find({ where: { coasterId }});
+            const [coaster] = await repo.find({ where: { coasterId } });
             if (!coaster) return reject({
                 status: 404,
                 message: 'This coaster does not exist.'
@@ -72,9 +72,51 @@ exports.addCoaster = (currentUserId, coasterId) => {
                     ...updatedCoaster
                 })
             }
-        } catch(error) {
+        } catch (error) {
             console.error(error);
             reject(error);
         }
     });
+}
+
+
+exports.updateCoaster = (currentUserId, coasterId, params) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const connection = await connect();
+            const repo = connection.getRepository(Coasters);
+
+            const { name, active } = params;
+            if (!name || !active) return reject({
+                status: 400,
+                message: 'No valid parameters have been passed.'
+            });
+
+            let [coaster] = await repo.find({ where: { coasterId } });
+            if (!coaster) return reject({
+                status: 404,
+                message: 'This coaster does not exist.'
+            });
+
+            if (coaster.userId !== currentUserId) return reject({
+                status: 404,
+                message: 'This coaster is not linked to this Fonz account.'
+            });
+
+
+            coaster.active = ((active == undefined) ? coaster.name : active);
+            coaster.name = ((name == undefined) ? coaster.name : name);
+
+            await repo.save(coaster);
+
+            resolve({
+                name,
+                active
+            })
+
+        } catch (error) {
+            console.error(error)
+            reject(error)
+        }
+    })
 }
