@@ -60,7 +60,7 @@ exports.addCoaster = (currentUserId, coasterId) => {
             })
             if (userId == null) {
 
-                const respo = await repo.save({
+                const updatedCoaster = await repo.save({
                     ...coaster,
                     userId: currentUserId,
                     active: true,
@@ -68,7 +68,8 @@ exports.addCoaster = (currentUserId, coasterId) => {
                 });
 
                 resolve({
-                    message: `Coaster has been linked to your account.`
+                    message: `Coaster has been linked to your account.`,
+                    ...updatedCoaster
                 })
             }
         } catch(error) {
@@ -77,4 +78,3 @@ exports.addCoaster = (currentUserId, coasterId) => {
         }
     });
 }
-
