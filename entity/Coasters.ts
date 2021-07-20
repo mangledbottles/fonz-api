@@ -26,9 +26,6 @@ export class Coasters extends BaseEntity {
     @Column()
     active: boolean;
 
-    @Column()
-    paused: boolean;
-
     @Column({ length: 64 })
     name: string;
    
