@@ -5,8 +5,8 @@ import { Coasters } from '../entity/Coasters';
 import { MusicProviders } from '../entity/MusicProviders';
 /**
  * import { Provider } from '../entity/Provider';
- * import { Session } from '../entity/Session';
  */
+import { Session } from '../entity/Session';
 import { Users } from '../entity/Users';
 
 // Will be true on deployed functions
@@ -23,7 +23,7 @@ export const config: ConnectionOptions = {
     synchronize: true,
     logging: false,
     // entities: [Coasters, MusicProvider, Provider, Session, Users],
-    entities: [ Users, MusicProviders, Coasters ],
+    entities: [ Users, MusicProviders, Coasters, Session ],
 
     // Production Mode
     ...(prod && {
