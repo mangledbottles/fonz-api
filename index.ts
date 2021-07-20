@@ -48,6 +48,8 @@ app.use(bodyParser.urlencoded({
 const IndexRoute: Router = require('./routes/Index.route');
 const AuthenticationRoute: Router = require('./routes/Auth.route');
 const HostRoute: Router = require('./routes/Host.route');
+const GuestRouter: Router = require('./routes/Guest.route');
+
 
 /** Requests don't require authentication */
 app.use('/', IndexRoute);
@@ -57,7 +59,7 @@ app.use('/auth', AuthenticationRoute);
 /** All requests after this require authentication */
 app.use(extractJWT);
 app.use('/host', HostRoute);
-// app.use('/guest', guestRouter);
+app.use('/guest', GuestRouter);
 // app.use('/library', libraryRouter);
 
 /** All unknown URL requests managed here */
