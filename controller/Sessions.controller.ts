@@ -14,8 +14,6 @@ exports.getCoasterSessionForGuest = (coasterId) => {
             const coasterRepo = connection.getRepository(Coasters);
             const sessionRepo = connection.getRepository(Session);
 
-            console.info({ sessionRepo })
-
             const coaster = await coasterRepo.findOne({ where: { coasterId } });
             const session = await sessionRepo.findOne({ where: { userId: coaster.userId } }) || reject({ message: "No active session", status: 403 });
 
@@ -26,4 +24,19 @@ exports.getCoasterSessionForGuest = (coasterId) => {
             reject(error)
         }
     });
+}
+
+exports.getSessionForGuest = (sessionId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const connection = await connect();
+            const repo = connection.getRepository(Session);
+
+            const session = await repo.findOne({ where: { sessionId } });
+            resolve(session);
+        } catch (error) {
+            console.error(error)
+            reject(error);
+        }
+    })
 }
