@@ -11,7 +11,7 @@ export class Provider extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     userId: string;
 
-    @Column()
+    @Column({ default: "Spotify" })
     provider: string;
 
     @Column()
