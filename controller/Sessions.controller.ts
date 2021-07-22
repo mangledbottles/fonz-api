@@ -32,7 +32,7 @@ exports.getSessionForGuest = (sessionId) => {
             const connection = await connect();
             const repo = connection.getRepository(Session);
 
-            const session = await repo.findOne({ where: { sessionId } });
+            const session = await repo.findOne({ where: { sessionId } }) || reject({ status: 404, message: `Session does not exit`});
             resolve(session);
         } catch (error) {
             console.error(error)
