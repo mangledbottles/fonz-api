@@ -1,17 +1,13 @@
-import express, { IRouter, Request, Response } from "express";
+import express, { IRouter, Request, Response, Router } from "express";
 var router: IRouter = express.Router();
 
-/** Import routers under /host */
-// const CoasterRoutes: Router = require('./Coasters.route');
+/** Import routers */
+const SpotifyRouter: Router = require('./Spotify.router');
+
+/** Import controllers */
 const Session = require('../controller/Sessions.controller');
 
-router.get('/', (req: Request, res: Response) => {
-    res.send({ message: "Guest Router"})
-})
-
 /* Coasters */
-
-/* Get details of session from a coaster UID */
 router.get('/coaster/:coasterId', async (req: Request, res: Response) => {
     try {
         const { coasterId } = req.params;
@@ -22,5 +18,8 @@ router.get('/coaster/:coasterId', async (req: Request, res: Response) => {
         res.status(error.status || 500).json(error);
     }
 })
+
+/* Session */
+router.use('/:sessionId/spotify', SpotifyRouter);
 
 module.exports = router;

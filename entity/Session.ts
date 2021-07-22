@@ -15,10 +15,10 @@ export class Session extends BaseEntity {
     userId: string;
 
     @Column()
-    status: Boolean;
+    active: Boolean;
 
-    @Column()
-    createdAt: Date;
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+    createdAt: string;
 
     @Column()
     provider: string;
