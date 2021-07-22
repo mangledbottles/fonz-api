@@ -51,7 +51,7 @@ export class MusicProviders extends BaseEntity {
     @Column({ default: 'Spotify' })
     provider: string;
 
-    @Column("uuid")
+    @Column()
     sessionId: string;
 
     @ManyToOne(type => Session, session => session.sessionId)
