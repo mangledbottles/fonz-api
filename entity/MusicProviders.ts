@@ -8,6 +8,7 @@ import {
     PrimaryColumn
 } from "typeorm";
 
+import { Session } from "./Session";
 import { Users } from "./Users";
 
 @Entity("MusicProviders")
@@ -49,4 +50,11 @@ export class MusicProviders extends BaseEntity {
     
     @Column({ default: 'Spotify' })
     provider: string;
+
+    @Column("uuid")
+    sessionId: string;
+
+    @ManyToOne(type => Session, session => session.sessionId)
+    @JoinColumn({ name: "sessionId" })
+    public session!: Session
 }
