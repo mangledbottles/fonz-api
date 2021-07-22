@@ -35,6 +35,7 @@ SELECT * FROM MusicProviders;
 DESC musicProviders;
 
 --@block Sessions Content // possibly providerId is calling Provider NOT MusicProviders
+-- 2fd1a952-0b8f-4730-aa5c-83150403d0b1
 SELECT * FROM Sessions;
 --@block DESC Sessions
 DESC Sessions;
