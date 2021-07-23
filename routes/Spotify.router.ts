@@ -17,25 +17,45 @@ router.use(async (req: Request, res: Response, next: NextFunction) => {
             provider
         } = session.musicProviders;
 
-        res.locals.musicProvider = { access_token, refresh_token, lastUpdated, provider };
+        globalThis.Spotify = { access_token, refresh_token, lastUpdated, provider };
+        globalThis._sessionId = sessionId;
 
-        if (provider != "Spotify") {
-            res.status(401).json({
-                status: 401,
-                message: "This session does not have Spotify linked to it."
-            })
-        } else {
-            next();
-        }
+        if (provider != "Spotify") res.status(401).json({
+            status: 401,
+            message: "This session does not have Spotify linked to it."
+        })
 
+        next();
     } catch (error) {
         res.status(error.status || 500).json(error);
     }
 });
 
-router.get('/', (req: Request, res: Response) => {
-    res.send({ message: "Guest Router" })
-})
+router.get('/search', (req: Request, res: Response) => {
+    try {
+        const {
+            term,
+            limit,
+            offset
+        } = req.query;
+
+        if (!term) return res.status(400).json({
+            status: 400,
+            message: "Missing parameters.",
+            requiredParams: ['term']
+        });
+        Spotify.searchSong(term).then((resp) => {
+            res.status(200).json(resp);
+        }).catch((err) => {
+            res.status(500).json({
+                err
+            });
+        })
+    } catch (error) {
+        res.status(500).send(error)
+    }
+});
+
 
 
 module.exports = router;
