@@ -42,3 +42,19 @@ exports.getSessionForGuest = (sessionId) => {
         }
     })
 }
+
+exports.getProviderForGuest = (sessionId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const connection = await connect();
+            const repo = connection.getRepository(Session);
+
+            const musicProviders = await repo.findOne({ where: { sessionId }}) || reject({ status: 403, message: `No music providers are linked to this session`});
+
+            resolve(musicProviders);
+        } catch (error) {
+            console.error(error)
+            reject(error);
+        }
+    })
+}
