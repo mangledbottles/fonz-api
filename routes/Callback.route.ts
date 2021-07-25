@@ -14,7 +14,7 @@ router.get('/spotify', async (req: Request, res: Response) => {
         // });
         console.log(storedStateUserId)
         
-        res.clearCookie(process.env.SPOTIFY_STATE_KEY);
+        // res.clearCookie(process.env.SPOTIFY_STATE_KEY);
 
         const { email, display_name, product, country, spotifyId, 
             expires_in, access_token, refresh_token } = await Spotify.authorizeUser(code);
