@@ -37,6 +37,9 @@ export class MusicProviders extends BaseEntity {
     expiresIn: number;
 
     @Column()
+    accessToken: string;
+
+    @Column()
     refreshToken: string;
 
     @Column()
