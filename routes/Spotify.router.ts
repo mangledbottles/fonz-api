@@ -64,7 +64,21 @@ router.get('/search', async (req: Request, res: Response) => {
         return res.status(error.status || 500).send(error)
     }
 });
+
+router.get('/state', async (req: Request, res: Response) => {
+    try {
+        const currentSong = await Spotify.getCurrent();
+        return res.send(currentSong);
+    } catch(error) {
+        console.error(error)
+        return res.status(error.status || 500).send(error)
     }
+    
+    // Spotify.getCurrent().then((currentlyPlayingInfo) => {
+    //     res.status(200).json(currentlyPlayingInfo);
+    // }).catch((err) => {
+    //     res.status(err.status).json(err);
+    // });
 });
 
 
