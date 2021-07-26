@@ -156,4 +156,40 @@ exports.searchSong = (term) => {
 
   })
 }
+
+exports.getCurrent = async () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await initSpotify();
+      const { body: currentSong } = await spotifyApi.getMyCurrentPlaybackState();
+      if (!currentSong) resolve({
+        status: 402,
+        message: "No songs playing at the moment",
+        isQueueEmpty: true
+      });
+
+
+      const isPlaying = currentSong.is_playing;
+      const deviceName = currentSong?.device?.name;
+      const deviceId = currentSong?.device?.id;
+      const volume = currentSong.device?.volume_percent;
+      const trackName = currentSong.item?.name;
+      const artistName = currentSong.item.album.artists[0]?.name;
+      const songUri = currentSong.item.uri;
+      const images = currentSong.item.album?.images;
+
+      resolve({
+        isPlaying,
+        deviceName,
+        deviceId,
+        volume,
+        trackName,
+        artistName,
+        images,
+        songUri
+      });
+    } catch (error) {
+      reject(error);
+    }
+  })
 }
