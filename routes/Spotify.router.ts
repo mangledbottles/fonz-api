@@ -35,12 +35,12 @@ router.use(async (req: Request, res: Response, next: NextFunction) => {
     }
 });
 
-router.get('/search', (req: Request, res: Response) => {
+router.get('/search', async (req: Request, res: Response) => {
     try {
         const {
             term,
-            limit,
-            offset
+            // limit,
+            // offset
         } = req.query;
 
         if (!term) return res.status(400).json({
@@ -48,15 +48,22 @@ router.get('/search', (req: Request, res: Response) => {
             message: "Missing parameters.",
             requiredParams: ['term']
         });
-        Spotify.searchSong(term).then((resp) => {
-            res.status(200).json(resp);
-        }).catch((err) => {
-            res.status(500).json({
-                err
-            });
-        })
+
+        const searchResults = await Spotify.searchSong(term);
+
+        return res.send({ searchResults })
+        // Spotify.searchSong(term).then((resp) => {
+        //     res.status(200).json(resp);
+        // }).catch((err) => {
+        //     res.status(500).json({
+        //         err
+        //     });
+        // })
     } catch (error) {
-        res.status(500).send(error)
+        console.error(error)
+        return res.status(error.status || 500).send(error)
+    }
+});
     }
 });
 
