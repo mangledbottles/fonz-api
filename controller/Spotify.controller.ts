@@ -40,6 +40,26 @@ const spotifyApi = new SpotifyWebApi({
 //     }
 //   });
 // }
+function initSpotify() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // const lastUpdated = new Date(globalThis.Spotify.lastUpdated);
+      const expirationDate = new Date(globalThis.Spotify.lastUpdated);
+      expirationDate.setSeconds(expirationDate.getSeconds() + 3600);
+
+      spotifyApi.setAccessToken(globalThis.Spotify.accessToken);
+      spotifyApi.setRefreshToken(globalThis.Spotify.refreshToken);
+
+      if (expirationDate < new Date()) {
+        await refreshAccessToken();
+      }
+      resolve({});
+    } catch (error) {
+      console.error(error);
+      reject(error);
+    }
+  });
+}
 
 exports.authorizeUser = (code) => {
   return new Promise(async (resolve, reject) => {
