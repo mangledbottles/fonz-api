@@ -135,3 +135,25 @@ exports.storeSpotifyCredentials = ({ email, display_name, product, country, spot
     }
   })
 }
+
+/**
+ * Spotify Search for song
+ *
+ * @param {string} term Name of song searching for.
+ * @param {int} limit Optional limit the amount of results.
+ * @param {int} offset Optional set an offset for pagination
+ * @returns {Promise} returns either resolve or reject with data about song query.
+ */
+exports.searchSong = (term) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await initSpotify();
+      const songResults = await spotifyApi.searchTracks(`${term}`);
+      resolve(songResults);
+    } catch (error) {
+      reject(error);
+    }
+
+  })
+}
+}
