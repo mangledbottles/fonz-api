@@ -61,6 +61,32 @@ function initSpotify() {
   });
 }
 
+function refreshAccessToken() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const connection = await connect();
+      const repo = connection.getRepository(MusicProviders);
+
+      const { providerId } = globalThis.Spotify;
+      const spotify = await repo.findOne({ where: { providerId } })
+
+      spotifyApi.refreshAccessToken().then(async (data) => {
+        const { access_token: accessToken } = data.body;
+
+        /** Update Access Token and Sync with Database */
+        spotify.accessToken = accessToken;
+        await repo.save(spotify);
+
+        spotifyApi.setAccessToken(accessToken);
+        resolve({ message: "Token Refreshed" });
+      })
+    } catch (error) {
+      console.error(error)
+      reject(error)
+    }
+  });
+}
+
 exports.authorizeUser = (code) => {
   return new Promise(async (resolve, reject) => {
     try {
