@@ -5,6 +5,7 @@ import { connect } from '../config/config';
 
 /* Import entities */
 import { Coasters } from '../entity/Coasters';
+import { MusicProviders } from '../entity/MusicProviders';
 import { Session } from '../entity/Session';
 
 exports.getCoasterSessionForGuest = (coasterId) => {
@@ -31,10 +32,12 @@ exports.getSessionForGuest = (sessionId) => {
     return new Promise(async (resolve, reject) => {
         try {
             const connection = await connect();
-            const repo = connection.getRepository(Session);
+            const sessionRepo = connection.getRepository(Session);
+            const musicProvidersRepo = connection.getRepository(MusicProviders);
 
-            const session = await repo.findOne({ where: { sessionId } }) || reject({ status: 404, message: `Session does not exit`});
-            const musicProviders = await repo.findOne({ where: { sessionId }}) || reject({ status: 403, message: `No music providers are linked to this session`});
+
+            const session = await sessionRepo.findOne({ where: { sessionId } }) || reject({ status: 404, message: `Session does not exit`});
+            const musicProviders = await musicProvidersRepo.findOne({ where: { sessionId }}) || reject({ status: 403, message: `No music providers are linked to this session`});
 
             resolve({ session, musicProviders });
         } catch (error) {
