@@ -3,6 +3,7 @@ var router: IRouter = express.Router();
 
 /** Import controllers */
 const Session = require('../controller/Sessions.controller');
+const Spotify = require('../controller/Spotify.controller');
 
 /** Middleware Function to Validate Session */
 router.use(async (req: Request, res: Response, next: NextFunction) => {
@@ -10,14 +11,17 @@ router.use(async (req: Request, res: Response, next: NextFunction) => {
         const sessionId = req.baseUrl?.split('/')[2];
         const session = await Session.getSessionForGuest(sessionId);
 
+        // console.log({ session })
+
         const {
-            access_token,
-            refresh_token,
+            accessToken,
+            refreshToken,
             lastUpdated,
-            provider
+            provider,
+            providerId
         } = session.musicProviders;
 
-        globalThis.Spotify = { access_token, refresh_token, lastUpdated, provider };
+        globalThis.Spotify = { accessToken, refreshToken, lastUpdated, provider, providerId };
         globalThis._sessionId = sessionId;
 
         if (provider != "Spotify") res.status(401).json({
