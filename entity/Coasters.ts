@@ -7,6 +7,7 @@ import {
     JoinColumn
 } from "typeorm";
 
+/** Import required entities */
 import { Users } from "./Users";
 
 @Entity("Coasters")
