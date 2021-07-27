@@ -24,6 +24,7 @@ router.use(async (req: Request, res: Response, next: NextFunction) => {
         globalThis.Spotify = { accessToken, refreshToken, lastUpdated, provider, providerId };
         globalThis._sessionId = sessionId;
 
+        console.log({ provider, test: "abv", session})
         if (provider != "Spotify") res.status(401).json({
             status: 401,
             message: "This session does not have Spotify linked to it."
@@ -69,18 +70,43 @@ router.get('/state', async (req: Request, res: Response) => {
     try {
         const currentSong = await Spotify.getCurrent();
         return res.send(currentSong);
-    } catch(error) {
+    } catch (error) {
         console.error(error)
         return res.status(error.status || 500).send(error)
     }
-    
-    // Spotify.getCurrent().then((currentlyPlayingInfo) => {
-    //     res.status(200).json(currentlyPlayingInfo);
-    // }).catch((err) => {
-    //     res.status(err.status).json(err);
-    // });
 });
 
+/** Spotify add song to queue */
+router.post('/queue/:songUri', (req: Request, res: Response) => {
+    try {
+        const {
+            songUri
+        } = req.params;
+        const {
+            device_id
+        } = req.query;
+        if (songUri.split(':')[1] != 'track') res.status(400).json({
+            status: 400,
+            message: "An invalid track has been provided. Must be informat of 'spotify:track:TRACKID'. "
+        });
+        if (!songUri) res.status(400).json({
+            status: 400,
+            message: "Missing parameters.",
+            requiredParams: ['songUri', 'device_id']
+        });
 
+        Spotify.addToQueue(songUri, device_id).then((resp) => {
+            res.status(200).json((resp.length == 0 || resp.length == undefined) ? {
+                status: 200,
+                message: "Song queued."
+            } : resp);
+        }).catch((err) => {
+            res.status(err.status).json(err);
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(error.status || 500).send(error);
+    }
+});
 
 module.exports = router;
