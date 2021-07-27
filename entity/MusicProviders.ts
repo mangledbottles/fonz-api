@@ -5,10 +5,11 @@ import {
     PrimaryGeneratedColumn, 
     JoinColumn,
     ManyToOne,
-    PrimaryColumn
+    PrimaryColumn,
 } from "typeorm";
 
-import { Session } from "./Session";
+/** Import required entities */
+// import { Session } from "./Session";
 import { Users } from "./Users";
 
 @Entity("MusicProviders")
@@ -23,10 +24,7 @@ export class MusicProviders extends BaseEntity {
     @ManyToOne(type => Users, user => user.userId)
     @JoinColumn({ name: "userId" })
     public user!: Users
-
-    // @OneToMany(type => Users) @JoinColumn() 
-    // userId: string;
-
+    
     @Column()
     country: string;
 
@@ -57,7 +55,10 @@ export class MusicProviders extends BaseEntity {
     @Column({ nullable: true, default: null })
     sessionId: string;
 
-    @ManyToOne(type => Session, session => session.sessionId)
-    @JoinColumn({ name: "sessionId" })
-    public session!: Session
+    // @ManyToMany(() => Session)
+    // @JoinTable()
+    // sessionId: Session[]
+    // @ManyToMany(type => Session, session => session.sessionId)
+    // @JoinColumn({ name: "sessionId" })
+    // public session!: Session
 }
