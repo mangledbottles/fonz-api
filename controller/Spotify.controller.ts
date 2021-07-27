@@ -26,7 +26,8 @@ function initSpotify() {
       spotifyApi.setAccessToken(globalThis.Spotify.accessToken);
       spotifyApi.setRefreshToken(globalThis.Spotify.refreshToken);
 
-      if (expirationDate < new Date()) {
+      if (expirationDate < new Date() || !globalThis.Spotify.accessToken) {
+        console.log("Refreshing token")
         await refreshAccessToken();
       }
       resolve({});
@@ -138,6 +139,7 @@ exports.getCurrent = async () => {
     try {
       await initSpotify();
       const { body: currentSong } = await spotifyApi.getMyCurrentPlaybackState();
+
       if (!currentSong) resolve({
         status: 402,
         message: "No songs playing at the moment",
@@ -150,7 +152,7 @@ exports.getCurrent = async () => {
       const deviceId = currentSong?.device?.id;
       const volume = currentSong.device?.volume_percent;
       const trackName = currentSong.item?.name;
-      const artistName = currentSong.item.album.artists[0]?.name;
+      const artistName = currentSong.item?.album?.artists[0]?.name;
       const songUri = currentSong.item.uri;
       const images = currentSong.item.album?.images;
 
