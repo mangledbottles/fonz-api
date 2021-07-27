@@ -171,3 +171,37 @@ exports.getCurrent = async () => {
     }
   })
 }
+
+exports.addToQueue = (songUri, device_id) => {
+  return new Promise(async (resolve, reject) => {
+    await initSpotify();
+
+    const currentSong = await exports.getCurrent();
+    if (currentSong.isQueueEmpty) {
+
+      spotifyApi.play({
+        uris: [songUri],
+        device_id
+      }).then((data) => {
+        resolve(data)
+      }).catch((err) => {
+        reject({
+          status: 500,
+          // This is a guess that this is the problem
+          message: 'Ensure that the host has Spotify open on a device',
+          err
+        });
+      })
+    } else {
+      spotifyApi.addToQueue(songUri, device_id).then((data) => {
+        resolve(data.body);
+      }).catch((err) => {
+        reject({
+          status: 404,
+          err
+        });
+      })
+    }
+
+  });
+}
