@@ -16,7 +16,7 @@ exports.getCoasterSessionForGuest = (coasterId) => {
             const sessionRepo = connection.getRepository(Session);
 
             const coaster = await coasterRepo.findOne({ where: { coasterId } });
-            if(coaster?.userId == undefined || null) reject({ message: "There coaster does not have a host.", status: 200, code: "COASTER_NO_HOST" });
+            if(coaster?.userId == undefined || null) reject({ message: "There coaster does not have a host.", status: 403, code: "COASTER_NO_HOST" });
             const session = await sessionRepo.findOne({ where: { userId: coaster.userId } }) || reject({ message: "No active session", status: 403 });
 
             resolve({ coaster, session });
