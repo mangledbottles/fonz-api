@@ -24,7 +24,6 @@ router.use(async (req: Request, res: Response, next: NextFunction) => {
         globalThis.Spotify = { accessToken, refreshToken, lastUpdated, provider, providerId };
         globalThis._sessionId = sessionId;
 
-        console.log({ provider, test: "abv", session})
         if (provider != "Spotify") res.status(401).json({
             status: 401,
             message: "This session does not have Spotify linked to it."
