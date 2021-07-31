@@ -18,9 +18,9 @@ exports.updateAccount = (email?: string, displayName?: string, password?: string
             const userId = globalThis.userId;
             const account = await repo.findOne({ where: { userId } });
 
-            if (email) account.email = email;
-            if (displayName) account.displayName = displayName;
-            if (password) {
+            if (email != undefined) account.email = email;
+            if (displayName != undefined) account.displayName = displayName;
+            if (password != undefined) {
                 // Generate password salt and create hash with password and salt 📩
                 const passwordSalt = await bcryptjs.genSalt(10);
                 const passwordHash = await bcryptjs.hash(password, passwordSalt);
