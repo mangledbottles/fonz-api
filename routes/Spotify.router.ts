@@ -11,8 +11,6 @@ router.use(async (req: Request, res: Response, next: NextFunction) => {
         const sessionId = req.baseUrl?.split('/')[2];
         const session = await Session.getSessionForGuest(sessionId);
 
-        // console.log({ session })
-
         const {
             accessToken,
             refreshToken,
