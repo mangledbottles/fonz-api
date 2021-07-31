@@ -12,7 +12,7 @@ export class Users {
     // @PrimaryColumn()
     userId: string;
 
-    @Column({ unique: true, nullable: false })
+    @Column({ unique: true, nullable: true })
     email: string;
 
     @Column({ length: 256, nullable: true })
@@ -20,6 +20,9 @@ export class Users {
 
     @Column()
     passwordSalt: string;
+
+    @Column()
+    refreshToken: string;
 
     @Column()
     emailVerified: boolean;
