@@ -19,7 +19,7 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.get('/spotify', async (req: Request, res: Response) => {
     try {
-        const { device } = req.params;
+        const { device } = req.query;
         if(!device) res.status(403).send({ message: "Missing device parameter"});
 
         const scopes = ['user-read-playback-state', 'user-modify-playback-state', 'user-read-currently-playing', 'app-remote-control', 'streaming', 'user-read-email', 'user-read-private', 'user-library-modify', 'user-library-read'],
