@@ -28,6 +28,7 @@ const extractJWT = (req: Request, res: Response, next: NextFunction) => {
             const { userId } = decoded;
             globalThis.userId = userId;
             res.locals.userId = userId;
+            console.log(`Authorised User ID ${userId}`);
             next();
         });
     } else {
