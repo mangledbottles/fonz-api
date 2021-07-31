@@ -19,13 +19,16 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.get('/spotify', async (req: Request, res: Response) => {
     try {
+        const { device } = req.params;
+        if(!device) res.status(403).send({ message: "Missing device parameter"});
+
         const scopes = ['user-read-playback-state', 'user-modify-playback-state', 'user-read-currently-playing', 'app-remote-control', 'streaming', 'user-read-email', 'user-read-private', 'user-library-modify', 'user-library-read'],
             spotifyApi = new SpotifyWebApi({
                 clientId: process.env.SPOTIFY_CLIENT_ID,
                 clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
                 redirectUri: process.env.SPOTIFY_REDIRECT_URI
             });
-        const authorizeURL = spotifyApi.createAuthorizeURL(scopes, res.locals.userId);
+        const authorizeURL = spotifyApi.createAuthorizeURL(scopes, `${res.locals.userId}|${device}`);
         res.send({ authorizeURL })
     } catch (error) {
         console.error(error);
