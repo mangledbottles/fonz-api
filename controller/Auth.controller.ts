@@ -133,6 +133,33 @@ exports.signUp = (email: string, password: string) => {
     })
 }
 
+/** TODO: Rate limit account creations */
+exports.createAnonymousAccount = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const connection = await connect();
+
+            // Create Refresh Token
+            const refreshToken: string = await generateRefreshToken();
+    
+            // Insert User into database 🖥️
+            let User = await connection.getRepository(Users).create({ refreshToken });
+            const saved = await connection.manager.save(User);
+
+            // Create access token for new account
+            const jwtConfig = new Jwtoken(saved.userId, "anonymous", false);
+            const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY);
+
+            resolve({ ...saved, accessToken, refreshToken })
+
+        } catch (error) {
+            if(error.code == "ER_DUP_ENTRY") return reject({ status: 403, message: "There is an account already using this email." })
+            
+            console.error(error)
+            reject({ message: error.message })
+        }
+    })
+}
 
 // let MusicProv = new MusicProviders();
             // MusicProv.userId = "509f4484-6830-4f17-aac9-707ccef96fae";
