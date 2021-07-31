@@ -8,6 +8,7 @@ const Spotify = require('../controller/Spotify.controller');
 router.get('/spotify', async (req: Request, res: Response) => {
     try {
         const { code, state } = req.query;
+        console.log({ state })
         const [userId, device] = state[0].split("+");
         const { email, display_name, product, country, spotifyId,
             expires_in, access_token, refresh_token } = await Spotify.authorizeUser(code);
