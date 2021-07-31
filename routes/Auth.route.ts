@@ -43,4 +43,17 @@ router.post('/register/anonymous', async (req: Request, res: Response) => {
     console.error(error);
     res.status(error.status || 500).send(error);
   }
+});
+
+router.post('/refresh', async (req: Request, res: Response) => {
+  try {
+    const { userId, refreshToken } = req.body;
+    const account = await Auth.refreshToken(userId, refreshToken);
+    res.send(account);
+  } catch (error) {
+    console.error(error);
+    res.status(error.status || 500).send(error);
+  }
+})
+
 module.exports = router;
