@@ -10,7 +10,7 @@ const Session = require('../controller/Sessions.controller');
 /* Coasters */
 router.get('/coaster/:coasterId', async (req: Request, res: Response) => {
     try {
-        const { coasterId } = req.params;
+        const { coasterId } = req.query;
         const session = await Session.getCoasterSessionForGuest(coasterId);
         res.send(session)
     } catch (error) {
