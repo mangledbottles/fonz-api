@@ -14,6 +14,7 @@ import { IJwt } from "../interfaces/JWT.interface";
 /* Import dependecies */
 const jwt = require("jsonwebtoken");
 import bcryptjs from "bcryptjs";
+import { v4 as uuid } from 'uuid';
 
 
 class Jwtoken implements IJwt {
@@ -22,8 +23,7 @@ class Jwtoken implements IJwt {
     sub: string;
     email: string;
     emailVerified: boolean;
-    exp: number = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 14); // 2 week authentication
-    // exp: number = Math.floor(Date.now() / 1000) + 1;
+    exp: number = Math.floor(Date.now() / 1000) + (60 * 60 * 24); // 1 day authentication
 
     constructor(userId: string, email: string, emailVerified: boolean) {
         this.userId = userId;
@@ -32,8 +32,7 @@ class Jwtoken implements IJwt {
     }
 
     getPayload(): object {
-        return { iss: this.iss, exp: this.exp, userId: this.userId, 
-            sub: this.userId, email: this.email, emailVerified: this.emailVerified };
+        return { iss: this.iss, exp: this.exp, userId: this.userId, sub: this.userId };
     }
 
     static validateEmail(email): boolean {
@@ -46,6 +45,18 @@ class Jwtoken implements IJwt {
         if(!password || typeof password != "string") return false;
         return password.length >= 12 && password.length < 256;
     }
+}
+
+function generateRefreshToken(): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const salt = await bcryptjs.genSalt(10);
+            const refreshToken: string = await bcryptjs.hash(uuid(), salt);
+            resolve(refreshToken);
+        } catch (error) {
+            reject(error);
+        }
+    });
 
 }
 
@@ -78,11 +89,11 @@ exports.signIn = (email, password: IUserSignIn) => {
             if(!passwordCompare) return reject({ status: 401, message: "Incorrect password provided for this account."})
 
             // Create access token
-            const { userId, emailVerified } = accountDetails;
+            const { userId, emailVerified, refreshToken } = accountDetails;
             const jwtConfig = new Jwtoken(userId, email, emailVerified);
             const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY);
 
-            resolve({ accessToken })
+            resolve({ accessToken, refreshToken });
 
         } catch (error) {
             console.error(error)
@@ -110,8 +121,11 @@ exports.signUp = (email: string, password: string) => {
             const passwordSalt = await bcryptjs.genSalt(10);
             const passwordHash = await bcryptjs.hash(password, passwordSalt);
     
+            // Create Refresh Token
+            const refreshToken: string = await generateRefreshToken();
+
             // Insert User into database 🖥️
-            let User = await connection.getRepository(Users).create({ email, password: passwordHash, passwordSalt });
+            let User = await connection.getRepository(Users).create({ email, password: passwordHash, passwordSalt, refreshToken });
             const saved = await connection.manager.save(User);
 
             // Security 🔐
@@ -160,6 +174,28 @@ exports.createAnonymousAccount = () => {
         }
     })
 }
+
+exports.refreshToken = (userId, refreshToken) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const connection = await connect();
+            const repo = connection.getRepository(Users);
+
+            // Check if userId and Refresh Token are valid
+            const account = await repo.findOne({ where: { userId, refreshToken }});
+            if(!account) reject({ status: 404, message: "Invalid refresh token provided, login again"});
+
+            // Create access token for new account
+            const jwtConfig = new Jwtoken(account.userId, "", false);
+            const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY);
+
+            resolve({ accessToken });
+        } catch(error) {
+            reject(error);
+        }
+    })
+}
+
 
 // let MusicProv = new MusicProviders();
             // MusicProv.userId = "509f4484-6830-4f17-aac9-707ccef96fae";
