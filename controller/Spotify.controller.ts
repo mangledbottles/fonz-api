@@ -29,6 +29,8 @@ function initSpotify() {
       if (expirationDate < new Date() || !globalThis.Spotify.accessToken) {
         console.log("Refreshing token")
         await refreshAccessToken();
+      } else {
+        console.log("Token is good: [" + expirationDate + "]");
       }
       resolve({});
     } catch (error) {
