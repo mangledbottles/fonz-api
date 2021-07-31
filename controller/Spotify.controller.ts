@@ -30,7 +30,7 @@ function initSpotify() {
         console.log("Refreshing token")
         await refreshAccessToken();
       } else {
-        console.log("Token is good: [" + expirationDate + "]");
+        console.log("Token is good: [" + expirationDate + "], vs, [" + new Date() + "]");
       }
       resolve({});
     } catch (error) {
