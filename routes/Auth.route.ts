@@ -35,4 +35,12 @@ router.post('/register', (req: Request, res: Response) => {
   }
 });
 
+router.post('/register/anonymous', async (req: Request, res: Response) => {
+  try {
+    const account = await Auth.createAnonymousAccount();
+    res.send(account);
+  } catch (error) {
+    console.error(error);
+    res.status(error.status || 500).send(error);
+  }
 module.exports = router;
