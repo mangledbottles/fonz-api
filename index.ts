@@ -51,6 +51,7 @@ const MusicProviders: Router = require('./routes/MusicProviders.route');
 const HostRoute: Router = require('./routes/Host.route');
 const GuestRouter: Router = require('./routes/Guest.route');
 const CallbackRouter: Router = require('./routes/Callback.route');
+const UserRoute: Router = require('./routes/User.route');
 
 
 /** Requests don't require authentication */
@@ -61,6 +62,7 @@ app.use('/callback', CallbackRouter);
 /** All requests after this require authentication */
 app.use(extractJWT);
 app.use('/providers', MusicProviders);
+app.use('/user', UserRoute);
 app.use('/host', HostRoute);
 app.use('/guest', GuestRouter);
 // app.use('/library', libraryRouter);
