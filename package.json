@@ -30,7 +30,8 @@
     "mysql": "^2.18.1",
     "reflect-metadata": "^0.1.13",
     "spotify-web-api-node": "^5.0.2",
-    "typeorm": "^0.2.34"
+    "typeorm": "^0.2.34",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.6",
