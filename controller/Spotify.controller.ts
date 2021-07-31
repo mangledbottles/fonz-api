@@ -151,7 +151,7 @@ exports.getCurrent = async () => {
       await initSpotify();
       const { body: currentSong } = await spotifyApi.getMyCurrentPlaybackState();
 
-      if (!currentSong) resolve({
+      if (!currentSong || _.isEmpty(currentSong)) return reject({
         status: 402,
         message: "No songs playing at the moment",
         isQueueEmpty: true
@@ -164,8 +164,8 @@ exports.getCurrent = async () => {
       const volume = currentSong.device?.volume_percent;
       const trackName = currentSong.item?.name;
       const artistName = currentSong.item?.album?.artists[0]?.name;
-      const songUri = currentSong.item.uri;
-      const images = currentSong.item.album?.images;
+      const songUri = currentSong.item?.uri;
+      const images = currentSong.item?.album?.images;
 
       resolve({
         isPlaying,
