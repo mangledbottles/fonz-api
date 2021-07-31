@@ -9,7 +9,9 @@ import { MusicProviders } from "../entity/MusicProviders";
 /** Import controllers */
 // const Session = require('../controller/Sessions.controller');
 
-var SpotifyWebApi = require('spotify-web-api-node');
+const SpotifyWebApi = require('spotify-web-api-node');
+const _ = require("lodash");
+
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.SPOTIFY_CLIENT_ID,
   clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
@@ -21,12 +23,15 @@ function initSpotify() {
     try {
       // const lastUpdated = new Date(globalThis.Spotify.lastUpdated);
       const expirationDate = new Date(globalThis.Spotify.lastUpdated);
-      expirationDate.setSeconds(expirationDate.getSeconds() + 3600);
+      // expirationDate.setSeconds(expirationDate.getSeconds() + 3600);
+      expirationDate.setSeconds(expirationDate.getSeconds());
 
       spotifyApi.setAccessToken(globalThis.Spotify.accessToken);
       spotifyApi.setRefreshToken(globalThis.Spotify.refreshToken);
 
-      if (expirationDate < new Date() || !globalThis.Spotify.accessToken) {
+      console.log({ expirationDate, date: new Date() });
+
+      if (expirationDate <= new Date() || !globalThis.Spotify.accessToken) {
         console.log("Refreshing token")
         await refreshAccessToken();
       } else {
@@ -52,7 +57,10 @@ function refreshAccessToken() {
       spotifyApi.refreshAccessToken().then(async (data) => {
         const { access_token: accessToken } = data.body;
 
+        console.log(`Got new access token ${accessToken}`);
+
         /** Update Access Token and Sync with Database */
+        globalThis.Spotify.accessToken = accessToken;
         spotify.accessToken = accessToken;
         await repo.save(spotify);
 
@@ -127,6 +135,7 @@ exports.searchSong = (term) => {
   return new Promise(async (resolve, reject) => {
     try {
       await initSpotify();
+      console.log({ spotifyApi })
       const songResults = await spotifyApi.searchTracks(`${term}`);
       resolve(songResults);
     } catch (error) {
