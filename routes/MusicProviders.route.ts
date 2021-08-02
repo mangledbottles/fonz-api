@@ -22,7 +22,7 @@ router.get('/spotify', async (req: Request, res: Response) => {
         const { device } = req.query;
         if(!device) res.status(403).send({ message: "Missing device parameter"});
 
-        const scopes = ['user-read-playback-state', 'user-modify-playback-state', 'user-read-currently-playing', 'app-remote-control', 'streaming', 'user-read-email', 'user-read-private', 'user-library-modify', 'user-library-read'],
+        const scopes = ['user-read-playback-state', 'user-modify-playback-state', 'user-read-currently-playing', 'app-remote-control', 'streaming', 'user-read-email', 'user-read-private', 'user-library-modify', 'user-library-read', 'user-top-read', 'ugc-image-upload', 'user-read-recently-played', 'user-read-playback-position', 'playlist-modify-public', 'playlist-modify-private', 'playlist-read-collaborative', 'user-follow-modify', 'user-follow-read'],
             spotifyApi = new SpotifyWebApi({
                 clientId: process.env.SPOTIFY_CLIENT_ID,
                 clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
