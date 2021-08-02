@@ -63,6 +63,18 @@ router.get('/search', async (req: Request, res: Response) => {
     }
 });
 
+router.get('/search/top', async (req: Request, res: Response) => {
+    try {
+        const { type } = req.query;
+        if(!type) return res.status(403).send({ message: "Search top not provided"});
+        const results = await Spotify.getGuestTop(type);
+        return res.send(results);
+    } catch(error) {
+        console.error(error)
+        return res.status(error.status || 500).send(error)
+    }
+})
+
 router.get('/state', async (req: Request, res: Response) => {
     try {
         const currentSong = await Spotify.getCurrent();

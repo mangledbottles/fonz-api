@@ -200,6 +200,35 @@ function initGuestSpotify() {
   })
 }
 
+
+type searchType = 'artists' | 'tracks';
+exports.getGuestTop = (type: searchType) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await initGuestSpotify();
+
+      let { body: top } = (type == 'artists') ?
+        await spotifyApi.getMyTopArtists({ limit: 8, time_range: 'medium_term' }) :
+        await spotifyApi.getMyTopTracks({ limit: 8, time_range: 'medium_term' });
+
+      // let top = { items: [] };
+      // if(type == 'artists') { body: top } = await spotifyApi.getMyTopArtists({ limit: 8, time_range: 'medium_term' });
+      // if(type == 'tracks') { body: top } =  await spotifyApi.getMyTopTracks({ limit: 8, time_range: 'medium_term' });
+
+
+
+      if(!top) return reject({ status: 404, message: "This user does not have any top artists"})
+      resolve(top.items);
+    } catch (error) {
+      console.error(error);
+      console.log(error.body);
+      if(_.isEmpty(error.body)) return reject({ status: 404, message: "This user does not have any top artists"})
+      reject(error);
+    }
+  })
+};
+
+
 exports.getCurrent = async () => {
   return new Promise(async (resolve, reject) => {
     try {
