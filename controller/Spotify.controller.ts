@@ -23,8 +23,8 @@ function initSpotify() {
     try {
       // const lastUpdated = new Date(globalThis.Spotify.lastUpdated);
       const expirationDate = new Date(globalThis.Spotify.lastUpdated);
-      // expirationDate.setSeconds(expirationDate.getSeconds() + 3600);
-      expirationDate.setSeconds(expirationDate.getSeconds());
+      expirationDate.setSeconds(expirationDate.getSeconds() + 3600);
+      // expirationDate.setSeconds(expirationDate.getSeconds());
 
       spotifyApi.setAccessToken(globalThis.Spotify.accessToken);
       spotifyApi.setRefreshToken(globalThis.Spotify.refreshToken);
