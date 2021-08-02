@@ -35,7 +35,6 @@ exports.getSessionForGuest = (sessionId) => {
             const sessionRepo = connection.getRepository(Session);
             const musicProvidersRepo = connection.getRepository(MusicProviders);
 
-
             const session = await sessionRepo.findOne({ where: { sessionId } }) || reject({ status: 404, message: `Session does not exit`});
             const musicProviders = await musicProvidersRepo.findOne({ where: { sessionId }}) || reject({ status: 403, message: `No music providers are linked to this session`});
 
