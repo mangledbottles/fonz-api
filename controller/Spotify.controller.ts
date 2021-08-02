@@ -141,7 +141,62 @@ exports.searchSong = (term) => {
     } catch (error) {
       reject(error);
     }
+  })
+}
 
+function initGuestSpotify() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // spotifyApi.resetCredentials();
+
+      const connection = await connect();
+      const repo = connection.getRepository(MusicProviders);
+
+      const userId = globalThis.userId; // Guest User Id
+      const guestProvider = await repo.findOne({ where: { userId }});
+
+      if(!guestProvider) reject({ status: 404, message: "Guest does not have a Spotify linked"});
+
+      const { lastUpdated, accessToken, refreshToken } = guestProvider;
+      // console.log({ lastUpdated, accessToken, refreshToken })
+
+      globalThis.GuestSpotify = { lastUpdated, accessToken, refreshToken };
+      // globalThis.Guest.lastUpdated = lastUpdated;
+      // globalThis.Guest.accessToken = accessToken;
+      // globalThis.Guest.refreshToken = refreshToken;
+
+
+      const expirationDate = new Date(lastUpdated);
+      expirationDate.setSeconds(expirationDate.getSeconds() + (3600 * 0));
+
+      console.log({ accessToken, refreshToken, expirationDate, date: new Date(), userId, guestProvider })
+
+      spotifyApi.setAccessToken(accessToken);
+      spotifyApi.setRefreshToken(refreshToken);
+
+
+      if (expirationDate <= new Date()) {
+        spotifyApi.refreshAccessToken().then(async (data) => {
+          const { access_token: accessToken } = data.body;
+  
+          console.log(`Got new access token ${accessToken}`);
+  
+          /** Update Access Token and Sync with Database */
+          globalThis.GuestSpotify.accessToken = accessToken;
+          guestProvider.accessToken = accessToken;
+
+          await repo.save(guestProvider);
+          spotifyApi.setAccessToken(accessToken);
+
+          resolve({ message: "Token Refreshed" });
+        })
+      } else {
+        resolve({});
+      }
+    } catch (error) {
+      console.log("reresh isue")
+      reject(error);
+    }
   })
 }
 
