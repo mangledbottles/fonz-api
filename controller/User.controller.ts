@@ -45,4 +45,23 @@ exports.updateAccount = (email?: string, displayName?: string, password?: string
         }
     });
 }
+
+exports.getAccount = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const connection = await connect();
+            const repo = connection.getRepository(Users);
+
+            const userId = globalThis.userId;
+            const account = await repo.findOne({ where: { userId } });
+
+            // Security 🔐
+            delete account.password;
+            delete account.passwordSalt;
+
+            resolve(account);
+        } catch (error) {
+            reject(error);
+        }
+    });
 }
