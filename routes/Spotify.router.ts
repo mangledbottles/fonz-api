@@ -75,6 +75,29 @@ router.get('/search/top', async (req: Request, res: Response) => {
     }
 })
 
+router.get('/search/artist/:artistId', async (req: Request, res: Response) => {
+    try {
+        const { artistId } = req.params;
+        if(!artistId) return res.status(403).send({ message: "Artist ID not provided"});
+
+        const results = await Spotify.getTracksByArtistId(artistId);
+        return res.send(results);
+    } catch(error) {
+        console.error(error)
+        return res.status(error.status || 500).send(error)
+    }
+})
+
+router.get('/search/releases', async (req: Request, res: Response) => {
+    try {
+        const results = await Spotify.getNewReleases();
+        return res.send(results);
+    } catch(error) {
+        console.error(error)
+        return res.status(error.status || 500).send(error)
+    }
+})
+
 router.get('/state', async (req: Request, res: Response) => {
     try {
         const currentSong = await Spotify.getCurrent();
