@@ -245,6 +245,19 @@ exports.getTracksByArtistId = (artistId: string) => {
   })
 }
 
+exports.getNewReleases = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await initSpotify();
+      // TODO: make country dynamic based on Session
+      const { body: releases } = await spotifyApi.getNewReleases({ limit : 5, offset: 0, country: 'IE' })
+      resolve(releases);
+    } catch(error) {
+      reject(error);
+    }
+  })
+}
+
 exports.getCurrent = async () => {
   return new Promise(async (resolve, reject) => {
     try {
