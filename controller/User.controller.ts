@@ -9,7 +9,7 @@ import { Users } from '../entity/Users';
 /** Import dependecies */
 import bcryptjs from "bcryptjs";
 
-exports.updateAccount = (email?: string, displayName?: string, password?: string) => {
+exports.updateAccount = (email?: string, displayName?: string, password?: string, agreedMarketing?: boolean, agreedConsent?: boolean) => {
     return new Promise(async (resolve, reject) => {
         try {
             const connection = await connect();
@@ -18,17 +18,19 @@ exports.updateAccount = (email?: string, displayName?: string, password?: string
             const userId = globalThis.userId;
             const account = await repo.findOne({ where: { userId } });
 
-            if (email != undefined) account.email = email;
+            if (email != undefined && email !== account.email) account.email = email;
             if (displayName != undefined) account.displayName = displayName;
             if (password != undefined) {
                 // Generate password salt and create hash with password and salt 📩
                 const passwordSalt = await bcryptjs.genSalt(10);
                 const passwordHash = await bcryptjs.hash(password, passwordSalt);
-                
+
                 account.password = passwordHash;
                 account.passwordSalt = passwordSalt;
             }
-                    
+            if (agreedMarketing != undefined) account.agreedMarketing = agreedMarketing;
+            if (agreedConsent != undefined) account.agreedConsent = agreedConsent;
+
             const saved = await repo.save(account);
 
             // Security 🔐
@@ -42,4 +44,5 @@ exports.updateAccount = (email?: string, displayName?: string, password?: string
             reject(error);
         }
     });
+}
 }
