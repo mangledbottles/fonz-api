@@ -43,7 +43,7 @@ exports.addCoaster = (currentUserId, coasterId) => {
             const connection = await connect();
             const repo = connection.getRepository(Coasters);
 
-            const [coaster] = await repo.find({ where: { coasterId } });
+            const [coaster] = await repo.find({ where: { coasterId } });            
             if (!coaster) return reject({
                 status: 404,
                 message: 'This coaster does not exist.'
@@ -64,7 +64,6 @@ exports.addCoaster = (currentUserId, coasterId) => {
                     ...coaster,
                     userId: currentUserId,
                     active: true,
-                    name: ''
                 });
 
                 resolve({
@@ -80,39 +79,31 @@ exports.addCoaster = (currentUserId, coasterId) => {
 }
 
 
-exports.updateCoaster = (currentUserId, coasterId, params) => {
+exports.updateCoaster = (coasterId, name?: string, active?: boolean) => {
     return new Promise(async (resolve, reject) => {
         try {
             const connection = await connect();
             const repo = connection.getRepository(Coasters);
 
-            const { name, active } = params;
-            if (!name || !active) return reject({
-                status: 400,
-                message: 'No valid parameters have been passed.'
-            });
-
             let [coaster] = await repo.find({ where: { coasterId } });
+
             if (!coaster) return reject({
                 status: 404,
                 message: 'This coaster does not exist.'
             });
 
+            const currentUserId = globalThis.userId;
+            console.log({ currentUserId, cUid: coaster.userId })
             if (coaster.userId !== currentUserId) return reject({
                 status: 404,
                 message: 'This coaster is not linked to this Fonz account.'
             });
 
+            if(name) coaster.name = name;
+            if(active) coaster.active = active;
+            const updatedCoaster =await repo.save(coaster);
 
-            coaster.active = ((active == undefined) ? coaster.name : active);
-            coaster.name = ((name == undefined) ? coaster.name : name);
-
-            await repo.save(coaster);
-
-            resolve({
-                name,
-                active
-            })
+            resolve(updatedCoaster)
 
         } catch (error) {
             console.error(error)

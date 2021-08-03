@@ -3,12 +3,10 @@ import {
     Entity, 
     Column,
     PrimaryColumn,
-    ManyToOne,
-    JoinColumn
 } from "typeorm";
 
 /** Import required entities */
-import { Users } from "./Users";
+// import { Users } from "./Users";
 
 @Entity("Coasters")
 export class Coasters extends BaseEntity {
@@ -19,10 +17,6 @@ export class Coasters extends BaseEntity {
 
     @Column({ nullable: true,})
     userId: string | null;
-
-    @ManyToOne(type => Users, user => user.userId)
-    @JoinColumn({ name: "userId" })
-    public user!: Users
 
     @Column()
     active: boolean;
