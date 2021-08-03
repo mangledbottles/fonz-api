@@ -6,8 +6,15 @@ const User = require('../controller/User.controller');
 
 router.put('/', async (req: Request, res: Response) => {
     try {
-        const { displayName, email, password } = req.body;
-        const user = await User.updateAccount(email, displayName, password);
+        const { displayName, email, password, agreedMarketing, agreedConsent } = req.body;
+        const user = await User.updateAccount(email, displayName, password, agreedMarketing, agreedConsent);
+        res.send(user);
+    } catch(error) {
+        console.error(error);
+        res.status(error.status || 500).send(error);
+    }
+})
+
         res.send(user);
     } catch(error) {
         console.error(error);
