@@ -228,6 +228,22 @@ exports.getGuestTop = (type: searchType) => {
   })
 };
 
+exports.getTracksByArtistId = (artistId: string) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await initSpotify();
+
+      console.log({artistId});
+
+      // TODO: make country dynamic based on Session
+      const { body: tracks } = await spotifyApi.getArtistTopTracks(artistId, 'IE');
+      resolve(tracks.tracks);
+
+    } catch(error) {
+      reject(error);
+    }
+  })
+}
 
 exports.getCurrent = async () => {
   return new Promise(async (resolve, reject) => {
