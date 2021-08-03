@@ -194,8 +194,7 @@ function initGuestSpotify() {
         resolve({});
       }
     } catch (error) {
-      console.log("reresh isue")
-      reject(error);
+      reject({ ...error, message: "Guest does not have Spotify linked." });
     }
   })
 }
@@ -210,12 +209,6 @@ exports.getGuestTop = (type: searchType) => {
       let { body: top } = (type == 'artists') ?
         await spotifyApi.getMyTopArtists({ limit: 8, time_range: 'medium_term' }) :
         await spotifyApi.getMyTopTracks({ limit: 8, time_range: 'medium_term' });
-
-      // let top = { items: [] };
-      // if(type == 'artists') { body: top } = await spotifyApi.getMyTopArtists({ limit: 8, time_range: 'medium_term' });
-      // if(type == 'tracks') { body: top } =  await spotifyApi.getMyTopTracks({ limit: 8, time_range: 'medium_term' });
-
-
 
       if(!top) return reject({ status: 404, message: "This user does not have any top artists"})
       resolve(top.items);
@@ -257,6 +250,7 @@ exports.getNewReleases = () => {
     }
   })
 }
+
 
 exports.getCurrent = async () => {
   return new Promise(async (resolve, reject) => {
