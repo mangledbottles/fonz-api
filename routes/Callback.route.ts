@@ -26,7 +26,7 @@ router.get('/spotify', async (req: Request, res: Response) => {
         if (device == 'iOS') {
             res.redirect("fonz-music://spotify")
         } else if (device == 'Android') {
-            res.redirect("fonzmusic://spotifty");
+            res.redirect("https://fonzmusic.com/spotify");
         } else {
             res.status(400).send({ message: "Invalid device"});
         }
