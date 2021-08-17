@@ -195,23 +195,3 @@ exports.refreshToken = (userId, refreshToken) => {
         }
     })
 }
-
-
-// let MusicProv = new MusicProviders();
-            // MusicProv.userId = "509f4484-6830-4f17-aac9-707ccef96fae";
-            // MusicProv.userId = "3acaa0e4-fa32-46ee-a17b-50d9a08665d4";
-            // const saved = await connection.manager.save(MusicProv);
-            // console.log({ saved, MusicProv })
-            // resolve(saved);
-
-
-            // let User = new Users();
-            // User.email = "ROHAN@test.com";
-            // console.log(User)
-            // const saved = await connection.manager.save(User);
-            // resolve(saved);
-
-            // const repo = await connection.getRepository(Users);
-            // const allUsers = await repo.find(); // get all users
-            // console.log({ allUsers })
-            // resolve(allUsers);
