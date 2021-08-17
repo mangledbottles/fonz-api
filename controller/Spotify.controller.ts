@@ -200,18 +200,30 @@ function initGuestSpotify() {
 }
 
 
-type searchType = 'artists' | 'tracks';
+type searchType = 'artists' | 'tracks' | 'playlists';
 exports.getGuestTop = (type: searchType) => {
   return new Promise(async (resolve, reject) => {
     try {
       await initGuestSpotify();
 
-      let { body: top } = (type == 'artists') ?
-        await spotifyApi.getMyTopArtists({ limit: 8, time_range: 'medium_term' }) :
-        await spotifyApi.getMyTopTracks({ limit: 8, time_range: 'medium_term' });
+      let top;
+      switch (type) {
+        case 'artists':
+          top = await spotifyApi.getMyTopArtists({ limit: 8, time_range: 'medium_term' }).body;
+          break;
 
-      if(!top) return reject({ status: 404, message: "This user does not have any top artists"})
-      resolve(top.items);
+        case 'tracks':
+          top = await spotifyApi.getMyTopTracks({ limit: 8, time_range: 'medium_term' }).body;
+
+        case 'playlists':
+          top = await spotifyApi.getUserPlaylists();
+      }
+
+      console.log(top.body)
+        // console.log((type =='artists') ? 'artists' : 'tracks')
+
+      if(!top.body) return reject({ status: 404, message: "This user does not have any top artists"})
+      resolve(top.body.items);
     } catch (error) {
       console.error(error);
       console.log(error.body);
