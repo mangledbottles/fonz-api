@@ -72,7 +72,7 @@ exports.signIn = (email, password: IUserSignIn) => {
             })
             if (!Jwtoken.validatePassword(password)) return reject({
                 status: 401,
-                message: "Invalid password provided, password should be atleast 12 characters long and less than 72"
+                message: "Invalid password provided, password should be atleast 8 characters long and less than 72"
             })
 
             // Get user with given email address
