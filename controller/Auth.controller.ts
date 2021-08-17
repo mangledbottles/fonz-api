@@ -43,7 +43,7 @@ class Jwtoken implements IJwt {
 
     static validatePassword(password): boolean {
         if(!password || typeof password != "string") return false;
-        return password.length >= 12 && password.length < 256;
+        return password.length >= 8 && password.length < 71;
     }
 }
 
