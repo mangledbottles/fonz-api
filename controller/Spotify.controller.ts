@@ -136,7 +136,7 @@ exports.searchSong = (term) => {
     try {
       await initSpotify();
       console.log({ spotifyApi })
-      const songResults = await spotifyApi.searchTracks(`${term}`);
+      const songResults = await spotifyApi.searchTracks(term, { market: 'IE' });
       resolve(songResults);
     } catch (error) {
       reject(error);
