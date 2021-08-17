@@ -38,7 +38,7 @@ router.get('/search', async (req: Request, res: Response) => {
         const {
             term,
             // limit,
-            // offset
+            offset
         } = req.query;
 
         if (!term) return res.status(400).json({
@@ -47,7 +47,7 @@ router.get('/search', async (req: Request, res: Response) => {
             requiredParams: ['term']
         });
 
-        const searchResults = await Spotify.searchSong(term);
+        const searchResults = await Spotify.searchSong(term, offset);
 
         return res.send({ searchResults })
         // Spotify.searchSong(term).then((resp) => {

@@ -131,12 +131,12 @@ exports.storeSpotifyCredentials = ({ email, display_name, product, country, spot
  * @param {int} offset Optional set an offset for pagination
  * @returns {Promise} returns either resolve or reject with data about song query.
  */
-exports.searchSong = (term) => {
+exports.searchSong = (term, offset = 0) => {
   return new Promise(async (resolve, reject) => {
     try {
       await initSpotify();
       console.log({ spotifyApi })
-      const songResults = await spotifyApi.searchTracks(term, { market: 'IE' });
+      const songResults = await spotifyApi.searchTracks(term, { market: 'IE', offset });
       resolve(songResults);
     } catch (error) {
       reject(error);
