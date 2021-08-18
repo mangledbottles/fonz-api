@@ -209,18 +209,17 @@ exports.getGuestTop = (type: searchType) => {
       let top;
       switch (type) {
         case 'artists':
-          top = await spotifyApi.getMyTopArtists({ limit: 8, time_range: 'medium_term' }).body;
+          top = await spotifyApi.getMyTopArtists({ limit: 8, time_range: 'medium_term' });
           break;
 
         case 'tracks':
-          top = await spotifyApi.getMyTopTracks({ limit: 8, time_range: 'medium_term' }).body;
+          top = await spotifyApi.getMyTopTracks({ limit: 8, time_range: 'medium_term' });
+          break;
 
         case 'playlists':
           top = await spotifyApi.getUserPlaylists();
+          break;
       }
-
-      console.log(top.body)
-        // console.log((type =='artists') ? 'artists' : 'tracks')
 
       if(!top.body) return reject({ status: 404, message: "This user does not have any top artists"})
       resolve(top.body.items);
