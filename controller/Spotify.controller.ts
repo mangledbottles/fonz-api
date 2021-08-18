@@ -249,6 +249,19 @@ exports.getTracksByArtistId = (artistId: string) => {
   })
 }
 
+exports.getTracksByPlaylistId = (playlistId: string) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await initSpotify();
+
+      const { body } = await spotifyApi.getPlaylistTracks(playlistId, { limit: 75 });
+      resolve(body)
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 exports.getNewReleases = () => {
   return new Promise(async (resolve, reject) => {
     try {

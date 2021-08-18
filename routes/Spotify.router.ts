@@ -88,6 +88,19 @@ router.get('/search/artist/:artistId', async (req: Request, res: Response) => {
     }
 })
 
+router.get('/search/playlist/:playlistId', async (req: Request, res: Response) => {
+    try {
+        const { playlistId } = req.params;
+        if(!playlistId) return res.status(403).send({ message: "Playlist ID not provided"});
+
+        const results = await Spotify.getTracksByPlaylistId(playlistId);
+        return res.send(results);
+    } catch(error) {
+        console.error(error)
+        return res.status(error.status || 500).send(error)
+    }
+})
+
 router.get('/search/releases', async (req: Request, res: Response) => {
     try {
         const results = await Spotify.getNewReleases();
