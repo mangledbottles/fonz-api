@@ -13,3 +13,7 @@ package-lock.json
 # ignore vs
 .idea
 .vscode
+
+# compilation ignore
+lib
+
