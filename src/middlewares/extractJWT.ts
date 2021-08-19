@@ -1,12 +1,11 @@
-import jwt from 'jsonwebtoken';
-// import config from '../config/config';
-import logging from '../config/logging';
+// import config from '../config';
 import { Request, Response, NextFunction } from 'express';
-
+import { info } from '../config';
+import jwt from 'jsonwebtoken';
 const NAMESPACE = 'Auth';
 
-const extractJWT = (req: Request, res: Response, next: NextFunction) => {
-    logging.info(NAMESPACE, 'Validating token');
+export const extractJWT = (req: Request, res: Response, next: NextFunction) => {
+    info(NAMESPACE, 'Validating token');
 
     if (req.headers.authorization) {
         let token = req.headers.authorization.split(' ')[1];
@@ -37,5 +36,3 @@ const extractJWT = (req: Request, res: Response, next: NextFunction) => {
         });
     }
 };
-
-export default extractJWT;

@@ -2,7 +2,10 @@
 	"events": {
 		"restart": "",
         "crash": "kill-port 8080",
-		"crashb": "npx kill-port 8080 && npm run dev-ts"
+		"crashb": "npx kill-port 8080 && npm run dev"
 	 },
-	"delay": "1500"
+	"ext": "ts,js,json",
+	"watch": ["src", ".env"],
+	"delay": "1500",
+	"exec": "ts-node  --transpile-only src/App.ts"
 }

@@ -1,26 +1,23 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "noImplicitReturns": true,
-        "noUnusedLocals": true,
-        "noImplicitAny": false,
-        "outDir": "lib",
+        "target": "ES2021",
+        "lib": ["ES2021"],
         "sourceMap": true,
-        "strict": false,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "target": "ES2020",
-        "lib": [
-            "ESNext"
-        ],
-        "strictNullChecks": false,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "removeComments": true,
+        
+        // Enable Typo Checks 
+        "strict": true,
+        "noUnusedLocals": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+    
+        "outDir": "dist"
     },
     "compileOnSave": true,
-    "include": [
-        "routes",
-        "controller",
-        "model",
-        "**/*.ts"
-    ]
+    "skipLibCheck": true,
+    "include": ["src/**/*"]
 }

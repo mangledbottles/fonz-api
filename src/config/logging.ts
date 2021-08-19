@@ -34,9 +34,4 @@ const getTimeStamp = (): string => {
     return new Date().toISOString();
 };
 
-export default {
-    info,
-    warn,
-    error,
-    debug
-};
+export { info, warn, error, debug };

@@ -1,0 +1,1 @@
+export { extractJWT } from './extractJWT';

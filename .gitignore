@@ -1,14 +1,15 @@
-.env
-node_modules
-.idea
-*.log
-functions/firebase-debug.log
+# why include libs?
+/node_modules
 package-lock.json
-functions/package-lock.jso
 
-# Misc
-# /notes
-/Misc
+# ignore built dir
+/dist
 
-lib
+# ignore env & redundant dot-files
+*.env
+*.log
+.DS_Store
+
+# ignore vs
+.idea
 .vscode
