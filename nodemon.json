@@ -1,0 +1,8 @@
+{
+	"events": {
+		"restart": "",
+        "crash": "kill-port 8080",
+		"crashb": "npx kill-port 8080 && npm run dev-ts"
+	 },
+	"delay": "1500"
+}

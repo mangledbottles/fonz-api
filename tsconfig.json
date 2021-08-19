@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noImplicitAny": false,
+        "outDir": "lib",
+        "sourceMap": true,
+        "strict": false,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "target": "ES2020",
+        "lib": [
+            "ESNext"
+        ],
+        "strictNullChecks": false,
+        "esModuleInterop": true
+    },
+    "compileOnSave": true,
+    "include": [
+        "routes",
+        "controller",
+        "model",
+        "**/*.ts"
+    ]
+}

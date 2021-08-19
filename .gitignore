@@ -4,7 +4,7 @@ node_modules
 *.log
 functions/firebase-debug.log
 package-lock.json
-functions/package-lock.json
+functions/package-lock.jso
 
 # Misc
 # /notes
