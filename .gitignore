@@ -8,7 +8,6 @@ functions/package-lock.jso
 
 # Misc
 # /notes
-/Misc
-
 lib
 .vscode
+/Misc
