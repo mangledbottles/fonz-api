@@ -91,9 +91,10 @@ router.get('/search/artist/:artistId', async (req: Request, res: Response) => {
 router.get('/search/playlist/:playlistId', async (req: Request, res: Response) => {
     try {
         const { playlistId } = req.params;
+        const { offset, limit } = req.query;
         if(!playlistId) return res.status(403).send({ message: "Playlist ID not provided"});
 
-        const results = await Spotify.getTracksByPlaylistId(playlistId);
+        const results = await Spotify.getTracksByPlaylistId(playlistId, offset, limit);
         return res.send(results);
     } catch(error) {
         console.error(error)
