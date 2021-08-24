@@ -201,7 +201,7 @@ function initGuestSpotify() {
 
 
 type searchType = 'artists' | 'tracks' | 'playlists';
-exports.getGuestTop = (type: searchType) => {
+exports.getGuestTop = (type: searchType, offset = 0, limit = 10) => {
   return new Promise(async (resolve, reject) => {
     try {
       await initGuestSpotify();
@@ -209,15 +209,15 @@ exports.getGuestTop = (type: searchType) => {
       let top;
       switch (type) {
         case 'artists':
-          top = await spotifyApi.getMyTopArtists({ limit: 8, time_range: 'medium_term' });
+          top = await spotifyApi.getMyTopArtists({ limit, offset, time_range: 'medium_term' });
           break;
 
         case 'tracks':
-          top = await spotifyApi.getMyTopTracks({ limit: 8, time_range: 'medium_term' });
+          top = await spotifyApi.getMyTopTracks({ limit, offset, time_range: 'medium_term' });
           break;
 
         case 'playlists':
-          top = await spotifyApi.getUserPlaylists();
+          top = await spotifyApi.getUserPlaylists({ limit, offset });
           break;
       }
 
