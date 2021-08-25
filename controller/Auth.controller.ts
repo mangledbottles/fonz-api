@@ -8,7 +8,7 @@ import { Users } from '../entity/Users';
 // import { MusicProviders } from '../entity/MusicProviders'; 
 
 /* Import interfaces */
-import { IUserSignIn } from "../interfaces/User.interface";
+// import { IUserSignIn } from "../interfaces/User.interface";
 import { IJwt } from "../interfaces/JWT.interface";
 
 /* Import dependecies */
@@ -60,7 +60,7 @@ function generateRefreshToken(): Promise<string> {
 
 }
 
-exports.signIn = (email, password: IUserSignIn) => {
+exports.signIn = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
             const connection = await connect();
@@ -91,7 +91,7 @@ exports.signIn = (email, password: IUserSignIn) => {
             // Create access token
             const { userId, emailVerified, refreshToken } = accountDetails;
             const jwtConfig = new Jwtoken(userId, email, emailVerified);
-            const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY);
+            const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY, { algorithm: 'HS512'});
 
             resolve({ accessToken, refreshToken });
 
@@ -134,7 +134,7 @@ exports.signUp = (email: string, password: string) => {
 
             // Create access token for new account
             const jwtConfig = new Jwtoken(saved.userId, email, false);
-            const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY);
+            const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY, { algorithm: 'HS512'});
 
             resolve({ ...saved, accessToken })
 
@@ -162,7 +162,7 @@ exports.createAnonymousAccount = () => {
 
             // Create access token for new account
             const jwtConfig = new Jwtoken(saved.userId, "anonymous", false);
-            const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY);
+            const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY, { algorithm: 'HS512'});
 
             resolve({ ...saved, accessToken, refreshToken })
 
@@ -187,7 +187,7 @@ exports.refreshToken = (userId, refreshToken) => {
 
             // Create access token for new account
             const jwtConfig = new Jwtoken(account.userId, "", false);
-            const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY);
+            const accessToken = jwt.sign(jwtConfig.getPayload(), process.env.JWT_PRIVATE_KEY, { algorithm: 'HS512'});
 
             resolve({ accessToken });
         } catch(error) {
