@@ -20,7 +20,7 @@ router.get('/', (req: Request, res: Response) => {
     res.send("ADMIN")
 });
 
-router.post('/coasters/:coasterId', async (req: Request, res: Response) => {
+router.put('/coasters/:coasterId', async (req: Request, res: Response) => {
     try {
         const { coasterId } = req.params;
         const { encoded, group } = req.body;
