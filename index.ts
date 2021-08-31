@@ -52,6 +52,7 @@ const HostRoute: Router = require('./routes/Host.route');
 const GuestRouter: Router = require('./routes/Guest.route');
 const CallbackRouter: Router = require('./routes/Callback.route');
 const UserRoute: Router = require('./routes/User.route');
+const AdminRoute: Router = require('./routes/Admin.route');
 
 
 /** Requests don't require authentication */
@@ -65,6 +66,7 @@ app.use('/providers', MusicProviders);
 app.use('/user', UserRoute);
 app.use('/host', HostRoute);
 app.use('/guest', GuestRouter);
+app.use('/admin', AdminRoute);
 // app.use('/library', libraryRouter);
 
 /** All unknown URL requests managed here */
