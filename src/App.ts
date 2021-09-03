@@ -5,12 +5,12 @@ const app: Application = express();
 const port: string = process.env.PORT || '8080';
 const NAMESPACE = 'Server';
 
-/** Import Authentication Checker */
-// const AuthChecker = require('./utils/AuthChecker')
-import { extractJWT } from './middlewares';
-import { info } from './config';
 var dotenv = require('dotenv');
 dotenv.config();
+
+/** Import Authentication Checker */
+import { extractJWT } from './middlewares';
+import { info } from './config';
 
 /** Import dependecies */
 var cookieParser = require('cookie-parser');
