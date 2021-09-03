@@ -153,9 +153,9 @@ function initGuestSpotify() {
       const repo = connection.getRepository(MusicProviders);
 
       const userId = globalThis.userId; // Guest User Id
-      const guestProvider = await repo.findOne({ where: { userId }});
+      const guestProvider = await repo.findOne({ where: { userId } });
 
-      if(!guestProvider) reject({ status: 404, message: "Guest does not have a Spotify linked"});
+      if (!guestProvider) reject({ status: 404, message: "Guest does not have a Spotify linked" });
 
       const { lastUpdated, accessToken, refreshToken } = guestProvider;
       // console.log({ lastUpdated, accessToken, refreshToken })
@@ -178,9 +178,9 @@ function initGuestSpotify() {
       if (expirationDate <= new Date()) {
         spotifyApi.refreshAccessToken().then(async (data) => {
           const { access_token: accessToken } = data.body;
-  
+
           console.log(`Got new access token ${accessToken}`);
-  
+
           /** Update Access Token and Sync with Database */
           globalThis.GuestSpotify.accessToken = accessToken;
           guestProvider.accessToken = accessToken;
@@ -221,12 +221,12 @@ exports.getGuestTop = (type: searchType, offset = 0, limit = 10) => {
           break;
       }
 
-      if(!top.body) return reject({ status: 404, message: "This user does not have any top artists"})
+      if (!top.body) return reject({ status: 404, message: "This user does not have any top artists" })
       resolve(top.body.items);
     } catch (error) {
       console.error(error);
       console.log(error.body);
-      if(_.isEmpty(error.body)) return reject({ status: 404, message: "This user does not have any top artists"})
+      if (_.isEmpty(error.body)) return reject({ status: 404, message: "This user does not have any top artists" })
       reject(error);
     }
   })
@@ -237,13 +237,13 @@ exports.getTracksByArtistId = (artistId: string) => {
     try {
       await initSpotify();
 
-      console.log({artistId});
+      console.log({ artistId });
 
       // TODO: make country dynamic based on Session
       const { body: tracks } = await spotifyApi.getArtistTopTracks(artistId, 'IE');
       resolve(tracks.tracks);
 
-    } catch(error) {
+    } catch (error) {
       reject(error);
     }
   })
@@ -267,9 +267,9 @@ exports.getNewReleases = () => {
     try {
       await initSpotify();
       // TODO: make country dynamic based on Session
-      const { body: releases } = await spotifyApi.getNewReleases({ limit : 5, offset: 0, country: 'IE' })
+      const { body: releases } = await spotifyApi.getNewReleases({ limit: 5, offset: 0, country: 'IE' })
       resolve(releases);
-    } catch(error) {
+    } catch (error) {
       reject(error);
     }
   })
@@ -316,33 +316,36 @@ exports.getCurrent = async () => {
 
 exports.addToQueue = (songUri, device_id) => {
   return new Promise(async (resolve, reject) => {
-    await initSpotify();
+    try {
+      await initSpotify();
 
-    const currentSong = await exports.getCurrent();
-    if (currentSong.isQueueEmpty) {
-
-      spotifyApi.play({
-        uris: [songUri],
-        device_id
-      }).then((data) => {
-        resolve(data)
-      }).catch((err) => {
-        reject({
-          status: 500,
-          // This is a guess that this is the problem
-          message: 'Ensure that the host has Spotify open on a device',
-          err
-        });
-      })
-    } else {
-      spotifyApi.addToQueue(songUri, device_id).then((data) => {
-        resolve(data.body);
-      }).catch((err) => {
-        reject({
-          status: 404,
-          err
-        });
-      })
+      const currentSong = await exports.getCurrent();
+      if (currentSong.isQueueEmpty) {
+        spotifyApi.play({
+          uris: [songUri],
+          device_id
+        }).then((data) => {
+          resolve(data)
+        }).catch((err) => {
+          reject({
+            status: 500,
+            // This is a guess that this is the problem
+            message: 'Ensure that the host has Spotify open on a device',
+            err
+          });
+        })
+      } else {
+        spotifyApi.addToQueue(songUri, device_id).then((data) => {
+          resolve(data.body);
+        }).catch((err) => {
+          reject({
+            status: 404,
+            err
+          });
+        })
+      }
+    } catch (error) {
+      reject(error);
     }
 
   });
