@@ -10,9 +10,9 @@
         "removeComments": true,
         
         // Enable Typo Checks 
-        "strict": true,
+        "strict": false,
         "noUnusedLocals": true,
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "noImplicitReturns": true,
     
         "outDir": "dist"
