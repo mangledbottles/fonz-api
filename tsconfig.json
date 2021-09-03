@@ -15,7 +15,7 @@
         "noImplicitAny": false,
         "noImplicitReturns": true,
     
-        "outDir": "dist"
+        "outDir": "lib"
     },
     "compileOnSave": true,
     "skipLibCheck": true,
