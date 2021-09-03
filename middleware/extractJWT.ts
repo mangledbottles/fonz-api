@@ -25,7 +25,12 @@ const extractJWT = (req: Request, res: Response, next: NextFunction) => {
                 res.status(401).send(resp);
             }
 
-            const { userId } = decoded;
+            console.log({ decoded })
+            const { userId, admin } = decoded;
+            if(admin) {
+                globalThis.isAdmin = true;
+                return next();
+            }
             globalThis.userId = userId;
             res.locals.userId = userId;
             console.log(`Authorised User ID ${userId}`);

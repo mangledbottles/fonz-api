@@ -21,6 +21,12 @@ export class Coasters extends BaseEntity {
     @Column()
     active: boolean;
 
+    @Column({ default: false })
+    encoded: boolean;
+
+    @Column({ nullable: true })
+    group: string | null;
+
     @Column({ length: 64 })
     name: string;
    
