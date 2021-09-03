@@ -20,7 +20,7 @@ export const config: ConnectionOptions = {
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD, // review
     database: process.env.DB_DATABASE,
-    synchronize: true,
+    synchronize: false,
     logging: false,
     // entities: [Coasters, MusicProvider, Provider, Session, Users],
     entities: [ Users, MusicProviders, Coasters, Session ],
