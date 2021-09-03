@@ -1,19 +1,28 @@
 {
-  "name": "functions",
-  "description": "Cloud Functions for Firebase",
+  "name": "fonz-api",
+  "version": "2.0.0",
+  "description": "API for Fonz Music",
   "scripts": {
-    "dev": "nodemon index.js",
-    "dev-ts": "nodemon index.ts",
-    "serve": "firebase emulators:start --only functions",
-    "shell": "firebase functions:shell",
-    "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "start": "npm run dev",
+    "build": "npm run clean && tsc",
+    "dev": "nodemon ./src/App.ts",
+    "dev-js": "nodemon ./src/App.js",
+    "clean": "rimraf ./dist",
+    "reset": "git pull && git checkout . && npm i && npm run build"
   },
   "engines": {
     "node": "16"
   },
-  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mangledbottles/fonz-api"
+  },
+  "author": "Fonz Music",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mangledbottles/fonz-api/issues"
+  },
+  "homepage": "https://github.com/mangledbottles/fonz-api",
   "dependencies": {
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
@@ -25,9 +34,10 @@
     "express-rate-limit": "^5.2.6",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.19",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
+    "npm": "^7.20.1",
     "reflect-metadata": "^0.1.13",
     "spotify-web-api-node": "^5.0.2",
     "typeorm": "^0.2.34",
@@ -36,6 +46,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.6",
     "@types/express": "^4.17.6",
+    "@types/jsonwebtoken": "^8.5.4",
     "nodemon": "^2.0.7",
     "ts-node-dev": "^1.1.6",
     "tslint": "^5.12.0",

@@ -1,22 +1,22 @@
+/** Initialise API Application and Port */
+
 import express, { Application, NextFunction, Request, Response, Router } from "express";
-import logging from './config/logging';
+const app: Application = express();
+const port: string = process.env.PORT || '8080';
+const NAMESPACE = 'Server';
 
 /** Import Authentication Checker */
-// const AuthChecker = require('./routes/AuthChecker')
-import extractJWT from './middleware/extractJWT';
+// const AuthChecker = require('./utils/AuthChecker')
+import { extractJWT } from './middlewares';
+import { info } from './config';
+var dotenv = require('dotenv');
+dotenv.config();
 
 /** Import dependecies */
 var cookieParser = require('cookie-parser');
-var dotenv = require('dotenv');
-dotenv.config();
-const bodyParser = require('body-parser');
-const rateLimit = require("express-rate-limit");
 const logger = require('morgan');
-
-/** Initialise API Application and Port */
-const app: Application = express();
-const port: string = process.env.PORT;
-const NAMESPACE = 'Server';
+const rateLimit = require("express-rate-limit");
+const bodyParser = require('body-parser');
 
 /** Remove X-Powered-By Express and add custom header */
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -24,10 +24,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader('A-PWNER-MESSAGE', 'VGhpcyBpcyBhIHByaXZhdGUgQVBJClVuYXV0aG9yaXNlZCB1c2Ugd2lsbCBiZSBkZXRlY3RlZCwgYW5kIHdlIHdpbGwgZmluZCB5b3UsIHdhdGNoIG91dC4=')
 
     /** Log the req */
-    logging.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
+    info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
     res.on('finish', () => {
         /** Log the res */
-        logging.info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - STATUS: [${res.statusCode}] - IP: [${req.socket.remoteAddress}]`);
+        info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - STATUS: [${res.statusCode}] - IP: [${req.socket.remoteAddress}]`);
     });
     next();
 })
@@ -79,8 +79,8 @@ app.use((req: Request, res: Response) => {
 
 try {
     app.listen(port, (): void => {
-        console.log(`Server Running https://localhost:${port}`);
+        console.log(`Fonz API is active at localhost:${port}`);
     });
 } catch (error) {
-    console.error(`Error occurred: ${error.message}`);
+    console.error(`An error occurred with message ${error.message}`);
 }
