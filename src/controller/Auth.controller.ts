@@ -15,6 +15,7 @@ import { IJwt } from "../interfaces/JWT.interface";
 const jwt = require("jsonwebtoken");
 import bcryptjs from "bcryptjs";
 import { v4 as uuid } from 'uuid';
+import { AUTH_INVALID_EMAIL, AUTH_INVALID_PASSWORD, AUTH_INVALID_TOKEN, AUTH_INVALID_USER } from '../config/error';
 
 
 class Jwtoken implements IJwt {
@@ -108,14 +109,8 @@ exports.signUp = (email: string, password: string) => {
             const connection = await connect();
 
             // Validate email and password inputs
-            if(!Jwtoken.validateEmail(email)) return reject({
-                status: 401,
-                message: "Invalid email address provided."
-            })
-            if(!Jwtoken.validatePassword(password)) return reject({
-                status: 401,
-                message: "Invalid password provided, password should be atleast 12 characters long and less than 72"
-            })
+            if(!Jwtoken.validateEmail(email)) return reject(AUTH_INVALID_EMAIL)
+            if(!Jwtoken.validatePassword(password)) return reject(AUTH_INVALID_PASSWORD)
 
             // Generate password salt and create hash with password and salt 📩
             const passwordSalt = await bcryptjs.genSalt(10);
@@ -139,7 +134,7 @@ exports.signUp = (email: string, password: string) => {
             resolve({ ...saved, accessToken })
 
         } catch (error) {
-            if(error.code == "ER_DUP_ENTRY") return reject({ status: 403, message: "There is an account already using this email." })
+            if(error.code == "ER_DUP_ENTRY") return reject(AUTH_INVALID_USER)
             
             console.error(error)
             reject({ message: error.message })
@@ -167,8 +162,7 @@ exports.createAnonymousAccount = () => {
             resolve({ ...saved, accessToken, refreshToken })
 
         } catch (error) {
-            if(error.code == "ER_DUP_ENTRY") return reject({ status: 403, message: "There is an account already using this email." })
-            
+            if(error.code == "ER_DUP_ENTRY") return reject(AUTH_INVALID_USER)
             console.error(error)
             reject({ message: error.message })
         }
@@ -183,7 +177,7 @@ exports.refreshToken = (userId, refreshToken) => {
 
             // Check if userId and Refresh Token are valid
             const account = await repo.findOne({ where: { userId, refreshToken }});
-            if(!account) reject({ status: 404, message: "Invalid refresh token provided, login again"});
+            if(!account) reject(AUTH_INVALID_TOKEN);
 
             // Create access token for new account
             const jwtConfig = new Jwtoken(account.userId, "", false);

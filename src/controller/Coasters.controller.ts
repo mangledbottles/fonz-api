@@ -2,6 +2,7 @@
 
 /* Import database configuration */
 import { connect } from '../config/config';
+import { COASTERS_LINKED, COASTERS_NOT_FOUND, COASTERS_NOT_LINKED, COASTER_ACC_REVOKED } from '../config/error';
 
 /* Import entities */
 import { Coasters } from '../entity/Coasters';
@@ -44,20 +45,11 @@ exports.addCoaster = (currentUserId, coasterId) => {
             const repo = connection.getRepository(Coasters);
 
             const [coaster] = await repo.find({ where: { coasterId } });            
-            if (!coaster) return reject({
-                status: 404,
-                message: 'This coaster does not exist.'
-            });
+            if (!coaster) return reject(COASTERS_NOT_FOUND);
 
             const { userId } = coaster;
-            if ((userId !== currentUserId) && (userId !== null)) return reject({
-                status: 404,
-                message: 'This coaster is already linked to a different Fonz account. That account must disconnect that coaster before you can add it to your account.'
-            });
-            if (userId == currentUserId) return reject({
-                status: 403,
-                message: 'This coaster is already linked to your account.'
-            })
+            if ((userId !== currentUserId) && (userId !== null)) return reject(COASTERS_LINK_EXISTS);
+            if (userId == currentUserId) return reject(COASTERS_LINKED)
             if (userId == null) {
 
                 const updatedCoaster = await repo.save({
@@ -94,10 +86,7 @@ exports.updateCoaster = (coasterId, name?: string, active?: boolean) => {
 
             const currentUserId = globalThis.userId;
             console.log({ currentUserId, cUid: coaster.userId })
-            if (coaster.userId !== currentUserId) return reject({
-                status: 404,
-                message: 'This coaster is not linked to this Fonz account.'
-            });
+            if (coaster.userId !== currentUserId) return reject(COASTERS_NOT_LINKED);
 
             if(name) coaster.name = name;
             if(active) coaster.active = active;
@@ -123,10 +112,7 @@ exports.removeCoaster = (currentUserId, coasterId) => {
             message: 'This coaster does not exist.'
         });
 
-        if (coaster.userId !== currentUserId) return reject({
-            status: 404,
-            message: 'This coaster is not linked to this Fonz account.'
-        });
+        if (coaster.userId !== currentUserId) return reject(COASTERS_NOT_LINKED);
 
         /** Remove userId and set active to false */
         coaster.userId = null;
@@ -134,8 +120,6 @@ exports.removeCoaster = (currentUserId, coasterId) => {
 
         await repo.save(coaster);
 
-        resolve({
-            message: 'Coaster removed from Fonz account.'
-        })
+        resolve(COASTER_ACC_REVOKED)
     })
 }
