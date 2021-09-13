@@ -33,9 +33,9 @@ router.post('/:coasterId', (req: Request, res: Response) => {
 router.put('/:coasterId', async (req: Request, res: Response) => {
     try {
         const { coasterId } = req.params;
-        const { name, active } = req.body;
+        const { name, active, encoded } = req.body;
 
-        const resp = await Coaster.updateCoaster(coasterId, name, active);
+        const resp = await Coaster.updateCoaster(coasterId, { name, active, encoded });
         res.send(resp);
     } catch (error) {
         console.error(error);
