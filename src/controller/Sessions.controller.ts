@@ -7,6 +7,7 @@ import { connect } from '../config/config';
 import { Coasters } from '../entity/Coasters';
 import { MusicProviders } from '../entity/MusicProviders';
 import { Session } from '../entity/Session';
+import { Users } from '../entity/Users';
 
 exports.getCoasterSessionForGuest = (coasterId) => {
     return new Promise(async (resolve, reject) => {
@@ -14,12 +15,16 @@ exports.getCoasterSessionForGuest = (coasterId) => {
             const connection = await connect();
             const coasterRepo = connection.getRepository(Coasters);
             const sessionRepo = connection.getRepository(Session);
+            const usersRepo = connection.getRepository(Users);
 
             const coaster = await coasterRepo.findOne({ where: { coasterId } });
             if(coaster?.userId == undefined || null) reject({ message: "There coaster does not have a host.", status: 403, code: "COASTER_NO_HOST" });
             const session = await sessionRepo.findOne({ where: { userId: coaster.userId } }) || reject({ message: "No active session", status: 403 });
+            const host = await usersRepo.findOne({ where: { userId: coaster.userId }});
 
-            resolve({ coaster, session });
+            const hostName = host.displayName;
+
+            resolve({ coaster, session, hostName });
 
         } catch (error) {
             console.error(error)
