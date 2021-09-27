@@ -2,7 +2,7 @@
 
 /* Import database configuration */
 import { connect } from '../config/config';
-import { COASTERS_LINKED, COASTERS_NOT_FOUND, COASTERS_NOT_LINKED, COASTER_ACC_REVOKED } from '../config/error';
+import { COASTERS_LINKED, COASTERS_LINK_EXISTS, COASTERS_NOT_FOUND, COASTERS_NOT_LINKED, COASTER_ACC_REVOKED } from '../config/messages';
 
 /* Import entities */
 import { Coasters } from '../entity/Coasters';
@@ -79,10 +79,7 @@ exports.updateCoaster = (coasterId, name?: string, active?: boolean) => {
 
             let [coaster] = await repo.find({ where: { coasterId } });
 
-            if (!coaster) return reject({
-                status: 404,
-                message: 'This coaster does not exist.'
-            });
+            if (!coaster) return reject(COASTERS_NOT_FOUND);
 
             const currentUserId = globalThis.userId;
             console.log({ currentUserId, cUid: coaster.userId })
@@ -107,10 +104,7 @@ exports.removeCoaster = (currentUserId, coasterId) => {
         const repo = connection.getRepository(Coasters);
 
         let [coaster] = await repo.find({ where: { coasterId } });
-        if (!coaster) return reject({
-            status: 404,
-            message: 'This coaster does not exist.'
-        });
+        if (!coaster) return reject(COASTERS_NOT_FOUND);
 
         if (coaster.userId !== currentUserId) return reject(COASTERS_NOT_LINKED);
 

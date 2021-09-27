@@ -8,6 +8,7 @@ import { Users } from '../entity/Users';
 
 /** Import dependecies */
 import bcryptjs from "bcryptjs";
+import { AUTH_USER_EMAIL_EXISTS } from '../config/messages';
 
 exports.updateAccount = (email?: string, displayName?: string, password?: string, agreedMarketing?: boolean, agreedConsent?: boolean) => {
     return new Promise(async (resolve, reject) => {
@@ -40,7 +41,7 @@ exports.updateAccount = (email?: string, displayName?: string, password?: string
             resolve(saved);
 
         } catch (error) {
-            if (error?.code == "ER_DUP_ENTRY") reject({ status: 409, message: "This email is already in use" });
+            if (error?.code == "ER_DUP_ENTRY") reject(AUTH_USER_EMAIL_EXISTS);
             reject(error);
         }
     });
