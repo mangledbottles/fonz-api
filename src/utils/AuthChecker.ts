@@ -27,8 +27,6 @@ function AuthChecker (req, res, next) {
             // global.userId = userId;
 
             res.locals.userId = userId;
-
-            console.log({ decoded })
             next();
         });
                

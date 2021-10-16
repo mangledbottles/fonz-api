@@ -80,7 +80,6 @@ exports.signIn = (email, password) => {
             
             // Check if correct password
             const passwordCompare = await bcryptjs.compare(password, accountDetails.password);
-            console.log({ passwordCompare })
             if(!passwordCompare) return reject(AUTH_INCORRECT_PASSWORD)
 
             // Create access token

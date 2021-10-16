@@ -29,8 +29,6 @@ function initSpotify() {
       spotifyApi.setAccessToken(globalThis.Spotify.accessToken);
       spotifyApi.setRefreshToken(globalThis.Spotify.refreshToken);
 
-      console.log({ expirationDate, date: new Date() });
-
       if (expirationDate <= new Date() || !globalThis.Spotify.accessToken) {
         console.log("Refreshing token")
         await refreshAccessToken();
@@ -224,8 +222,6 @@ exports.getGuestTop = (type: searchType, offset = 0, limit = 10) => {
       if (!top.body) return reject({ status: 404, message: "This user does not have any top artists" })
       resolve(top.body.items);
     } catch (error) {
-      console.error(error);
-      console.log(error.body);
       if (_.isEmpty(error.body)) return reject({ status: 404, message: "This user does not have any top artists" })
       reject(error);
     }
@@ -237,7 +233,6 @@ exports.getTracksByArtistId = (artistId: string) => {
     try {
       await initSpotify();
 
-      console.log({ artistId });
 
       // TODO: make country dynamic based on Session
       const { body: tracks } = await spotifyApi.getArtistTopTracks(artistId, 'IE');

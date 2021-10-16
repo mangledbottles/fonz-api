@@ -82,12 +82,11 @@ exports.updateCoaster = (coasterId, name?: string, active?: boolean) => {
             if (!coaster) return reject(COASTERS_NOT_FOUND);
 
             const currentUserId = globalThis.userId;
-            console.log({ currentUserId, cUid: coaster.userId })
             if (coaster.userId !== currentUserId) return reject(COASTERS_NOT_LINKED);
 
             if(name) coaster.name = name;
             if(active) coaster.active = active;
-            const updatedCoaster =await repo.save(coaster);
+            const updatedCoaster = await repo.save(coaster);
 
             resolve(updatedCoaster)
 

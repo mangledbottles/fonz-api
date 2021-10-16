@@ -148,11 +148,8 @@ exports.updateSession = (sessionId: string, active?: boolean, providerId?: strin
             const session = await sessionRepo.findOne({ where: { userId, sessionId } })
             if (!session) reject(SESSIONS_NOT_FOUND);
 
-            console.log({ providerId, active, session })
-
             /** If requested, update Session status */
             if (active != undefined) {
-                //console.log("UPDATE STATUS")
                 // Save Session
                 session.active = active;
                 await sessionRepo.save(session);

@@ -1,12 +1,8 @@
-// import config from '../config';
 import { Request, Response, NextFunction } from 'express';
-import { info } from '../config';
 import jwt from 'jsonwebtoken';
-const NAMESPACE = 'Auth';
+const NAMESPACE = 'AuthVerify';
 
 export const extractJWT = (req: Request, res: Response, next: NextFunction) => {
-    info(NAMESPACE, 'Validating token');
-
     if (req.headers.authorization) {
         let token = req.headers.authorization.split(' ')[1];
 
@@ -24,15 +20,17 @@ export const extractJWT = (req: Request, res: Response, next: NextFunction) => {
                 res.status(401).send(resp);
             }
 
-            console.log({ decoded })
             const { userId, admin } = decoded;
             if(admin) {
                 globalThis.isAdmin = true;
                 return next();
             }
+            /** Add userId to LoggingParams */
+            globalThis.LoggingParams = { ...globalThis.LoggingParams, userId }
+            globalThis.Logger.log('info', `[${NAMESPACE}] User Authenticated `, { ...globalThis.LoggingParams })
+
             globalThis.userId = userId;
             res.locals.userId = userId;
-            console.log(`Authorised User ID ${userId}`);
             next();
         });
     } else {
