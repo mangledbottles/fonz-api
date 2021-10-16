@@ -1,14 +1,17 @@
 import express, { IRouter, Request, Response } from "express";
 var router: IRouter = express.Router();
 
+const NAMESPACE = 'Callback';
+
 /** Import dependecies */
 const Spotify = require('../controller/Spotify.controller');
  
 
 router.get('/spotify', async (req: Request, res: Response) => {
     try {
+        globalThis.Logger.log('info', `[${NAMESPACE}] Authenticating from Spotify `, { ...globalThis.LoggingParams})
+
         const { code, state } = req.query;
-        console.log({ state })
         const [userId, device] = state.toString().split("+");
         const { email, display_name, product, country, spotifyId,
             expires_in, access_token, refresh_token } = await Spotify.authorizeUser(code);
@@ -31,7 +34,8 @@ router.get('/spotify', async (req: Request, res: Response) => {
             res.status(400).send({ message: "Invalid device"});
         }
     } catch (error) {
-        console.error(error);
+        globalThis.Logger.log('error', `[${NAMESPACE}] Could not Authenticate from Spotify `, { ...globalThis.LoggingParams, error },)
+    
         res.status(error.status || 500).send(error);
     }
 });
