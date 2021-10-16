@@ -1,5 +1,6 @@
 import express, { IRouter, NextFunction, Request, Response } from "express";
 var router: IRouter = express.Router();
+const NAMESPACE = "Spotify";
 
 /** Import controllers */
 const Session = require('../controller/Sessions.controller');
@@ -41,6 +42,9 @@ router.get('/search', async (req: Request, res: Response) => {
             offset
         } = req.query;
 
+        globalThis.Logger.log('info', `[${NAMESPACE}] User searching Song  `, { ...globalThis.LoggingParams, params: { term, offset } })
+
+
         if (!term) return res.status(400).json({
             status: 400,
             message: "Missing parameters.",
@@ -50,15 +54,9 @@ router.get('/search', async (req: Request, res: Response) => {
         const searchResults = await Spotify.searchSong(term, offset);
 
         return res.send({ searchResults })
-        // Spotify.searchSong(term).then((resp) => {
-        //     res.status(200).json(resp);
-        // }).catch((err) => {
-        //     res.status(500).json({
-        //         err
-        //     });
-        // })
     } catch (error) {
-        console.error(error)
+        globalThis.Logger.log('error', `[${NAMESPACE}] Could not search for Song `, { ...globalThis.LoggingParams, error })
+
         return res.status(error.status || 500).send(error)
     }
 });
@@ -66,11 +64,14 @@ router.get('/search', async (req: Request, res: Response) => {
 router.get('/search/top', async (req: Request, res: Response) => {
     try {
         const { type, offset, limit } = req.query;
+        globalThis.Logger.log('info', `[${NAMESPACE}] User getting Top Songs  `, { ...globalThis.LoggingParams, params: { type, offset, limit } })
+
         if(!type) return res.status(403).send({ message: "Search top not provided"});
         const results = await Spotify.getGuestTop(type, offset, limit);
         return res.send(results);
     } catch(error) {
-        console.error(error)
+        globalThis.Logger.log('error', `[${NAMESPACE}] Could not Get Top Songs `, { ...globalThis.LoggingParams, error })
+
         return res.status(error.status || 500).send(error)
     }
 })
@@ -79,11 +80,14 @@ router.get('/search/artist/:artistId', async (req: Request, res: Response) => {
     try {
         const { artistId } = req.params;
         if(!artistId) return res.status(403).send({ message: "Artist ID not provided"});
+        globalThis.Logger.log('info', `[${NAMESPACE}] User searching by Artist ID  `, { ...globalThis.LoggingParams, params: { artistId } })
+
 
         const results = await Spotify.getTracksByArtistId(artistId);
         return res.send(results);
     } catch(error) {
-        console.error(error)
+        globalThis.Logger.log('error', `[${NAMESPACE}] Could not search by Artist ID `, { ...globalThis.LoggingParams, error })
+
         return res.status(error.status || 500).send(error)
     }
 })
@@ -93,31 +97,40 @@ router.get('/search/playlist/:playlistId', async (req: Request, res: Response) =
         const { playlistId } = req.params;
         const { offset, limit } = req.query;
         if(!playlistId) return res.status(403).send({ message: "Playlist ID not provided"});
+        globalThis.Logger.log('info', `[${NAMESPACE}] User searching by Playlist ID  `, { ...globalThis.LoggingParams, params: { offset, limit, playlistId } })
+
 
         const results = await Spotify.getTracksByPlaylistId(playlistId, offset, limit);
         return res.send(results);
     } catch(error) {
-        console.error(error)
+        globalThis.Logger.log('error', `[${NAMESPACE}] Could not search by Playlist ID `, { ...globalThis.LoggingParams, error })
+
         return res.status(error.status || 500).send(error)
     }
 })
 
 router.get('/search/releases', async (req: Request, res: Response) => {
     try {
+        globalThis.Logger.log('info', `[${NAMESPACE}] User getting Spotify Releases  `, { ...globalThis.LoggingParams })
+
         const results = await Spotify.getNewReleases();
         return res.send(results);
     } catch(error) {
-        console.error(error)
+        globalThis.Logger.log('error', `[${NAMESPACE}] Could not get Spotify Releases `, { ...globalThis.LoggingParams, error })
+        
         return res.status(error.status || 500).send(error)
     }
 })
 
 router.get('/state', async (req: Request, res: Response) => {
     try {
+        globalThis.Logger.log('info', `[${NAMESPACE}] User getting Session State and Active Song  `, { ...globalThis.LoggingParams })
+        
         const currentSong = await Spotify.getCurrent();
         return res.send(currentSong);
     } catch (error) {
-        console.error(error)
+        globalThis.Logger.log('error', `[${NAMESPACE}] Could not Get Session State and Active Song `, { ...globalThis.LoggingParams, error })
+
         return res.status(error.status || 500).send(error)
     }
 });
@@ -141,16 +154,22 @@ router.post('/queue/:songUri', (req: Request, res: Response) => {
             requiredParams: ['songUri', 'device_id']
         });
 
+        globalThis.Logger.log('info', `[${NAMESPACE}] User adding Song to Queue  `, { ...globalThis.LoggingParams, params: { songUri, device_id } })
+
+
         Spotify.addToQueue(songUri, device_id).then((resp) => {
             res.status(200).json((resp.length == 0 || resp.length == undefined) ? {
                 status: 200,
                 message: "Song queued."
             } : resp);
-        }).catch((err) => {
-            res.status(err.status).json(err);
+        }).catch((error) => {
+            globalThis.Logger.log('error', `[${NAMESPACE}] Could not add Song to Queue `, { ...globalThis.LoggingParams, error })
+
+            res.status(error.status || 500).json(error);
         })
     } catch (error) {
-        console.error(error);
+        globalThis.Logger.log('error', `[${NAMESPACE}] Could not add Song to Queue `, { ...globalThis.LoggingParams, error })
+
         res.status(error.status || 500).send(error);
     }
 });
