@@ -45,7 +45,7 @@ router.post('/:coasterId', (req: Request, res: Response) => {
 
 router.put('/:coasterId', async (req: Request, res: Response) => {
     const { coasterId } = req.params;
-    const { name, active } = req.body;
+    const { name, active, encoded } = req.body;
 
     try {
         globalThis.Logger.log('info', `[${NAMESPACE}] Updating Coaster `, { ...globalThis.LoggingParams, coasterId, params: { name, active } })
