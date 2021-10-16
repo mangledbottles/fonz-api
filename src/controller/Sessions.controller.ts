@@ -2,6 +2,7 @@
 
 /* Import database configuration */
 import { connect } from '../config/config';
+import { SESSIONS_INACTIVE, SESSIONS_INVALID_STREAMING, SESSIONS_NOT_FOUND, SESSIONS_NO_HOST, SESSIONS_UNLINKED } from '../config/messages';
 
 /* Import entities */
 import { Coasters } from '../entity/Coasters';
@@ -18,8 +19,8 @@ exports.getCoasterSessionForGuest = (coasterId) => {
             const usersRepo = connection.getRepository(Users);
 
             const coaster = await coasterRepo.findOne({ where: { coasterId } });
-            if(coaster?.userId == undefined || null) reject({ message: "There coaster does not have a host.", status: 403, code: "COASTER_NO_HOST" });
-            const session = await sessionRepo.findOne({ where: { userId: coaster.userId } }) || reject({ message: "No active session", status: 403 });
+            if(coaster?.userId == undefined || null) reject(SESSIONS_NO_HOST);
+            const session = await sessionRepo.findOne({ where: { userId: coaster.userId } }) || reject(SESSIONS_INACTIVE);
             const host = await usersRepo.findOne({ where: { userId: coaster.userId }});
 
             const hostName = host.displayName;
@@ -40,8 +41,8 @@ exports.getSessionForGuest = (sessionId) => {
             const sessionRepo = connection.getRepository(Session);
             const musicProvidersRepo = connection.getRepository(MusicProviders);
 
-            const session = await sessionRepo.findOne({ where: { sessionId } }) || reject({ status: 404, message: `Session does not exit`});
-            const musicProviders = await musicProvidersRepo.findOne({ where: { sessionId }}) || reject({ status: 403, message: `No music providers are linked to this session`});
+            const session = await sessionRepo.findOne({ where: { sessionId } }) || reject(SESSIONS_NOT_FOUND);
+            const musicProviders = await musicProvidersRepo.findOne({ where: { sessionId }}) || reject(SESSIONS_INVALID_STREAMING);
 
             resolve({ session, musicProviders });
         } catch (error) {
@@ -57,7 +58,7 @@ exports.getProviderForGuest = (sessionId) => {
             const connection = await connect();
             const repo = connection.getRepository(Session);
 
-            const musicProviders = await repo.findOne({ where: { sessionId }}) || reject({ status: 403, message: `No music providers are linked to this session`});
+            const musicProviders = await repo.findOne({ where: { sessionId }}) || reject(SESSIONS_INVALID_STREAMING);
 
             resolve(musicProviders);
         } catch (error) {
@@ -94,7 +95,7 @@ exports.getSessionById = (sessionId: string) => {
 
             const userId = globalThis.userId;
             const session = await sessionRepo.findOne({ where: { userId, sessionId } })
-            if (!session) reject({ status: 403, message: "No active sessions" });
+            if (!session) reject(SESSIONS_INACTIVE);
 
             resolve(session);
 
@@ -112,7 +113,7 @@ exports.getAllSessions = () => {
 
             const userId = globalThis.userId;
             const session = await sessionRepo.find({ where: { userId } })
-            if (!session) reject({ status: 403, message: "No sessions linked to this user" });
+            if (!session) reject(SESSIONS_UNLINKED);
 
             resolve(session);
         } catch (error) {
@@ -129,7 +130,7 @@ exports.deleteSession = (sessionId) => {
 
             const userId = globalThis.userId;
             const session = await sessionRepo.findOne({ where: { userId, sessionId } })
-            if (!session) reject({ status: 403, message: "Session does not exist." });
+            if (!session) reject(SESSIONS_NOT_FOUND);
 
             await sessionRepo.delete(session);
 
@@ -150,13 +151,10 @@ exports.updateSession = (sessionId: string, active?: boolean, providerId?: strin
 
             const userId = globalThis.userId;
             const session = await sessionRepo.findOne({ where: { userId, sessionId } })
-            if (!session) reject({ status: 403, message: "No active session / session does not exist" });
-
-            console.log({ providerId, active, session })
+            if (!session) reject(SESSIONS_NOT_FOUND);
 
             /** If requested, update Session status */
             if (active != undefined) {
-                console.log("UPDATE STATUS")
                 // Save Session
                 session.active = active;
                 await sessionRepo.save(session);
@@ -167,7 +165,7 @@ exports.updateSession = (sessionId: string, active?: boolean, providerId?: strin
                 console.log("UPDATE PROVIDER")
 
                 const musicProvider = await musicProviderRepo.findOne({ where: { providerId } });
-                if(!musicProvider) reject({ status: 404, message: "Music provider does not exist"});
+                if(!musicProvider) reject(SESSIONS_INVALID_STREAMING);
                 musicProvider.sessionId = sessionId;
 
                 // Save Music Provider ans Session

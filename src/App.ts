@@ -1,16 +1,17 @@
 /** Initialise API Application and Port */
-
 import express, { Application, NextFunction, Request, Response, Router } from "express";
 const app: Application = express();
 const port: string = process.env.PORT || '8080';
-const NAMESPACE = 'Server';
+const NAMESPACE = 'App';
 
 var dotenv = require('dotenv');
 dotenv.config();
 
+const Logger = require('./config/Logger');
+globalThis.Logger = Logger;
+
 /** Import Authentication Checker */
 import { extractJWT } from './middlewares';
-import { info } from './config';
 
 /** Import dependecies */
 var cookieParser = require('cookie-parser');
@@ -24,11 +25,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader('A-PWNER-MESSAGE', 'VGhpcyBpcyBhIHByaXZhdGUgQVBJClVuYXV0aG9yaXNlZCB1c2Ugd2lsbCBiZSBkZXRlY3RlZCwgYW5kIHdlIHdpbGwgZmluZCB5b3UsIHdhdGNoIG91dC4=')
 
     /** Log the req */
-    info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
-    res.on('finish', () => {
-        /** Log the res */
-        info(NAMESPACE, `METHOD: [${req.method}] - URL: [${req.url}] - STATUS: [${res.statusCode}] - IP: [${req.socket.remoteAddress}]`);
-    });
+    globalThis.LoggingParams = { method: req.method, url: req.originalUrl, ip: req.socket.remoteAddress, userId: globalThis.userId }
+    Logger.log('info', `[${NAMESPACE}] User connecting to Fonz Server `, { ...globalThis.LoggingParams })
     next();
 })
 const limiter = rateLimit({
@@ -71,6 +69,7 @@ app.use('/admin', AdminRoute);
 
 /** All unknown URL requests managed here */
 app.use((req: Request, res: Response) => {
+    Logger.log('info', `[${NAMESPACE}] Endpoint not found `, { method: req.method, url: req.originalUrl, ip: req.socket.remoteAddress })
     res.status(404).json({
         status: 404,
         message: "Endpoint not found. Ensure that you have requested the correct URL."
@@ -79,6 +78,7 @@ app.use((req: Request, res: Response) => {
 
 try {
     app.listen(port, (): void => {
+        Logger.log('info', "[STARTUP] Starting Fonz API Server", {tags: 'startup'})
         console.log(`Fonz API is active at localhost:${port}`);
     });
 } catch (error) {
