@@ -2,8 +2,8 @@ import express, { IRouter, Request, Response } from "express";
 var router: IRouter = express.Router();
 const NAMESPACE = "Index";
 
-const IOS_MINIMUM_APP_VERSION = "1.24";
-const ANDROID_MINIMUM_APP_VERSION = "1.0.5";
+const IOS_MINIMUM_APP_VERSION = "2.04";
+const ANDROID_MINIMUM_APP_VERSION = "2.0.1";
 
 router.get('/', (req: Request, res: Response) => {
     globalThis.Logger.log('info', `[${NAMESPACE}] User checking Fonz Server Status `, { ...globalThis.LoggingParams })

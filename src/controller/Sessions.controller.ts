@@ -8,6 +8,7 @@ import { SESSIONS_INACTIVE, SESSIONS_INVALID_STREAMING, SESSIONS_NOT_FOUND, SESS
 import { Coasters } from '../entity/Coasters';
 import { MusicProviders } from '../entity/MusicProviders';
 import { Session } from '../entity/Session';
+import { Users } from '../entity/Users';
 
 exports.getCoasterSessionForGuest = (coasterId) => {
     return new Promise(async (resolve, reject) => {
@@ -15,12 +16,16 @@ exports.getCoasterSessionForGuest = (coasterId) => {
             const connection = await connect();
             const coasterRepo = connection.getRepository(Coasters);
             const sessionRepo = connection.getRepository(Session);
+            const usersRepo = connection.getRepository(Users);
 
             const coaster = await coasterRepo.findOne({ where: { coasterId } });
             if(coaster?.userId == undefined || null) reject(SESSIONS_NO_HOST);
             const session = await sessionRepo.findOne({ where: { userId: coaster.userId } }) || reject(SESSIONS_INACTIVE);
+            const host = await usersRepo.findOne({ where: { userId: coaster.userId }});
 
-            resolve({ coaster, session });
+            const hostName = host.displayName;
+
+            resolve({ coaster, session, hostName });
 
         } catch (error) {
             console.error(error)

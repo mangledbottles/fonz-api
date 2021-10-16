@@ -7,6 +7,8 @@ import { COASTERS_LINKED, COASTERS_LINK_EXISTS, COASTERS_NOT_FOUND, COASTERS_NOT
 /* Import entities */
 import { Coasters } from '../entity/Coasters';
 
+// import { COASTERS_ACCOUNT_LINKED } from '../config/Error';
+
 exports.getCoasters = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -71,7 +73,7 @@ exports.addCoaster = (currentUserId, coasterId) => {
 }
 
 
-exports.updateCoaster = (coasterId, name?: string, active?: boolean) => {
+exports.updateCoaster = (coasterId, { name, active, encoded }) => {
     return new Promise(async (resolve, reject) => {
         try {
             const connection = await connect();
@@ -85,8 +87,9 @@ exports.updateCoaster = (coasterId, name?: string, active?: boolean) => {
             if (coaster.userId !== currentUserId) return reject(COASTERS_NOT_LINKED);
 
             if(name) coaster.name = name;
-            if(active) coaster.active = active;
-            const updatedCoaster = await repo.save(coaster);
+            if(active != undefined) coaster.active = active;
+            if(encoded != undefined) coaster.encoded = encoded;
+            const updatedCoaster =await repo.save(coaster);
 
             resolve(updatedCoaster)
 

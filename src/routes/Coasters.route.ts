@@ -50,7 +50,7 @@ router.put('/:coasterId', async (req: Request, res: Response) => {
     try {
         globalThis.Logger.log('info', `[${NAMESPACE}] Updating Coaster `, { ...globalThis.LoggingParams, coasterId, params: { name, active } })
 
-        const resp = await Coaster.updateCoaster(coasterId, name, active);
+        const resp = await Coaster.updateCoaster(coasterId, { name, active, encoded });
         res.send(resp);
     } catch (error) {
         globalThis.Logger.log('error', `[${NAMESPACE}] Could not update Coaster `, { ...globalThis.LoggingParams, coasterId, error })
