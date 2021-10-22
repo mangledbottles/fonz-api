@@ -2,6 +2,7 @@
 
 /* Import database configuration */
 import { connect } from '../config/config';
+import { COASTERS_NOT_FOUND, COASTERS_NOT_LINKED, COASTER_ACC_REVOKED } from '../config/messages';
 
 /* Import entities */
 import { Coasters } from '../entity/Coasters';
@@ -58,4 +59,22 @@ exports.getCoaster = (coasterId: string) => {
         }
     });
 }
+
+/** Remove user from coaster */
+exports.releaseCoaster = (coasterId) => {
+    return new Promise(async (resolve, reject) => {
+        const connection = await connect();
+        const repo = connection.getRepository(Coasters);
+
+        let [coaster] = await repo.find({ where: { coasterId } });
+        if (!coaster) return reject(COASTERS_NOT_FOUND);
+
+        /** Remove userId and set active to false */
+        coaster.userId = null;
+        coaster.active = false;
+
+        await repo.save(coaster);
+
+        resolve(COASTER_ACC_REVOKED)
+    })
 }
