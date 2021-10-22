@@ -133,7 +133,6 @@ exports.searchSong = (term, offset = 0) => {
   return new Promise(async (resolve, reject) => {
     try {
       await initSpotify();
-      console.log({ spotifyApi })
       const songResults = await spotifyApi.searchTracks(term, { market: 'IE', offset });
       resolve(songResults);
     } catch (error) {
@@ -156,18 +155,11 @@ function initGuestSpotify() {
       if (!guestProvider) reject({ status: 404, message: "Guest does not have a Spotify linked" });
 
       const { lastUpdated, accessToken, refreshToken } = guestProvider;
-      // console.log({ lastUpdated, accessToken, refreshToken })
 
       globalThis.GuestSpotify = { lastUpdated, accessToken, refreshToken };
-      // globalThis.Guest.lastUpdated = lastUpdated;
-      // globalThis.Guest.accessToken = accessToken;
-      // globalThis.Guest.refreshToken = refreshToken;
-
 
       const expirationDate = new Date(lastUpdated);
       expirationDate.setSeconds(expirationDate.getSeconds() + (3600 * 0));
-
-      console.log({ accessToken, refreshToken, expirationDate, date: new Date(), userId, guestProvider })
 
       spotifyApi.setAccessToken(accessToken);
       spotifyApi.setRefreshToken(refreshToken);
