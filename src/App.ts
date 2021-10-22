@@ -25,7 +25,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader('A-PWNER-MESSAGE', 'VGhpcyBpcyBhIHByaXZhdGUgQVBJClVuYXV0aG9yaXNlZCB1c2Ugd2lsbCBiZSBkZXRlY3RlZCwgYW5kIHdlIHdpbGwgZmluZCB5b3UsIHdhdGNoIG91dC4=')
 
     /** Log the req */
-    globalThis.LoggingParams = { method: req.method, url: req.originalUrl, ip: req.socket.remoteAddress, userId: globalThis.userId }
+    globalThis.LoggingParams = { method: req.method, url: req.originalUrl, ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress, userId: globalThis.userId }
     Logger.log('info', `[${NAMESPACE}] User connecting to Fonz Server `, { ...globalThis.LoggingParams })
     next();
 })
