@@ -53,6 +53,13 @@ router.post('/coasters/:coasterId', async (req: Request, res: Response) => {
     }
 });
 
+router.get('/coasters/:coasterId', async (req: Request, res: Response) => {
+    const { coasterId } = req.params;
+    try {
+        globalThis.Logger.log('info', `[${NAMESPACE}] Getting Coaster `, { ...globalThis.LoggingParams, coasterId })
+        res.send(await Admin.getCoaster(coasterId));
+    } catch (error) {
+        globalThis.Logger.log('error', `[${NAMESPACE}] Could not get Coaster `, { ...globalThis.LoggingParams, coasterId, error })
         res.send(error);
     }
 });

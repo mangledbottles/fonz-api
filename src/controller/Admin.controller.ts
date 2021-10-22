@@ -44,4 +44,18 @@ exports.addCoaster = (coasterId: string, { group }) => {
         }
     })
 }
+
+exports.getCoaster = (coasterId: string) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const connection = await connect();
+            const repo = connection.getRepository(Coasters);
+
+            let [coaster] = await repo.find({ where: { coasterId } });
+            resolve(coaster);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
 }
