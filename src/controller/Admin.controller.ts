@@ -18,16 +18,16 @@ exports.updateCoaster = (coasterId, { encoded, group }) => {
                 status: 404,
                 message: 'This coaster does not exist.'
             });
-            
-            if(encoded != null) coaster.encoded = encoded;
-            if(group) coaster.group = group;
+
+            if (encoded != null) coaster.encoded = encoded;
+            if (group) coaster.group = group;
             const updatedCoaster = await repo.save(coaster);
 
             resolve(updatedCoaster)
 
         } catch (error) {
-            console.error(error)
             reject(error)
         }
     })
+}
 }
