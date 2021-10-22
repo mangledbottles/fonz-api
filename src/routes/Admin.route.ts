@@ -35,6 +35,18 @@ router.put('/coasters/:coasterId', async (req: Request, res: Response) => {
         res.send(await Admin.updateCoaster(coasterId, { encoded, group }));
     } catch(error) {
         globalThis.Logger.log('error', `[${NAMESPACE}] Could not Update Coaster `, { ...globalThis.LoggingParams, error })
+router.post('/coasters/:coasterId', async (req: Request, res: Response) => {
+    const { coasterId } = req.params;
+    try {
+        const { group } = req.body;
+        globalThis.Logger.log('info', `[${NAMESPACE}] Adding Coaster `, { ...globalThis.LoggingParams, coasterId })
+
+        res.send(await Admin.addCoaster(coasterId, { group }));
+    } catch (error) {
+        globalThis.Logger.log('error', `[${NAMESPACE}] Could not add Coaster `, { ...globalThis.LoggingParams, coasterId, error })
+        res.send(error);
+    }
+});
 
         res.send(error);
     }

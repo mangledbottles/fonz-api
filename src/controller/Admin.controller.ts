@@ -30,4 +30,18 @@ exports.updateCoaster = (coasterId, { encoded, group }) => {
         }
     })
 }
+
+exports.addCoaster = (coasterId: string, { group }) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const connection = await connect();
+            let Coaster = await connection.getRepository(Coasters).create({ coasterId, group, active: false });
+            const saved = await connection.manager.save(Coaster);
+
+            resolve(saved);
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 }
