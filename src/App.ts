@@ -86,6 +86,21 @@ io.on('connection', (socket) => {
         console.log(message);
         io.emit('message', `User ${globalThis.userId} said ${message}`)
     })
+
+    socket.on("session:join", (sessionId, callback) => {
+        // socket.join(`session:${sessionId}`); // join user to sessionId
+        // io.to(`session:${sessionId}`).emit(`User joined session ${sessionId}`) // send message to all listeners
+        // socket.to(socket.id).emit("You have joined the session")
+        // io.emit(`session:${sessionId}`, sessionId, socket.id, message);
+        try {
+            if(!callback) throw("Acknowledgement not set, cannot return session data")
+            callback({ message: "you have joined the session"});
+            console.log({ type: 'join session', sessionId, callback })
+        } catch(error) {
+            new Error(error)
+        }
+    });
+
     socket.on("disconnect", () => {
         console.log("a user disconnected")
     })
