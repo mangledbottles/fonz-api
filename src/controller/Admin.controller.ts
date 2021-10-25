@@ -1,11 +1,14 @@
 'use strict';
 
+import { Repository } from 'typeorm';
 /* Import database configuration */
 import { connect } from '../config/config';
 import { COASTERS_NOT_FOUND, COASTERS_NOT_LINKED, COASTER_ACC_REVOKED } from '../config/messages';
 
 /* Import entities */
 import { Coasters } from '../entity/Coasters';
+import { Session } from '../entity/Session';
+import { Users } from '../entity/Users';
 
 exports.updateCoaster = (coasterId, { encoded, group }) => {
     return new Promise(async (resolve, reject) => {
@@ -50,10 +53,16 @@ exports.getCoaster = (coasterId: string) => {
     return new Promise(async (resolve, reject) => {
         try {
             const connection = await connect();
-            const repo = connection.getRepository(Coasters);
+            const coasterRepo = connection.getRepository(Coasters);
+            const sessionRepo = connection.getRepository(Session);
+            const usersRepo = connection.getRepository(Users);
 
-            let [coaster] = await repo.find({ where: { coasterId } });
-            resolve(coaster);
+            let [coaster] = await coasterRepo.find({ where: { coasterId } });
+            let [session] = await sessionRepo.find({ where: { userId: coaster.userId, active: true } });
+            let [user] = await usersRepo.find({ where: { userId: coaster.userId }});
+            let { userId, email, displayName, createdAt } = user;
+        
+            resolve({ coaster, session, user: { userId, email, displayName, createdAt } });
         } catch (error) {
             reject(error);
         }
