@@ -1,6 +1,9 @@
 /** Initialise API Application and Port */
 import express, { Application, NextFunction, Request, Response, Router } from "express";
 const app: Application = express();
+const server = require('http').createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
 const port: string = process.env.PORT || '8080';
 const NAMESPACE = 'App';
 
@@ -76,8 +79,18 @@ app.use((req: Request, res: Response) => {
     });
 });
 
+/** Socket IO Requests */
+io.on('connection', (socket) => {
+    console.log('a user connected');
+    socket.on("disconnect", () => {
+        console.log("a user disconnected")
+    })
+
+});
+
+
 try {
-    app.listen(port, (): void => {
+    server.listen(port, (): void => {
         Logger.log('info', "[STARTUP] Starting Fonz API Server", {tags: 'startup'})
         console.log(`Fonz API is active at localhost:${port}`);
     });
