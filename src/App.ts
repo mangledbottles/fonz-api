@@ -82,6 +82,10 @@ app.use((req: Request, res: Response) => {
 /** Socket IO Requests */
 io.on('connection', (socket) => {
     console.log('a user connected');
+    socket.on('message', (message) => {
+        console.log(message);
+        io.emit('message', `User ${globalThis.userId} said ${message}`)
+    })
     socket.on("disconnect", () => {
         console.log("a user disconnected")
     })
