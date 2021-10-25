@@ -101,6 +101,10 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on("session:queue", (sessionId, songUri) => {
+
+    })
+
     socket.on("disconnect", () => {
         console.log("a user disconnected")
     })
