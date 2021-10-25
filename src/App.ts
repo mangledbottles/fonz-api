@@ -14,7 +14,7 @@ const Logger = require('./config/Logger');
 globalThis.Logger = Logger;
 
 /** Import Authentication Checker */
-import { extractJWT } from './middlewares';
+import { restJWTVerify, socketJWTVerify } from './middlewares';
 
 /** Import dependecies */
 var cookieParser = require('cookie-parser');
@@ -62,7 +62,7 @@ app.use('/auth', AuthenticationRoute);
 app.use('/callback', CallbackRouter);
 
 /** All requests after this require authentication */
-app.use(extractJWT);
+app.use(restJWTVerify);
 app.use('/providers', MusicProviders);
 app.use('/user', UserRoute);
 app.use('/host', HostRoute);
@@ -82,6 +82,10 @@ app.use((req: Request, res: Response) => {
 /** Socket IO Requests */
 io.on('connection', (socket) => {
     console.log('a user connected');
+
+    /** Ensure user is properly authenticated */
+    io.use(socketJWTVerify);
+
     socket.on('message', (message) => {
         console.log(message);
         io.emit('message', `User ${globalThis.userId} said ${message}`)
@@ -110,6 +114,7 @@ io.on('connection', (socket) => {
     })
 
 });
+
 
 
 try {

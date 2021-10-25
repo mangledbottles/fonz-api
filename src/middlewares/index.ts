@@ -1,1 +1,1 @@
-export { extractJWT } from './extractJWT';
+export { restJWTVerify, socketJWTVerify } from './extractJWT';
