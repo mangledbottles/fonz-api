@@ -5,21 +5,29 @@ const NAMESPACE = 'Callback';
 
 /** Import dependecies */
 const Spotify = require('../controller/Spotify.controller');
- 
+
 
 router.get('/spotify', async (req: Request, res: Response) => {
     try {
-        globalThis.Logger.log('info', `[${NAMESPACE}] Authenticating from Spotify `, { ...globalThis.LoggingParams})
+        globalThis.Logger.log('info', `[${NAMESPACE}] Authenticating from Spotify `, { ...globalThis.LoggingParams })
 
         const { code, state } = req.query;
         const [userId, device] = state.toString().split("+");
         const { email, display_name, product, country, spotifyId,
             expires_in, access_token, refresh_token } = await Spotify.authorizeUser(code);
 
-        await Spotify.storeSpotifyCredentials({
-            email, display_name, product, country, spotifyId,
-            expires_in, access_token, refresh_token
-        }, userId);
+        const { isDuplicate, providerId } = await Spotify.checkIfSpotifyAccountDuplicate(userId, spotifyId);
+        if (isDuplicate) {
+            await Spotify.updateSpotifyCredentials(providerId, {
+                email, display_name, product, country, spotifyId,
+                expires_in, access_token, refresh_token
+            }, userId);
+        } else {
+            await Spotify.storeSpotifyCredentials({
+                email, display_name, product, country, spotifyId,
+                expires_in, access_token, refresh_token
+            }, userId);
+        }
 
         /** Requirement for Hosts only
         if(product != "premium") res.status().json({
@@ -31,11 +39,11 @@ router.get('/spotify', async (req: Request, res: Response) => {
         } else if (device == 'Android') {
             res.redirect("https://fonzmusic.com/spotify");
         } else {
-            res.status(400).send({ message: "Invalid device"});
+            res.status(400).send({ message: "Invalid device" });
         }
     } catch (error) {
         globalThis.Logger.log('error', `[${NAMESPACE}] Could not Authenticate from Spotify `, { ...globalThis.LoggingParams, error },)
-    
+
         res.status(error.status || 500).send(error);
     }
 });

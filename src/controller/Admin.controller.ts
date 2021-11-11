@@ -59,10 +59,15 @@ exports.getCoaster = (coasterId: string) => {
 
             let [coaster] = await coasterRepo.find({ where: { coasterId } });
             let [session] = await sessionRepo.find({ where: { userId: coaster.userId, active: true } });
-            let [user] = await usersRepo.find({ where: { userId: coaster.userId }});
-            let { userId, email, displayName, createdAt } = user;
+
+            let userDetails;
+            if(coaster.userId) {
+                let [user] = await usersRepo.find({ where: { userId: coaster.userId }});
+                let { userId, email, displayName, createdAt } = user;
+                userDetails = { userId, email, displayName, createdAt }
+            }
         
-            resolve({ coaster, session, user: { userId, email, displayName, createdAt } });
+            resolve({ coaster, session, userDetails });
         } catch (error) {
             reject(error);
         }
