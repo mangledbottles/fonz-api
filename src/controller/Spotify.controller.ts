@@ -111,7 +111,7 @@ exports.storeSpotifyCredentials = ({ email, display_name, product, country, spot
       const connection = await connect();
       const repo = connection.getRepository(MusicProviders);
 
-      const additional = JSON.stringify({ product, country, spotifyId, email, display_name });
+      const additional = { product, country, spotifyId, email, display_name };
       repo.save({ userId, country, expiresIn: expires_in, accessToken: access_token, refreshToken: refresh_token, additional, displayName: display_name })
 
       resolve({})
