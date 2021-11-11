@@ -40,8 +40,8 @@ export class MusicProviders extends BaseEntity {
     @Column()
     refreshToken: string;
 
-    @Column()
-    additional: string;
+    @Column({ type: 'json' })
+    additional: any;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     createdAt: string;
