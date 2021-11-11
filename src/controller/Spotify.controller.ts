@@ -28,13 +28,14 @@ function initSpotify() {
 
       spotifyApi.setAccessToken(globalThis.Spotify.accessToken);
       spotifyApi.setRefreshToken(globalThis.Spotify.refreshToken);
+      await refreshAccessToken();
 
-      if (expirationDate <= new Date() || !globalThis.Spotify.accessToken) {
-        console.log("Refreshing token")
-        await refreshAccessToken();
-      } else {
-        console.log("Token is good: [" + expirationDate + "], vs, [" + new Date() + "]");
-      }
+      // if (expirationDate <= new Date() || !globalThis.Spotify.accessToken) {
+      //   console.log("Refreshing token")
+      //   await refreshAccessToken();
+      // } else {
+      //   console.log("Token is good: [" + expirationDate + "], vs, [" + new Date() + "]");
+      // }
       resolve({});
     } catch (error) {
       console.error(error);
