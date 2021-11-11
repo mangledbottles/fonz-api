@@ -122,6 +122,27 @@ exports.storeSpotifyCredentials = ({ email, display_name, product, country, spot
   })
 }
 
+exports.updateSpotifyCredentials = (providerId: string, { email, display_name, product, country, spotifyId,
+  expires_in, access_token, refresh_token }, userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const connection = await connect();
+      const repo = connection.getRepository(MusicProviders);
+
+      const additional = { product, country, spotifyId, email, display_name };
+      const response = await repo.save({
+        providerId, userId,
+        country, expiresIn: expires_in, accessToken: access_token, refreshToken: refresh_token, additional, displayName: display_name
+      })
+
+      resolve(response);
+
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 /**
  * Spotify Search for song
  *
