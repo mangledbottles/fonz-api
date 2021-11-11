@@ -28,13 +28,14 @@ function initSpotify() {
 
       spotifyApi.setAccessToken(globalThis.Spotify.accessToken);
       spotifyApi.setRefreshToken(globalThis.Spotify.refreshToken);
+      await refreshAccessToken();
 
-      if (expirationDate <= new Date() || !globalThis.Spotify.accessToken) {
-        console.log("Refreshing token")
-        await refreshAccessToken();
-      } else {
-        console.log("Token is good: [" + expirationDate + "], vs, [" + new Date() + "]");
-      }
+      // if (expirationDate <= new Date() || !globalThis.Spotify.accessToken) {
+      //   console.log("Refreshing token")
+      //   await refreshAccessToken();
+      // } else {
+      //   console.log("Token is good: [" + expirationDate + "], vs, [" + new Date() + "]");
+      // }
       resolve({});
     } catch (error) {
       console.error(error);
@@ -110,7 +111,7 @@ exports.storeSpotifyCredentials = ({ email, display_name, product, country, spot
       const connection = await connect();
       const repo = connection.getRepository(MusicProviders);
 
-      const additional = JSON.stringify({ product, country, spotifyId, email, display_name });
+      const additional = { product, country, spotifyId, email, display_name };
       repo.save({ userId, country, expiresIn: expires_in, accessToken: access_token, refreshToken: refresh_token, additional, displayName: display_name })
 
       resolve({})
@@ -119,6 +120,27 @@ exports.storeSpotifyCredentials = ({ email, display_name, product, country, spot
       reject(error);
     }
   })
+}
+
+exports.updateSpotifyCredentials = (providerId: string, { email, display_name, product, country, spotifyId,
+  expires_in, access_token, refresh_token }, userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const connection = await connect();
+      const repo = connection.getRepository(MusicProviders);
+
+      const additional = { product, country, spotifyId, email, display_name };
+      const response = await repo.save({
+        providerId, userId,
+        country, expiresIn: expires_in, accessToken: access_token, refreshToken: refresh_token, additional, displayName: display_name
+      })
+
+      resolve(response);
+
+    } catch (error) {
+      reject(error);
+    }
+  });
 }
 
 /**
@@ -295,6 +317,27 @@ exports.getCurrent = async () => {
         images,
         songUri
       });
+    } catch (error) {
+      reject(error);
+    }
+  })
+}
+
+exports.checkIfSpotifyAccountDuplicate = (userId: string, spotifyId: string) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const connection = await connect();
+      const repo = connection.getRepository(MusicProviders);
+
+      // repo.find({ where: { userId, additional: Raw(() => additional->'$.spotifyId' = spotifyId )}});
+      const duplicate = await repo.find({ where: { userId } });
+      if (!duplicate) return resolve({ isDuplicate: false, providerId: null });
+      duplicate.forEach((spotify) => {
+        if (spotify.additional.spotifyId == spotifyId) {
+          return resolve({ isDuplicate: true, providerId: spotify.providerId })
+        }
+      })
+      resolve({ isDuplicate: false, providerId: null })
     } catch (error) {
       reject(error);
     }
