@@ -302,6 +302,27 @@ exports.getCurrent = async () => {
   })
 }
 
+exports.checkIfSpotifyAccountDuplicate = (userId: string, spotifyId: string) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const connection = await connect();
+      const repo = connection.getRepository(MusicProviders);
+
+      // repo.find({ where: { userId, additional: Raw(() => additional->'$.spotifyId' = spotifyId )}});
+      const duplicate = await repo.find({ where: { userId } });
+      if (!duplicate) return resolve({ isDuplicate: false, providerId: null });
+      duplicate.forEach((spotify) => {
+        if (spotify.additional.spotifyId == spotifyId) {
+          return resolve({ isDuplicate: true, providerId: spotify.providerId })
+        }
+      })
+      resolve({ isDuplicate: false, providerId: null })
+    } catch (error) {
+      reject(error);
+    }
+  })
+}
+
 exports.addToQueue = (songUri, device_id) => {
   return new Promise(async (resolve, reject) => {
     try {

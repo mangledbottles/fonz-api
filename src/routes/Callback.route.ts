@@ -20,6 +20,7 @@ router.get('/spotify', async (req: Request, res: Response) => {
             email, display_name, product, country, spotifyId,
             expires_in, access_token, refresh_token
         }, userId);
+        const { isDuplicate, providerId } = await Spotify.checkIfSpotifyAccountDuplicate(userId, spotifyId);
 
         /** Requirement for Hosts only
         if(product != "premium") res.status().json({
