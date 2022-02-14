@@ -1,6 +1,9 @@
 /** Initialise API Application and Port */
 import express, { Application, NextFunction, Request, Response, Router } from "express";
 const app: Application = express();
+const server = require('http').createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
 const port: string = process.env.PORT || '8080';
 const NAMESPACE = 'App';
 
@@ -11,7 +14,7 @@ const Logger = require('./config/Logger');
 globalThis.Logger = Logger;
 
 /** Import Authentication Checker */
-import { extractJWT } from './middlewares';
+import { restJWTVerify, socketJWTVerify } from './middlewares';
 
 /** Import dependecies */
 var cookieParser = require('cookie-parser');
@@ -59,7 +62,7 @@ app.use('/auth', AuthenticationRoute);
 app.use('/callback', CallbackRouter);
 
 /** All requests after this require authentication */
-app.use(extractJWT);
+app.use(restJWTVerify);
 app.use('/providers', MusicProviders);
 app.use('/user', UserRoute);
 app.use('/host', HostRoute);
@@ -76,8 +79,46 @@ app.use((req: Request, res: Response) => {
     });
 });
 
+/** Socket IO Requests */
+io.on('connection', (socket) => {
+    console.log('a user connected');
+
+    /** Ensure user is properly authenticated */
+    io.use(socketJWTVerify);
+
+    socket.on('message', (message) => {
+        console.log(message);
+        io.emit('message', `User ${globalThis.userId} said ${message}`)
+    })
+
+    socket.on("session:join", (sessionId, callback) => {
+        // socket.join(`session:${sessionId}`); // join user to sessionId
+        // io.to(`session:${sessionId}`).emit(`User joined session ${sessionId}`) // send message to all listeners
+        // socket.to(socket.id).emit("You have joined the session")
+        // io.emit(`session:${sessionId}`, sessionId, socket.id, message);
+        try {
+            if(!callback) throw("Acknowledgement not set, cannot return session data")
+            callback({ message: "you have joined the session"});
+            console.log({ type: 'join session', sessionId, callback })
+        } catch(error) {
+            new Error(error)
+        }
+    });
+
+    socket.on("session:queue", (sessionId, songUri) => {
+
+    })
+
+    socket.on("disconnect", () => {
+        console.log("a user disconnected")
+    })
+
+});
+
+
+
 try {
-    app.listen(port, (): void => {
+    server.listen(port, (): void => {
         Logger.log('info', "[STARTUP] Starting Fonz API Server", {tags: 'startup'})
         console.log(`Fonz API is active at localhost:${port}`);
     });

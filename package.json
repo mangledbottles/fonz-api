@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/mangledbottles/fonz-api",
   "dependencies": {
+    "aws-sdk": "^2.1013.0",
     "axios": "^0.21.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
@@ -39,6 +40,7 @@
     "mysql": "^2.18.1",
     "npm": "^7.20.1",
     "reflect-metadata": "^0.1.13",
+    "socket.io": "^4.3.1",
     "spotify-web-api-node": "^5.0.2",
     "typeorm": "^0.2.34",
     "uuid": "^8.3.2",
